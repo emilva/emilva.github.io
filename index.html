@@ -62,69 +62,71 @@
   </div>
 
   <!-- Moving the script to the bottom of the body -->
-  <script>
+<script>
+  window.onload = function() {
     const turbulence = document.getElementById('turbulence');
     const displacementMap = document.querySelector('feDisplacementMap');
     const dynamicText = document.getElementById("dynamic-text");
 
-    // Check if the elements exist before proceeding
+    // Check if the elements exist before proceeding and log a message if not
     if (!turbulence || !displacementMap) {
       console.error('SVG filter elements not found!');
-      return;
-    }
+    } else {
+      // Scroll-related variables
+      let scrollPos = 0;
+      let lastTime = Date.now(); // To control speed of fake scroll
+      let distortionPhase = true; // Track whether we are in the distortion phase
 
-    // Scroll-related variables
-    let scrollPos = 0;
-    let lastTime = Date.now(); // To control speed of fake scroll
-    let distortionPhase = true; // Track whether we are in the distortion phase
+      function updateAnimation() {
+        // Simulate continuous scrolling
+        const currentTime = Date.now();
+        const deltaTime = (currentTime - lastTime) / 1000; // Time passed in seconds
+        lastTime = currentTime;
+        
+        // Adjust scroll position manually
+        scrollPos += deltaTime * 0.05; // Adjust speed here (0.05 is scroll speed)
 
-    function updateAnimation() {
-      // Simulate continuous scrolling
-      const currentTime = Date.now();
-      const deltaTime = (currentTime - lastTime) / 1000; // Time passed in seconds
-      lastTime = currentTime;
-      
-      // Adjust scroll position manually
-      scrollPos += deltaTime * 0.05; // Adjust speed here (0.05 is scroll speed)
+        // Keep scrollPos between 0 and 1 to simulate endless loop
+        if (scrollPos > 1) {
+          scrollPos = 0;
+          distortionPhase = !distortionPhase; // Toggle between distortion and restore phases
+        }
 
-      // Keep scrollPos between 0 and 1 to simulate endless loop
-      if (scrollPos > 1) {
-        scrollPos = 0;
-        distortionPhase = !distortionPhase; // Toggle between distortion and restore phases
+        // Calculate randomness for distortion
+        const randomFactor = Math.random() * 0.02; // Randomize the distortion a little
+
+        if (distortionPhase) {
+          // Apply distortion
+          const baseFrequency = 0.01 + (scrollPos * 0.05) + randomFactor;  // Increase with scroll
+          const scaleValue = 50 + (scrollPos * 200); // Increase scale with scroll
+
+          turbulence.setAttribute('baseFrequency', baseFrequency);
+          displacementMap.setAttribute('scale', scaleValue);
+
+          // Distorted text
+          dynamicText.textContent = "SCROLLED";
+        } else {
+          // Reduce distortion gradually to restore letters
+          const baseFrequency = Math.max(0.01, 0.05 - (scrollPos * 0.05));  // Reduce distortion
+          const scaleValue = Math.max(30, 200 - (scrollPos * 200)); // Gradually reduce displacement
+
+          turbulence.setAttribute('baseFrequency', baseFrequency);
+          displacementMap.setAttribute('scale', scaleValue);
+
+          // Restored text
+          dynamicText.textContent = "VAAGLAND";
+        }
+
+        // Repeat the animation
+        requestAnimationFrame(updateAnimation);
       }
 
-      // Calculate randomness for distortion
-      const randomFactor = Math.random() * 0.02; // Randomize the distortion a little
-
-      if (distortionPhase) {
-        // Apply distortion
-        const baseFrequency = 0.01 + (scrollPos * 0.05) + randomFactor;  // Increase with scroll
-        const scaleValue = 50 + (scrollPos * 200); // Increase scale with scroll
-
-        turbulence.setAttribute('baseFrequency', baseFrequency);
-        displacementMap.setAttribute('scale', scaleValue);
-
-        // Distorted text
-        dynamicText.textContent = "SCROLLED";
-      } else {
-        // Reduce distortion gradually to restore letters
-        const baseFrequency = Math.max(0.01, 0.05 - (scrollPos * 0.05));  // Reduce distortion
-        const scaleValue = Math.max(30, 200 - (scrollPos * 200)); // Gradually reduce displacement
-
-        turbulence.setAttribute('baseFrequency', baseFrequency);
-        displacementMap.setAttribute('scale', scaleValue);
-
-        // Restored text
-        dynamicText.textContent = "VAAGLAND";
-      }
-
-      // Repeat the animation
+      // Start the animation loop
       requestAnimationFrame(updateAnimation);
     }
+  };
+</script>
 
-    // Start the animation loop
-    requestAnimationFrame(updateAnimation);
-  </script>
 
 </body>
 </html>
