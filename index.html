@@ -69,8 +69,8 @@
         alpha: 1.0,
         sunDirection: new THREE.Vector3(),
         sunColor: 0xffffff,
-        waterColor: 0x001e0f,
-        distortionScale: 3.7,
+        waterColor: 0x58B0FF,  // Light and blue water color
+        distortionScale: 3.5,  // Lower to make the water smoother
         fog: scene.fog !== undefined
       });
 
@@ -130,17 +130,18 @@
           // Trigger splash when the text dips below a certain threshold
           if (textMesh.position.y <= 25) {
             splashActive = true;
-            water.material.uniforms['distortionScale'].value = 6; // Increase water distortion for splash effect
+            water.material.uniforms['distortionScale'].value = 8; // Increase water distortion for splash effect
+            textMesh.position.y -= 1.0;  // Start faster dip when splash starts
           }
         } else {
           // Once splash is active, move the text downward and then back up
-          textMesh.position.y -= 0.8;
+          textMesh.position.y -= 1.0;
 
           if (textMesh.position.y < 5) {
             textMesh.position.y = 5; // Stop dipping
             splashActive = false; // Reset splash effect
             setTimeout(() => {
-              water.material.uniforms['distortionScale'].value = 3.7; // Reset water distortion scale
+              water.material.uniforms['distortionScale'].value = 3.5; // Reset water distortion scale
             }, 500); // Small delay before resetting
           }
         }
