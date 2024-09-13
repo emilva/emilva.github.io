@@ -13,15 +13,18 @@
       font-family: Arial, sans-serif;
     }
 
-    .distortion-block {
-      position: relative;
-      width: 80%;
-      height: 40%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 50vh; /* Center the text */
-    }
+.distortion-block {
+  position: fixed; /* Keeps the block fixed in the viewport */
+  top: 50%; /* Centers it vertically */
+  left: 50%; /* Centers it horizontally */
+  transform: translate(-50%, -50%); /* Adjusts the centering */
+  width: 80%;
+  height: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 
     h1 {
       font-size: 120px;
