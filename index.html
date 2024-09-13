@@ -3,14 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Distorted Text Animation - VAAGLAND</title>
+  <title>Scroll-Based Distorted Text Animation</title>
   <style>
     body {
       margin: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      padding: 0;
+      height: 200vh; /* Make the page scrollable */
       background-color: #fff;
       font-family: Arial, sans-serif;
     }
@@ -22,9 +20,9 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      margin-top: 50vh; /* Center the text */
     }
 
-    /* The text that will be distorted */
     h1 {
       font-size: 120px;
       font-weight: bold;
@@ -33,34 +31,28 @@
       text-transform: uppercase;
     }
 
-    /* Hide the actual SVG but keep its effects */
     svg {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      opacity: 0;
+      opacity: 0; /* Hide the actual SVG but keep its effects */
     }
 
   </style>
 </head>
 <body>
+
   <div class="distortion-block">
-    <h1>VAAGLAND</h1>
+    <h1 id="dynamic-text">VAAGLAND</h1>
 
     <!-- SVG that defines the distortion filter -->
     <svg xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <!-- Define the filter for the text distortion -->
         <filter id="distortion-filter" x="0" y="0" width="200%" height="200%">
-          <!-- Turbulence to create noise -->
           <feTurbulence id="turbulence" baseFrequency="0.01" numOctaves="3" seed="2" result="NOISE" />
-          
-          <!-- Displacement map using the turbulence -->
           <feDisplacementMap in="SourceGraphic" in2="NOISE" scale="50" xChannelSelector="R" yChannelSelector="G" />
-          
-          <!-- Gaussian blur with a lower stdDeviation to keep text readable -->
           <feGaussianBlur stdDeviation="1" />
         </filter>
       </defs>
@@ -68,25 +60,30 @@
   </div>
 
   <script>
-    // JavaScript to dynamically update the SVG filter's displacement scale and turbulence
-    function updateFilter() {
-      const turbulence = document.getElementById('turbulence');
-      const displacementMap = document.querySelector('feDisplacementMap');
-      
-      // Generate dynamic values for the animation
-      const baseFrequency = Math.random() * 0.015 + 0.005; // Adjust the base frequency randomly
-      const scaleValue = Math.random() * 50 + 30;        // Random scale for displacement
-      
-      // Apply the changes to the filter
-      turbulence.setAttribute('baseFrequency', baseFrequency);
-      displacementMap.setAttribute('scale', scaleValue);
-      
-      // Recursively update the filter values to create a dynamic effect
-      requestAnimationFrame(updateFilter);
-    }
+    const turbulence = document.getElementById('turbulence');
+    const displacementMap = document.querySelector('feDisplacementMap');
+    const dynamicText = document.getElementById("dynamic-text");
 
-    // Start the distortion effect
-    updateFilter();
+    window.onscroll = function () {
+      // Get the scroll position relative to the page height
+      const scrollPos = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+      // Update the base frequency of the turbulence as you scroll
+      const baseFrequency = 0.01 + (scrollPos * 0.03);  // Increase with scroll
+      turbulence.setAttribute('baseFrequency', baseFrequency);
+
+      // Update the scale of the displacement map based on scroll
+      const scaleValue = 30 + (scrollPos * 100); // Change from 30 to 130
+      displacementMap.setAttribute('scale', scaleValue);
+
+      // Optional: Change text content based on scroll position
+      if (scrollPos > 0.5) {
+        dynamicText.textContent = "SCROLLED";
+      } else {
+        dynamicText.textContent = "VAAGLAND";
+      }
+    };
   </script>
+
 </body>
 </html>
