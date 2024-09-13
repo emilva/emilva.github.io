@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Connected Distorted Text Animation</title>
+  <title>Edgy Distorted Text Animation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
@@ -15,12 +16,12 @@
     }
 
     .distorted-text {
-      font-size: 100px;
-      font-weight: bold;
-      font-family: 'Arial', sans-serif;
+      font-size: 120px;
+      font-family: 'Anton', sans-serif; /* Edgy font */
       display: inline-block;
-      letter-spacing: 5px;
-      color: #333;
+      letter-spacing: 10px;
+      color: #000;
+      text-transform: uppercase; /* Make the text uppercase */
     }
 
     /* All letters will have different keyframes */
@@ -63,6 +64,16 @@
       animation-delay: 1s;
     }
 
+    .distorted-text span:nth-child(7) {
+      animation-name: distortG;
+      animation-delay: 1.2s;
+    }
+
+    .distorted-text span:nth-child(8) {
+      animation-name: distortH;
+      animation-delay: 1.4s;
+    }
+
     /* Keyframes for each letter with different distortions */
 
     @keyframes distortA {
@@ -70,10 +81,10 @@
         transform: scale(1) skew(0deg, 0deg) rotate(0deg);
       }
       25% {
-        transform: scale(1.1, 0.9) skew(-5deg, 5deg) rotate(5deg);
+        transform: scale(1.2, 0.9) skew(-5deg, 5deg) rotate(5deg);
       }
       50% {
-        transform: scale(1.2, 0.8) skew(10deg, -10deg) rotate(-10deg);
+        transform: scale(1.1, 0.8) skew(10deg, -10deg) rotate(-10deg);
       }
       75% {
         transform: scale(0.9, 1.1) skew(-15deg, 15deg) rotate(8deg);
@@ -154,16 +165,49 @@
         transform: scale(0.9, 1.2) skew(5deg, -5deg) rotate(10deg);
       }
     }
+
+    @keyframes distortG {
+      0%, 100% {
+        transform: scale(1) skew(0deg, 0deg) rotate(0deg);
+      }
+      25% {
+        transform: scale(1.15, 0.85) skew(-5deg, 5deg) rotate(5deg);
+      }
+      50% {
+        transform: scale(1.1, 0.8) skew(10deg, -10deg) rotate(-10deg);
+      }
+      75% {
+        transform: scale(1.2, 0.9) skew(-10deg, 5deg) rotate(5deg);
+      }
+    }
+
+    @keyframes distortH {
+      0%, 100% {
+        transform: scale(1) skew(0deg, 0deg) rotate(0deg);
+      }
+      25% {
+        transform: scale(1.15, 0.85) skew(10deg, -10deg) rotate(-5deg);
+      }
+      50% {
+        transform: scale(0.9, 1.2) skew(-10deg, 5deg) rotate(10deg);
+      }
+      75% {
+        transform: scale(1.1, 0.9) skew(5deg, 10deg) rotate(-5deg);
+      }
+    }
   </style>
 </head>
 <body>
   <div class="distorted-text">
-    <span>B</span>
-    <span>E</span>
-    <span>C</span>
-    <span>O</span>
-    <span>M</span>
-    <span>E</span>
+    <span>V</span>
+    <span>A</span>
+    <span>A</span>
+    <span>G</span>
+     <span>.</span>
+    <span>L</span>
+    <span>A</span>
+    <span>N</span>
+    <span>D</span>
   </div>
 </body>
 </html>
