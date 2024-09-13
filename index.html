@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Text Dipping and Splash - Three.js</title>
+  <title>Text Submersion and Splash - Three.js</title>
   <style>
     body {
       margin: 0;
@@ -24,7 +24,7 @@
 
   <script>
     let scene, camera, renderer, textMesh, water, controls;
-    let splashActive = false; // Control splash state
+    let submergeActive = false; // Control the state of submerging and rising
 
     function init() {
       // Create scene
@@ -96,7 +96,7 @@
         textMesh = new THREE.Mesh(textGeometry, textMaterial);
         textGeometry.center();
 
-        textMesh.position.set(0, 30, 0);
+        textMesh.position.set(0, 30, 0); // Start above the water
         scene.add(textMesh);
       });
 
@@ -119,30 +119,29 @@
       // Make water move
       water.material.uniforms['time'].value += 1.0 / 60.0;
 
-      // Splash effect (make the text dip into the water)
+      // Submerge effect: make the text dip into the water and then rise back up
       if (textMesh) {
         const elapsedTime = Date.now() * 0.002;
-        
-        // The text will bob up and down until splash is triggered
-        if (!splashActive) {
+
+        if (!submergeActive) {
+          // Bob up and down in the air
           textMesh.position.y = 30 + Math.sin(elapsedTime) * 5;
-          
-          // Trigger splash when the text dips below a certain threshold
+
+          // Trigger submersion when the text dips close to the water surface
           if (textMesh.position.y <= 25) {
-            splashActive = true;
+            submergeActive = true;
             water.material.uniforms['distortionScale'].value = 8; // Increase water distortion for splash effect
-            textMesh.position.y -= 1.0;  // Start faster dip when splash starts
           }
         } else {
-          // Once splash is active, move the text downward and then back up
-          textMesh.position.y -= 1.0;
-
-          if (textMesh.position.y < 5) {
-            textMesh.position.y = 5; // Stop dipping
-            splashActive = false; // Reset splash effect
+          // Submerge the text into the water and then raise it back up
+          textMesh.position.y -= 1.5;  // Submerge faster
+          
+          if (textMesh.position.y <= -20) {  // After submerging completely
+            textMesh.position.y = -20;  // Stay submerged briefly
             setTimeout(() => {
-              water.material.uniforms['distortionScale'].value = 3.5; // Reset water distortion scale
-            }, 500); // Small delay before resetting
+              submergeActive = false; // Allow rising after a brief delay
+              water.material.uniforms['distortionScale'].value = 3.5; // Reset water distortion
+            }, 800); // Delay before rising up
           }
         }
       }
