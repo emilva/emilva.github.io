@@ -1,24 +1,29 @@
 <style>
 @keyframes waveText {
-  0%, 100% {
-    transform: rotate(0deg) scale(1);
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1);
     opacity: 1;
     letter-spacing: 0px;
   }
   25% {
-    transform: rotate(10deg) scale(1.2);
+    transform: translateY(-20px) rotate(10deg) scale(1.2);
     opacity: 0.8;
     letter-spacing: 3px;
   }
   50% {
-    transform: rotate(-10deg) scale(0.8);
+    transform: translateY(20px) rotate(-10deg) scale(0.8);
     opacity: 0.6;
     letter-spacing: -2px;
   }
   75% {
-    transform: rotate(5deg) scale(1.1);
+    transform: translateY(-10px) rotate(5deg) scale(1.1);
     opacity: 0.9;
     letter-spacing: 1px;
+  }
+  100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 1;
+    letter-spacing: 0px;
   }
 }
 
@@ -49,7 +54,7 @@
 .artsy-weird-text {
   font-family: 'Courier New', monospace;
   display: block;
-  animation: waveText 5s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55), colorChange 4s infinite ease-in-out;
+  animation: waveText 3s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55), colorChange 4s infinite ease-in-out;
   background: linear-gradient(135deg, #FFE77A, #F7CAC9, #92A8D1, #6B5B95);
   background-size: 300% 300%;
   animation: gradientShift 8s ease infinite;
@@ -62,6 +67,7 @@
   align-items: center;
   text-shadow: 2px 2px 15px rgba(255, 255, 255, 0.6);
 }
+
 
 
 
