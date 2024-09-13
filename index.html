@@ -1,112 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Forever Scroll Distorted Text Animation</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      height: 100vh;
-      overflow-y: scroll; /* Allow scrolling */
-      background-color: #fff;
-      font-family: Arial, sans-serif;
+<script>
+  const turbulence = document.getElementById('turbulence');
+  const displacementMap = document.querySelector('feDisplacementMap');
+  const dynamicText = document.getElementById("dynamic-text");
+
+  // Scroll-related variables
+  let scrollPos = 0;
+  let lastTime = Date.now(); // To control speed of fake scroll
+  let distortionPhase = true; // Track whether we are in the distortion phase
+
+  function updateAnimation() {
+    // Simulate continuous scrolling
+    const currentTime = Date.now();
+    const deltaTime = (currentTime - lastTime) / 1000; // Time passed in seconds
+    lastTime = currentTime;
+    
+    // Adjust scroll position manually
+    scrollPos += deltaTime * 0.05; // Adjust speed here (0.05 is scroll speed)
+
+    // Keep scrollPos between 0 and 1 to simulate endless loop
+    if (scrollPos > 1) {
+      scrollPos = 0;
+      distortionPhase = !distortionPhase; // Toggle between distortion and restore phases
     }
 
-    .distortion-block {
-      position: fixed; /* Keeps the block fixed in the viewport */
-      top: 50%; /* Centers it vertically */
-      left: 50%; /* Centers it horizontally */
-      transform: translate(-50%, -50%); /* Adjusts the centering */
-      width: 80%;
-      height: 40%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+    // Calculate randomness for distortion
+    const randomFactor = Math.random() * 0.02; // Randomize the distortion a little
 
-    h1 {
-      font-size: 120px;
-      font-weight: bold;
-      color: #FF0000;
-      filter: url(#distortion-filter); /* Apply the SVG filter here */
-      text-transform: uppercase;
-    }
+    if (distortionPhase) {
+      // Apply distortion
+      const baseFrequency = 0.01 + (scrollPos * 0.05) + randomFactor;  // Increase with scroll
+      const scaleValue = 50 + (scrollPos * 200); // Increase scale with scroll
 
-    svg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0; /* Hide the actual SVG but keep its effects */
-    }
-
-  </style>
-</head>
-<body>
-
-  <div class="distortion-block">
-    <h1 id="dynamic-text">VAAGLAND</h1>
-
-    <!-- SVG that defines the distortion filter -->
-    <svg xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <filter id="distortion-filter" x="0" y="0" width="200%" height="200%">
-          <feTurbulence id="turbulence" baseFrequency="0.01" numOctaves="3" seed="2" result="NOISE" />
-          <feDisplacementMap in="SourceGraphic" in2="NOISE" scale="50" xChannelSelector="R" yChannelSelector="G" />
-          <feGaussianBlur stdDeviation="1" />
-        </filter>
-      </defs>
-    </svg>
-  </div>
-
-  <script>
-    const turbulence = document.getElementById('turbulence');
-    const displacementMap = document.querySelector('feDisplacementMap');
-    const dynamicText = document.getElementById("dynamic-text");
-
-    // Scroll-related variables
-    let scrollPos = 0;
-    let lastTime = Date.now(); // To control speed of fake scroll
-
-    function updateAnimation() {
-      // Simulate continuous scrolling
-      const currentTime = Date.now();
-      const deltaTime = (currentTime - lastTime) / 1000; // Time passed in seconds
-      lastTime = currentTime;
-      
-      // Adjust scroll position manually
-      scrollPos += deltaTime * 0.05; // Adjust speed here (0.05 is scroll speed)
-
-      // Keep scrollPos between 0 and 1 to simulate endless loop
-      if (scrollPos > 1) {
-        scrollPos = 0;
-      }
-
-      // Update the base frequency of the turbulence as the "scroll" progresses
-      const baseFrequency = 0.01 + (scrollPos * 0.03);  // Increase with scroll
       turbulence.setAttribute('baseFrequency', baseFrequency);
-
-      // Update the scale of the displacement map based on scroll
-      const scaleValue = 30 + (scrollPos * 100); // Change from 30 to 130
       displacementMap.setAttribute('scale', scaleValue);
 
-      // Optional: Change text content based on scroll position
-      if (scrollPos > 0.5) {
-        dynamicText.textContent = "SCROLLED";
-      } else {
-        dynamicText.textContent = "VAAGLAND";
-      }
+      // Distorted text
+      dynamicText.textContent = "SCROLLED";
+    } else {
+      // Reduce distortion gradually to restore letters
+      const baseFrequency = Math.max(0.01, 0.05 - (scrollPos * 0.05));  // Reduce distortion
+      const scaleValue = Math.max(30, 200 - (scrollPos * 200)); // Gradually reduce displacement
 
-      // Repeat the animation
-      requestAnimationFrame(updateAnimation);
+      turbulence.setAttribute('baseFrequency', baseFrequency);
+      displacementMap.setAttribute('scale', scaleValue);
+
+      // Restored text
+      dynamicText.textContent = "VAAGLAND";
     }
 
-    // Start the animation loop
+    // Repeat the animation
     requestAnimationFrame(updateAnimation);
-  </script>
+  }
 
-</body>
-</html>
+  // Start the animation loop
+  requestAnimationFrame(updateAnimation);
+</script>
