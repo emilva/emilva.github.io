@@ -3,28 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Scroll-Based Distorted Text Animation</title>
+  <title>Forever Scroll Distorted Text Animation</title>
   <style>
     body {
       margin: 0;
       padding: 0;
-      height: 200vh; /* Make the page scrollable */
+      height: 100vh;
+      overflow-y: scroll; /* Allow scrolling */
       background-color: #fff;
       font-family: Arial, sans-serif;
     }
 
-.distortion-block {
-  position: fixed; /* Keeps the block fixed in the viewport */
-  top: 50%; /* Centers it vertically */
-  left: 50%; /* Centers it horizontally */
-  transform: translate(-50%, -50%); /* Adjusts the centering */
-  width: 80%;
-  height: 40%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
+    .distortion-block {
+      position: fixed; /* Keeps the block fixed in the viewport */
+      top: 50%; /* Centers it vertically */
+      left: 50%; /* Centers it horizontally */
+      transform: translate(-50%, -50%); /* Adjusts the centering */
+      width: 80%;
+      height: 40%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
     h1 {
       font-size: 120px;
@@ -67,11 +67,25 @@
     const displacementMap = document.querySelector('feDisplacementMap');
     const dynamicText = document.getElementById("dynamic-text");
 
-    window.onscroll = function () {
-      // Get the scroll position relative to the page height
-      const scrollPos = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+    // Scroll-related variables
+    let scrollPos = 0;
+    let lastTime = Date.now(); // To control speed of fake scroll
 
-      // Update the base frequency of the turbulence as you scroll
+    function updateAnimation() {
+      // Simulate continuous scrolling
+      const currentTime = Date.now();
+      const deltaTime = (currentTime - lastTime) / 1000; // Time passed in seconds
+      lastTime = currentTime;
+      
+      // Adjust scroll position manually
+      scrollPos += deltaTime * 0.05; // Adjust speed here (0.05 is scroll speed)
+
+      // Keep scrollPos between 0 and 1 to simulate endless loop
+      if (scrollPos > 1) {
+        scrollPos = 0;
+      }
+
+      // Update the base frequency of the turbulence as the "scroll" progresses
       const baseFrequency = 0.01 + (scrollPos * 0.03);  // Increase with scroll
       turbulence.setAttribute('baseFrequency', baseFrequency);
 
@@ -85,7 +99,13 @@
       } else {
         dynamicText.textContent = "VAAGLAND";
       }
-    };
+
+      // Repeat the animation
+      requestAnimationFrame(updateAnimation);
+    }
+
+    // Start the animation loop
+    requestAnimationFrame(updateAnimation);
   </script>
 
 </body>
