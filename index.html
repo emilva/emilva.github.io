@@ -25,6 +25,7 @@
   <script>
     let scene, camera, renderer, textMesh, water, controls;
     let submergeActive = false; // Control the state of submerging and rising
+    const waterLevelY = 0; // Adjust to control the water level
 
     function init() {
       // Create scene
@@ -32,7 +33,7 @@
 
       // Create camera
       camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 2000);
-      camera.position.set(0, 100, 200);
+      camera.position.set(0, 50, 200); // Lower camera for better view
 
       // Create renderer
       renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -75,6 +76,7 @@
       });
 
       water.rotation.x = -Math.PI / 2;
+      water.position.y = waterLevelY;  // Ensure the water surface is at y = 0
       scene.add(water);
 
       // Load Font and Create Floating Text
@@ -96,7 +98,7 @@
         textMesh = new THREE.Mesh(textGeometry, textMaterial);
         textGeometry.center();
 
-        textMesh.position.set(0, 30, 0); // Start above the water
+        textMesh.position.set(0, 50, 0); // Start clearly above the water
         scene.add(textMesh);
       });
 
@@ -125,10 +127,10 @@
 
         if (!submergeActive) {
           // Bob up and down in the air
-          textMesh.position.y = 30 + Math.sin(elapsedTime) * 5;
+          textMesh.position.y = 50 + Math.sin(elapsedTime) * 5;
 
           // Trigger submersion when the text dips close to the water surface
-          if (textMesh.position.y <= 25) {
+          if (textMesh.position.y <= waterLevelY + 5) {
             submergeActive = true;
             water.material.uniforms['distortionScale'].value = 8; // Increase water distortion for splash effect
           }
@@ -136,8 +138,8 @@
           // Submerge the text into the water and then raise it back up
           textMesh.position.y -= 1.5;  // Submerge faster
           
-          if (textMesh.position.y <= -20) {  // After submerging completely
-            textMesh.position.y = -20;  // Stay submerged briefly
+          if (textMesh.position.y <= waterLevelY - 20) {  // Ensure it goes below the water
+            textMesh.position.y = waterLevelY - 20;  // Stay submerged briefly
             setTimeout(() => {
               submergeActive = false; // Allow rising after a brief delay
               water.material.uniforms['distortionScale'].value = 3.5; // Reset water distortion
