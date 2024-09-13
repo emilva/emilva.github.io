@@ -1,38 +1,45 @@
 <style>
 @keyframes weirdAnimation {
+@keyframes weirdAnimation {
   0% {
-    color: #ff0000;
     transform: skew(10deg, 10deg) rotate(0deg) scale(1);
     font-size: 20px;
+    filter: blur(0px);
   }
   25% {
-    color: #00ff00;
     transform: skew(-10deg, -10deg) rotate(10deg) scale(1.2);
     font-size: 25px;
+    filter: contrast(200%) blur(1px);
   }
   50% {
-    color: #0000ff;
     transform: skew(20deg, -10deg) rotate(-10deg) scale(1.4);
     font-size: 30px;
+    filter: contrast(400%) blur(2px);
   }
   75% {
-    color: #ff00ff;
     transform: skew(-20deg, 10deg) rotate(5deg) scale(1.1);
     font-size: 22px;
+    filter: contrast(300%) blur(1px);
   }
   100% {
-    color: #ffff00;
     transform: skew(10deg, 10deg) rotate(0deg) scale(1);
     font-size: 20px;
+    filter: blur(0px);
   }
 }
 
 .weird-text {
-  font-family: 'Arial', sans-serif;
+  font-family: 'Courier New', monospace; /* Monospace font for a pixelated feel */
   display: inline-block;
   animation: weirdAnimation 4s infinite ease-in-out;
+  background: black;
+  color: white;
+  filter: pixelate(10px); /* Simulating pixelation effect */
+  text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5);
+  padding: 5px;
 }
+
 
   
 </style>
-<p class="weird-text">Weird Animation!</p>
+<p class="weird-text">vaag.land</p>
