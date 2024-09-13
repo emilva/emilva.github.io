@@ -2,6 +2,13 @@
   window.onload = function() {
     const turbulence = document.getElementById('turbulence');
     const displacementMap = document.querySelector('feDisplacementMap');
+
+    // Check if the elements exist before proceeding
+    if (!turbulence || !displacementMap) {
+      console.error('SVG filter elements not found!');
+      return;
+    }
+
     const dynamicText = document.getElementById("dynamic-text");
 
     // Scroll-related variables
