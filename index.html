@@ -3,164 +3,70 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Text Submersion and Splash - Three.js</title>
+  <title>Distorted Text Animation</title>
   <style>
     body {
       margin: 0;
-      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #fff;
     }
-    canvas {
-      display: block;
+
+    .distorted-text {
+      font-size: 100px;
+      font-weight: bold;
+      font-family: 'Arial', sans-serif;
+      display: inline-block;
+      letter-spacing: 5px;
+      color: #333;
     }
+
+    /* Animate each letter with different timings and distortions */
+    .distorted-text span {
+      display: inline-block;
+      transform-origin: center;
+      animation: distort 5s infinite ease-in-out;
+    }
+
+    /* Random distortion animation */
+    @keyframes distort {
+      0% {
+        transform: scale(1) skew(0deg, 0deg) rotate(0deg);
+      }
+      25% {
+        transform: scale(1.2, 0.9) skew(-10deg, 10deg) rotate(3deg);
+      }
+      50% {
+        transform: scale(1.1) skew(5deg, -5deg) rotate(-5deg);
+      }
+      75% {
+        transform: scale(0.9, 1.1) skew(10deg, -10deg) rotate(7deg);
+      }
+      100% {
+        transform: scale(1) skew(0deg, 0deg) rotate(0deg);
+      }
+    }
+
+    /* Add random delays to each letter */
+    .distorted-text span:nth-child(1) { animation-delay: 0.1s; }
+    .distorted-text span:nth-child(2) { animation-delay: 0.2s; }
+    .distorted-text span:nth-child(3) { animation-delay: 0.3s; }
+    .distorted-text span:nth-child(4) { animation-delay: 0.4s; }
+    .distorted-text span:nth-child(5) { animation-delay: 0.5s; }
+    .distorted-text span:nth-child(6) { animation-delay: 0.6s; }
+    .distorted-text span:nth-child(7) { animation-delay: 0.7s; }
   </style>
 </head>
 <body>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/objects/Water.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/TextGeometry.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FontLoader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/CubeTextureLoader.js"></script>
-
-  <script>
-    let scene, camera, renderer, textMesh, water, controls;
-    let submergeActive = false; // Control the state of submerging and rising
-    const waterLevelY = 0; // Adjust to control the water level
-
-    function init() {
-      // Create scene
-      scene = new THREE.Scene();
-
-      // Create camera
-      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 2000);
-      camera.position.set(0, 50, 200); // Lower camera for better view
-
-      // Create renderer
-      renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      document.body.appendChild(renderer.domElement);
-
-      // Create orbit controls
-      controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.maxPolarAngle = Math.PI * 0.495;
-      controls.target.set(0, 10, 0);
-      controls.minDistance = 40.0;
-      controls.maxDistance = 400.0;
-
-      // Skybox / Environment
-      const cubeTextureLoader = new THREE.CubeTextureLoader();
-      const skybox = cubeTextureLoader.load([
-        'https://threejs.org/examples/textures/cube/skybox/px.jpg',
-        'https://threejs.org/examples/textures/cube/skybox/nx.jpg',
-        'https://threejs.org/examples/textures/cube/skybox/py.jpg',
-        'https://threejs.org/examples/textures/cube/skybox/ny.jpg',
-        'https://threejs.org/examples/textures/cube/skybox/pz.jpg',
-        'https://threejs.org/examples/textures/cube/skybox/nz.jpg'
-      ]);
-      scene.background = skybox;
-
-      // Create water
-      const waterGeometry = new THREE.PlaneGeometry(10000, 10000);
-      water = new THREE.Water(waterGeometry, {
-        textureWidth: 512,
-        textureHeight: 512,
-        waterNormals: new THREE.TextureLoader().load('https://threejs.org/examples/textures/waternormals.jpg', function(texture) {
-          texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-        }),
-        alpha: 1.0,
-        sunDirection: new THREE.Vector3(),
-        sunColor: 0xffffff,
-        waterColor: 0x58B0FF,  // Light and blue water color
-        distortionScale: 3.5,  // Lower to make the water smoother
-        fog: scene.fog !== undefined
-      });
-
-      water.rotation.x = -Math.PI / 2;
-      water.position.y = waterLevelY;  // Ensure the water surface is at y = 0
-      scene.add(water);
-
-      // Load Font and Create Floating Text
-      let fontLoader = new THREE.FontLoader();
-      fontLoader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function(font) {
-        let textGeometry = new THREE.TextGeometry('vaag.land', {
-          font: font,
-          size: 30,
-          height: 10,
-          curveSegments: 12,
-          bevelEnabled: true,
-          bevelThickness: 2,
-          bevelSize: 1.5,
-          bevelOffset: 0,
-          bevelSegments: 5
-        });
-
-        let textMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000, shininess: 100 });
-        textMesh = new THREE.Mesh(textGeometry, textMaterial);
-        textGeometry.center();
-
-        textMesh.position.set(0, 50, 0); // Start clearly above the water
-        scene.add(textMesh);
-      });
-
-      // Add lighting
-      const light = new THREE.DirectionalLight(0xffffff, 0.8);
-      light.position.set(100, 100, 100);
-      scene.add(light);
-
-      const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
-      scene.add(ambientLight);
-
-      // Start the animation loop
-      animate();
-    }
-
-    // Animate the scene
-    function animate() {
-      requestAnimationFrame(animate);
-
-      // Make water move
-      water.material.uniforms['time'].value += 1.0 / 60.0;
-
-      // Submerge effect: make the text dip into the water and then rise back up
-      if (textMesh) {
-        const elapsedTime = Date.now() * 0.002;
-
-        if (!submergeActive) {
-          // Bob up and down in the air
-          textMesh.position.y = 50 + Math.sin(elapsedTime) * 5;
-
-          // Trigger submersion when the text dips close to the water surface
-          if (textMesh.position.y <= waterLevelY + 5) {
-            submergeActive = true;
-            water.material.uniforms['distortionScale'].value = 8; // Increase water distortion for splash effect
-          }
-        } else {
-          // Submerge the text into the water and then raise it back up
-          textMesh.position.y -= 1.5;  // Submerge faster
-          
-          if (textMesh.position.y <= waterLevelY - 20) {  // Ensure it goes below the water
-            textMesh.position.y = waterLevelY - 20;  // Stay submerged briefly
-            setTimeout(() => {
-              submergeActive = false; // Allow rising after a brief delay
-              water.material.uniforms['distortionScale'].value = 3.5; // Reset water distortion
-            }, 800); // Delay before rising up
-          }
-        }
-      }
-
-      controls.update(); // For camera control
-      renderer.render(scene, camera);
-    }
-
-    // Handle window resize
-    window.addEventListener('resize', function() {
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-    });
-
-    // Initialize the scene
-    init();
-  </script>
+  <div class="distorted-text">
+    <span>B</span>
+    <span>E</span>
+    <span>C</span>
+    <span>O</span>
+    <span>M</span>
+    <span>E</span>
+  </div>
 </body>
 </html>
