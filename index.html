@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Distorted Text Animation</title>
+  <title>Connected Distorted Text Animation</title>
   <style>
     body {
       margin: 0;
@@ -23,40 +23,137 @@
       color: #333;
     }
 
-    /* Animate each letter with different timings and distortions */
+    /* All letters will have different keyframes */
     .distorted-text span {
       display: inline-block;
       transform-origin: center;
-      animation: distort 5s infinite ease-in-out;
+      animation-duration: 4s;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
     }
 
-    /* Random distortion animation */
-    @keyframes distort {
-      0% {
+    /* Individual letter animations with slight differences */
+    .distorted-text span:nth-child(1) {
+      animation-name: distortA;
+      animation-delay: 0s;
+    }
+
+    .distorted-text span:nth-child(2) {
+      animation-name: distortB;
+      animation-delay: 0.2s;
+    }
+
+    .distorted-text span:nth-child(3) {
+      animation-name: distortC;
+      animation-delay: 0.4s;
+    }
+
+    .distorted-text span:nth-child(4) {
+      animation-name: distortD;
+      animation-delay: 0.6s;
+    }
+
+    .distorted-text span:nth-child(5) {
+      animation-name: distortE;
+      animation-delay: 0.8s;
+    }
+
+    .distorted-text span:nth-child(6) {
+      animation-name: distortF;
+      animation-delay: 1s;
+    }
+
+    /* Keyframes for each letter with different distortions */
+
+    @keyframes distortA {
+      0%, 100% {
         transform: scale(1) skew(0deg, 0deg) rotate(0deg);
       }
       25% {
-        transform: scale(1.2, 0.9) skew(-10deg, 10deg) rotate(3deg);
+        transform: scale(1.1, 0.9) skew(-5deg, 5deg) rotate(5deg);
       }
       50% {
-        transform: scale(1.1) skew(5deg, -5deg) rotate(-5deg);
+        transform: scale(1.2, 0.8) skew(10deg, -10deg) rotate(-10deg);
       }
       75% {
-        transform: scale(0.9, 1.1) skew(10deg, -10deg) rotate(7deg);
-      }
-      100% {
-        transform: scale(1) skew(0deg, 0deg) rotate(0deg);
+        transform: scale(0.9, 1.1) skew(-15deg, 15deg) rotate(8deg);
       }
     }
 
-    /* Add random delays to each letter */
-    .distorted-text span:nth-child(1) { animation-delay: 0.1s; }
-    .distorted-text span:nth-child(2) { animation-delay: 0.2s; }
-    .distorted-text span:nth-child(3) { animation-delay: 0.3s; }
-    .distorted-text span:nth-child(4) { animation-delay: 0.4s; }
-    .distorted-text span:nth-child(5) { animation-delay: 0.5s; }
-    .distorted-text span:nth-child(6) { animation-delay: 0.6s; }
-    .distorted-text span:nth-child(7) { animation-delay: 0.7s; }
+    @keyframes distortB {
+      0%, 100% {
+        transform: scale(1) skew(0deg, 0deg) rotate(0deg);
+      }
+      25% {
+        transform: scale(1.15, 0.85) skew(10deg, -10deg) rotate(-5deg);
+      }
+      50% {
+        transform: scale(0.9, 1.2) skew(-10deg, 5deg) rotate(10deg);
+      }
+      75% {
+        transform: scale(1.1, 0.9) skew(5deg, 10deg) rotate(-5deg);
+      }
+    }
+
+    @keyframes distortC {
+      0%, 100% {
+        transform: scale(1) skew(0deg, 0deg) rotate(0deg);
+      }
+      25% {
+        transform: scale(1.2, 0.8) skew(-5deg, 10deg) rotate(-8deg);
+      }
+      50% {
+        transform: scale(1.1, 0.9) skew(15deg, -10deg) rotate(5deg);
+      }
+      75% {
+        transform: scale(0.9, 1.2) skew(-10deg, 5deg) rotate(10deg);
+      }
+    }
+
+    @keyframes distortD {
+      0%, 100% {
+        transform: scale(1) skew(0deg, 0deg) rotate(0deg);
+      }
+      25% {
+        transform: scale(1.1, 0.9) skew(10deg, -5deg) rotate(5deg);
+      }
+      50% {
+        transform: scale(0.8, 1.2) skew(-5deg, 10deg) rotate(-10deg);
+      }
+      75% {
+        transform: scale(1.2, 0.8) skew(5deg, -15deg) rotate(10deg);
+      }
+    }
+
+    @keyframes distortE {
+      0%, 100% {
+        transform: scale(1) skew(0deg, 0deg) rotate(0deg);
+      }
+      25% {
+        transform: scale(1.15, 0.85) skew(-10deg, 10deg) rotate(-5deg);
+      }
+      50% {
+        transform: scale(0.9, 1.2) skew(5deg, -10deg) rotate(8deg);
+      }
+      75% {
+        transform: scale(1.1, 0.9) skew(-5deg, 5deg) rotate(-8deg);
+      }
+    }
+
+    @keyframes distortF {
+      0%, 100% {
+        transform: scale(1) skew(0deg, 0deg) rotate(0deg);
+      }
+      25% {
+        transform: scale(1.2, 0.9) skew(5deg, -5deg) rotate(-5deg);
+      }
+      50% {
+        transform: scale(1.1, 0.85) skew(-10deg, 10deg) rotate(5deg);
+      }
+      75% {
+        transform: scale(0.9, 1.2) skew(5deg, -5deg) rotate(10deg);
+      }
+    }
   </style>
 </head>
 <body>
