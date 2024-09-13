@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Realistic Water Simulation - Three.js</title>
+  <title>Text Dipping and Splash - Three.js</title>
   <style>
     body {
       margin: 0;
@@ -24,6 +24,7 @@
 
   <script>
     let scene, camera, renderer, textMesh, water, controls;
+    let splashActive = false; // Control splash state
 
     function init() {
       // Create scene
@@ -118,9 +119,31 @@
       // Make water move
       water.material.uniforms['time'].value += 1.0 / 60.0;
 
-      // Make the text float up and down
+      // Splash effect (make the text dip into the water)
       if (textMesh) {
-        textMesh.position.y = 30 + Math.sin(Date.now() * 0.002) * 5; // Floating effect
+        const elapsedTime = Date.now() * 0.002;
+        
+        // The text will bob up and down until splash is triggered
+        if (!splashActive) {
+          textMesh.position.y = 30 + Math.sin(elapsedTime) * 5;
+          
+          // Trigger splash when the text dips below a certain threshold
+          if (textMesh.position.y <= 25) {
+            splashActive = true;
+            water.material.uniforms['distortionScale'].value = 6; // Increase water distortion for splash effect
+          }
+        } else {
+          // Once splash is active, move the text downward and then back up
+          textMesh.position.y -= 0.8;
+
+          if (textMesh.position.y < 5) {
+            textMesh.position.y = 5; // Stop dipping
+            splashActive = false; // Reset splash effect
+            setTimeout(() => {
+              water.material.uniforms['distortionScale'].value = 3.7; // Reset water distortion scale
+            }, 500); // Small delay before resetting
+          }
+        }
       }
 
       controls.update(); // For camera control
