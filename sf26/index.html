@@ -1,0 +1,4473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude, Make Me a Security Engineer. Make No Mistakes.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<!-- Apply saved theme before first paint (no flash). Default = dark. -->
+<script>
+  try { if (localStorage.getItem('deck-theme') === 'light')
+          document.documentElement.dataset.theme = 'light'; } catch (e) {}
+</script>
+<style>
+/* ============================================================================
+   Deck engine: Sikkerhetsfestivalen 2026
+   "Claude, Make Me a Security Engineer. Make No Mistakes."
+
+   Type: Inter Tight, a clean, neutral grotesque. The composition and the one
+   accent carry the design, not the font. (Swap --font + the <link> to change.)
+
+   Aesthetic: neutral graphite. Bone ink. One warm burgundy accent, reserved
+   for the single thing that matters per slide. Hierarchy comes from weight,
+   size, space and hairlines, not colour. Sharp corners. Fade-only motion.
+
+   Projector-first: cqi type scale (grows with the canvas), full-bleed 16:9
+   letterboxed stage, one focal element per slide.
+   Navigation is slides.js (reused unchanged): View Transitions, keys, touch, hash.
+   ========================================================================== */
+
+:root {
+  /* ---- Dark, high contrast (default). Every grey clears WCAG AAA (7:1+) on
+         the graphite bg, the bar the brief sets for projectors. ---- */
+  --bg:   #101014;
+  --bg-1: #17171c;
+  --bg-2: #202027;
+
+  --ink:   #f5f4f7;   /* off-white heading  (~13:1) */
+  --ink-2: #d3d3da;   /* secondary          (~11:1) */
+  --ink-3: #a7a7b2;   /* muted / labels     (~8:1)  */
+  --ink-4: #75757f;   /* faint (decorative only)    */
+
+  --rule:        rgba(245,244,247,0.16);
+  --rule-strong: rgba(245,244,247,0.30);
+
+  /* ---- The single accent: Vend burgundy, lifted to read on graphite ---- */
+  --accent:      #d0674f;
+  --accent-soft: rgba(208,103,79,0.16);
+
+  /* ---- Vend supporting palette (available, used sparingly on later slides) */
+  --blue:  #addbff;
+  --green: #2fa944;
+  --rose:  #ac7470;
+
+  /* ---- Theme-dependent atmosphere (overridden by the light theme) ---- */
+  --vig:         rgba(0,0,0,0.5);   /* stage edge vignette   */
+  --grain-op:    0.022;
+  --grain-blend: overlay;
+
+  --font: 'Inter Tight', system-ui, -apple-system, sans-serif;
+
+  /* ---- Type scale in cqi (= % of stage width). px @1920 in comments. ---- */
+  --fs-hero:      8.6cqi;   /* 165px  one giant number / word          */
+  --fs-title:     6.2cqi;   /* 119px  title-slide hero                  */
+  --fs-slide:     4.4cqi;   /*  85px  content-slide working title       */
+  --fs-statement: 5.2cqi;   /* 100px  full-slide statement line         */
+  --fs-lead:      2.7cqi;   /*  52px  single takeaway line              */
+  --fs-body:      2.5cqi;   /*  48px  body & bullets (hard floor)       */
+  --fs-label:     1.5cqi;   /*  28px  tracked labels / captions         */
+
+  --lh-tight: 1.03;
+  --lh-body:  1.4;
+
+  /* Safe zone. NB: % padding resolves against WIDTH, so vertical safe uses cqi
+     tuned to ~8% of the 1080 canvas height (~86px), not 8% of width. */
+  --safe-x: 7.5%;
+  --safe-y: 4.6cqi;
+
+  --ease:  cubic-bezier(0.16, 1, 0.3, 1);
+  --speed: 0.4s;
+}
+
+/* ---- Light theme: warm paper. Projector-safe fallback for a lit room.
+        Press "t" to flip (persisted). Deep burgundy reads best on paper. ---- */
+html[data-theme="light"] {
+  --bg:   #f3f1ec;
+  --bg-1: #eae7e0;
+  --bg-2: #e0ddd4;
+
+  --ink:   #16151a;
+  --ink-2: #44424b;
+  --ink-3: #6c6a73;
+  --ink-4: #8f8d95;
+
+  --rule:        rgba(22,21,26,0.16);
+  --rule-strong: rgba(22,21,26,0.28);
+
+  --accent:      #9c3324;
+  --accent-soft: rgba(156,51,36,0.12);
+
+  --vig:         rgba(0,0,0,0);      /* no dark vignette on paper */
+  --grain-op:    0.035;
+  --grain-blend: multiply;           /* noise reads on light via multiply */
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-feature-settings: 'ss01' 1, 'cv01' 1;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  transition: background-color var(--speed) var(--ease), color var(--speed) var(--ease);
+}
+
+/* Fine grain, very subtle, for a printed-matter feel */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: var(--grain-op);
+  mix-blend-mode: var(--grain-blend);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+/* ---- The 16:9 stage ---- */
+.slides {
+  position: relative;
+  width: min(100vw, 177.78vh);
+  height: min(56.25vw, 100vh);
+  background:
+    radial-gradient(125% 125% at 50% 40%, transparent 58%, var(--vig) 100%),
+    var(--bg);
+  overflow: hidden;
+  transition: background-color var(--speed) var(--ease);
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  padding: var(--safe-y) var(--safe-x);
+  container-type: inline-size;   /* cqi = % of THIS slide's width */
+}
+
+.slide.active {
+  display: flex;
+  animation: fadeUp var(--speed) var(--ease);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(1cqi); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide.active, .slide.active .stagger > * { animation: none !important; }
+}
+
+.slide.active .stagger > * { animation: staggerIn 0.55s var(--ease) both; }
+.slide.active .stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.slide.active .stagger > *:nth-child(2) { animation-delay: 0.13s; }
+.slide.active .stagger > *:nth-child(3) { animation-delay: 0.21s; }
+.slide.active .stagger > *:nth-child(4) { animation-delay: 0.29s; }
+@keyframes staggerIn {
+  from { opacity: 0; transform: translateY(1.1cqi); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================================
+   SHARED PRIMITIVES
+   ========================================================================== */
+
+/* Tracked all-caps label */
+.eyebrow {
+  font-size: var(--fs-label);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+  color: var(--ink-3);
+}
+.eyebrow.placeholder { visibility: hidden; }
+.eyebrow .mark { color: var(--accent); }
+
+.slide-title {
+  font-size: var(--fs-slide);
+  font-weight: 600;
+  line-height: var(--lh-tight);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.accent { color: var(--accent); }
+.dim    { color: var(--ink-2); }
+.mute   { color: var(--ink-3); }
+
+/* ============================================================================
+   TITLE SLIDE (B1): bottom-anchored, deadpan
+   ========================================================================== */
+
+.title-slide {
+  justify-content: center;
+}
+.title-slide .eyebrow { margin-bottom: 3cqi; }
+
+.title-slide h1 {
+  font-size: var(--fs-title);
+  font-weight: 700;
+  line-height: 0.99;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+/* the meme punchline: the single accent moment, dry italic */
+.title-aside {
+  font-size: var(--fs-statement);
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+  margin-top: 1.2cqi;
+}
+
+.title-meta {
+  display: block;
+  margin-top: 4cqi;
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+.title-meta::before {
+  content: '';
+  display: block;
+  width: 6cqi; height: 1px;
+  background: var(--rule-strong);
+  margin-bottom: 1.4cqi;
+}
+.title-meta span + span::before {
+  content: '·';
+  margin-right: 2.4cqi;
+  color: var(--rule-strong);
+}
+
+/* ============================================================================
+   STATEMENT SLIDE (B2)
+   ========================================================================== */
+
+.statement-slide { justify-content: flex-start; padding-top: 7cqi; }
+.statement-slide .eyebrow { margin-bottom: 2cqi; }
+
+.statement {
+  font-size: var(--fs-statement);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  max-width: 22ch;
+}
+.statement .was { color: var(--ink-3); font-weight: 600; }
+
+.statement-sub {
+  font-size: var(--fs-lead);
+  font-weight: 400;
+  line-height: var(--lh-body);
+  color: var(--ink-2);
+  max-width: 34ch;
+  margin-top: 4cqi;
+  padding-top: 3cqi;
+  border-top: 1px solid var(--rule);
+}
+.statement-sub em { font-style: normal; color: var(--ink); font-weight: 600; }
+
+/* ============================================================================
+   SECTION DIVIDER: outline ghost word behind the real title
+   ========================================================================== */
+
+.section-divider { justify-content: center; overflow: hidden; }
+
+/* A short accent rule gives the divider structure without the ghost word. */
+.section-divider .eyebrow { position: relative; margin-bottom: 2.4cqi; }
+.section-divider .eyebrow::before {
+  content: '';
+  display: block;
+  width: 7cqi; height: 2px;
+  background: var(--accent);
+  margin-bottom: 2.4cqi;
+}
+
+.section-divider h2 {
+  position: relative;
+  font-size: var(--fs-title);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.0;
+  color: var(--ink);
+  max-width: 20ch;
+}
+
+.section-divider .tagline {
+  position: relative;
+  font-size: var(--fs-lead);
+  font-weight: 400;
+  color: var(--ink-2);
+  margin-top: 2.4cqi;
+}
+
+/* ============================================================================
+   CONTENT SLIDE
+   ========================================================================== */
+
+/* Top-anchored: the title sits at the same spot on every content slide, so it
+   doesn't drift as content length changes. Content flows beneath it. */
+.content-slide { justify-content: flex-start; padding-top: 7cqi; }
+.content-slide .eyebrow {
+  min-height: 1.8cqi;
+  margin-bottom: 2cqi;
+  line-height: 1.2;
+}
+.content-slide .eyebrow.redundant,
+.content-slide .eyebrow.placeholder { visibility: hidden; }
+.content-slide .slide-title { margin-bottom: 3.4cqi; }
+
+.timeline-year {
+  margin-bottom: 1.2cqi;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.timeline-note {
+  max-width: 72ch;
+  margin-top: 3cqi;
+  padding-top: 2.2cqi;
+  border-top: 1px solid var(--rule-strong);
+  font-size: 1.7cqi;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+
+/* Airy top-rule blocks: neutral hairline, no colour clutter */
+.blocks { display: grid; gap: 3.2cqi; }
+.blocks.cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+.block { border-top: 1px solid var(--rule-strong); padding-top: 1.8cqi; }
+.block.lead-rule { border-top: 2px solid var(--accent); }
+.block .note { margin-top: 2cqi; font-size: var(--fs-label); font-style: italic; color: var(--ink-3); line-height: 1.4; }
+
+.block h3 {
+  font-size: var(--fs-body);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--ink);
+  margin-bottom: 1cqi;
+}
+.block p {
+  font-size: var(--fs-body);
+  font-weight: 400;
+  line-height: var(--lh-body);
+  color: var(--ink-2);
+}
+.block p em { font-style: italic; color: var(--ink); }
+.block .tools {
+  font-size: var(--fs-body);
+  font-weight: 500;
+  color: var(--ink-2);
+  line-height: 1.7;
+}
+
+/* Bug bounty agent: how the ad hoc scoring skill became a running service. */
+.production-agent-slide {
+  padding: 4.6cqi var(--safe-x);
+}
+.production-agent-slide.active {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 2.6cqi;
+}
+.production-agent-slide .slide-title {
+  font-size: 4.2cqi;
+}
+.production-agent-lead {
+  margin-top: 1.15cqi;
+  color: var(--ink-2);
+  font-size: 1.7cqi;
+  line-height: 1.35;
+}
+.production-agent-flow {
+  display: grid;
+  grid-template-columns: 0.88fr 1.03fr 1.28fr 1fr;
+  align-items: stretch;
+  min-height: 0;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule-strong);
+}
+.production-agent-step {
+  min-width: 0;
+  padding: 2.05cqi 2cqi 1.7cqi 0;
+}
+.production-agent-step + .production-agent-step {
+  padding-left: 2cqi;
+  border-left: 1px solid var(--rule);
+}
+.production-agent-label {
+  color: var(--ink-3);
+  font-size: 1.2cqi;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.production-agent-step h3 {
+  max-width: 15ch;
+  margin-top: 0.8cqi;
+  color: var(--ink);
+  font-size: 2.15cqi;
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+}
+.production-agent-copy {
+  max-width: 23ch;
+  margin-top: 1.25cqi;
+  color: var(--ink-2);
+  font-size: 1.58cqi;
+  line-height: 1.4;
+}
+.production-agent-detail {
+  display: grid;
+  gap: 0.65cqi;
+  margin-top: 1.35cqi;
+  padding-top: 1.05cqi;
+  border-top: 1px solid var(--rule);
+  color: var(--ink-3);
+  font-size: 1.15cqi;
+  line-height: 1.25;
+}
+.production-agent-step.output {
+  background: linear-gradient(180deg, var(--accent-soft), transparent 78%);
+}
+.production-agent-step.output .production-agent-label,
+.production-agent-step.output h3 {
+  color: var(--accent);
+}
+.production-agent-metric {
+  margin-top: 2.1cqi;
+  padding-top: 1.35cqi;
+  border-top: 1px solid var(--rule);
+}
+.production-agent-metric strong {
+  display: block;
+  color: var(--ink);
+  font-size: 2.55cqi;
+  font-weight: 650;
+  line-height: 1.05;
+}
+.production-agent-metric span {
+  display: block;
+  margin-top: 0.45cqi;
+  color: var(--ink-2);
+  font-size: 1.28cqi;
+}
+.production-agent-footer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2cqi;
+  align-items: end;
+  color: var(--ink-3);
+  font-size: 1.28cqi;
+  line-height: 1.35;
+}
+.production-agent-footer p:last-child {
+  text-align: right;
+}
+.production-agent-footer strong {
+  color: var(--ink-2);
+  font-weight: 600;
+}
+
+/* Conceptual example of Hindsight recall informing the report estimate. */
+.recall-priority-slide {
+  padding: 4.6cqi var(--safe-x);
+}
+.recall-priority-slide.active {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 2.35cqi;
+}
+.recall-priority-slide .slide-title {
+  font-size: 4.2cqi;
+}
+.recall-record {
+  display: grid;
+  grid-template-columns: 0.95fr 1.25fr 0.95fr;
+  min-height: 0;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule-strong);
+}
+.recall-record-section {
+  min-width: 0;
+  padding: 2.1cqi 2.2cqi 1.55cqi 0;
+}
+.recall-record-section + .recall-record-section {
+  padding-left: 2.2cqi;
+  border-left: 1px solid var(--rule);
+}
+.recall-summary-label {
+  color: var(--ink-3);
+  font-size: 1.2cqi;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.recall-summary-incoming h3,
+.recall-summary-verdict h3 {
+  margin-top: 1.35cqi;
+  max-width: 14ch;
+  font-size: 2.45cqi;
+  font-weight: 600;
+  line-height: 1.08;
+}
+.recall-summary-incoming p,
+.recall-summary-verdict p {
+  margin-top: 1.45cqi;
+  color: var(--ink-2);
+  font-size: 1.62cqi;
+  line-height: 1.38;
+}
+.recall-summary-case {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1.3cqi;
+  align-items: start;
+  margin-top: 1.45cqi;
+  padding-top: 1.45cqi;
+  border-top: 1px solid var(--rule);
+}
+.recall-summary-case strong {
+  color: var(--ink);
+  font-size: 1.65cqi;
+  line-height: 1.15;
+}
+.recall-summary-case p {
+  margin-top: 0.55cqi;
+  color: var(--ink-2);
+  font-size: 1.42cqi;
+  line-height: 1.32;
+}
+.recall-summary-case span {
+  color: var(--ink-3);
+  font-size: 1.18cqi;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.recall-summary-verdict {
+  background: linear-gradient(180deg, var(--accent-soft), transparent 76%);
+}
+.recall-summary-verdict h3 { color: var(--accent); }
+.recall-summary-verdict small {
+  display: block;
+  margin-top: 2cqi;
+  padding-top: 1cqi;
+  border-top: 1px solid var(--rule);
+  color: var(--ink-4);
+  font-size: 1.15cqi;
+  line-height: 1.3;
+}
+.recall-priority-footer {
+  color: var(--ink-3);
+  font-size: 1.55cqi;
+  line-height: 1.35;
+}
+.recall-priority-footer strong {
+  color: var(--ink-2);
+  font-weight: 600;
+}
+
+/* Asymmetric hero-stat split: big number left, supporting points right */
+.split-stat {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 6cqi;
+  align-items: center;
+}
+
+.stat-hero {
+  font-size: var(--fs-hero);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.stat-hero::after {
+  content: '';
+  display: block;
+  width: 16cqi; height: 1px;
+  background: var(--rule-strong);
+  margin-top: 2.2cqi;
+}
+.stat-cap {
+  font-size: var(--fs-lead);
+  line-height: var(--lh-body);
+  color: var(--ink-2);
+  margin-top: 1.8cqi;
+  max-width: 18ch;
+}
+
+.points { display: grid; gap: 2.6cqi; }
+
+/* Pull-aside callout: a thin accent rule + tracked label, no box */
+.callout {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2.4cqi;
+  align-items: start;
+  margin-top: 3cqi;
+  padding-left: 2.4cqi;
+  border-left: 2px solid var(--accent);
+}
+.callout .lbl {
+  font-size: var(--fs-label);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+  white-space: nowrap;
+  padding-top: 0.7cqi;
+}
+.callout .txt {
+  font-size: var(--fs-lead);
+  line-height: var(--lh-body);
+  color: var(--ink);
+  max-width: 40ch;
+}
+.callout .txt em { font-style: normal; color: var(--accent); font-weight: 600; }
+/* Footer-band variant: full-width, hairline on top, no label, body-size text */
+.callout.band { display: block; border-left: none; border-top: 1px solid var(--rule-strong); padding-left: 0; padding-top: 2.2cqi; margin-top: 4.4cqi; }
+.callout.band .txt { font-size: var(--fs-body); max-width: none; line-height: 1.35; }
+
+/* Small, clickable references, pinned to the bottom of the flow (never overlaps content) */
+.sources {
+  margin-top: auto;
+  padding-top: 2.4cqi;
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  gap: 1.4cqi;
+  font-size: 1.2cqi;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--ink-3);
+}
+.sources .src { color: var(--ink-3); text-decoration: none; white-space: nowrap; }
+a.src { border-bottom: 1px solid var(--rule-strong); transition: color .2s, border-color .2s; }
+a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.sources > * + *::before { content: '·'; margin-right: 1.4cqi; color: var(--rule-strong); }
+
+/* ============================================================================
+   ADDED LAYOUTS (skeleton pass, refined per slide during content rework)
+   ========================================================================== */
+
+.blocks.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.blocks.cols-2.wide { gap: 8cqi; }
+
+/* Single takeaway line under a title */
+.lead {
+  font-size: var(--fs-lead);
+  font-weight: 400;
+  line-height: var(--lh-body);
+  color: var(--ink-2);
+  max-width: 44ch;
+}
+.lead em { font-style: normal; color: var(--ink); font-weight: 600; }
+.lead .accent { color: var(--accent); font-weight: 600; }
+.gap-top { margin-top: 3cqi; }
+
+.strike { text-decoration: line-through; text-decoration-color: var(--accent); text-decoration-thickness: 0.35cqi; color: var(--ink-3); }
+
+/* Figure: chart image + note (B4) */
+.figure { display: grid; grid-template-columns: 1.4fr 1fr; gap: 5cqi; align-items: center; }
+.figure img { width: 100%; border: 1px solid var(--rule); border-radius: 3px; background: #fff; }
+.figure .fig-note p { font-size: var(--fs-body); color: var(--ink-2); line-height: var(--lh-body); max-width: 26ch; }
+.figure .fig-note p + p { margin-top: 2cqi; }
+.figure .fig-note .accent { color: var(--accent); font-weight: 600; }
+
+/* Metric row: a few big numbers (origin, evidence, incident timeline) */
+.metrics { display: flex; flex-wrap: wrap; gap: 6cqi; align-items: flex-start; }
+.metric .num { font-size: 6cqi; font-weight: 700; color: var(--ink); letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.metric.key .num { color: var(--accent); }
+.metric .lbl { font-size: var(--fs-label); color: var(--ink-3); margin-top: 1cqi; text-transform: uppercase; letter-spacing: 0.14em; }
+
+.verification-flow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 2cqi;
+  align-items: start;
+  margin-top: 4cqi;
+}
+.verification-step {
+  min-height: 15cqi;
+  padding-top: 1.4cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.verification-step .index {
+  margin-bottom: 1.2cqi;
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+}
+.verification-step h3 {
+  margin: 0;
+  font-size: 2.15cqi;
+  line-height: 1.15;
+  color: var(--ink);
+}
+.verification-step p {
+  margin-top: 1.1cqi;
+  font-size: 1.65cqi;
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+.verification-step .evidence {
+  display: block;
+  margin-top: 1.5cqi;
+  font-family: var(--mono);
+  font-size: 1.45cqi;
+  line-height: 1.3;
+  color: var(--ink-3);
+}
+.verification-step.confirmed .evidence { color: var(--accent); font-weight: 650; }
+.verification-arrow {
+  padding-top: 6.2cqi;
+  font-size: 2.2cqi;
+  color: var(--ink-3);
+}
+.verification-takeaway {
+  margin-top: 2.8cqi;
+  padding-left: 1.7cqi;
+  border-left: 0.35cqi solid var(--accent);
+  font-size: 1.9cqi;
+  line-height: 1.3;
+  color: var(--ink-2);
+}
+
+.assessment-comparison {
+  padding-top: 5.2cqi;
+}
+.assessment-comparison .slide-title {
+  margin-bottom: 2.4cqi;
+}
+.assessment-shared {
+  display: flex;
+  align-items: baseline;
+  gap: 2cqi;
+  padding: 1.2cqi 0;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule-strong);
+}
+.assessment-shared span,
+.assessment-detail span {
+  font-size: 1.2cqi;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+.assessment-shared strong {
+  font-size: 1.8cqi;
+  color: var(--ink);
+  font-weight: 500;
+}
+.assessment-columns {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5.2cqi;
+  margin-top: 3.2cqi;
+}
+.assessment-column {
+  display: grid;
+  grid-template-rows: 4.9cqi 6.6cqi 8.4cqi 6.6cqi;
+  align-items: start;
+  padding-top: 1.4cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.assessment-column.ours {
+  border-top: 2px solid var(--accent);
+}
+.assessment-column h3 {
+  margin: 0;
+  font-size: 2.3cqi;
+  color: var(--ink);
+}
+.assessment-detail {
+  padding-top: 1.1cqi;
+  border-top: 1px solid var(--rule);
+}
+.assessment-detail + .assessment-detail {
+  margin-top: 0;
+}
+.assessment-detail p {
+  margin: 0.6cqi 0 0;
+  font-size: 1.8cqi;
+  line-height: 1.3;
+  color: var(--ink-2);
+}
+.assessment-column.ours .assessment-detail.access p {
+  color: var(--accent);
+  font-weight: 600;
+}
+.assessment-takeaway {
+  margin-top: 3.3cqi;
+  font-size: 2.05cqi;
+  line-height: 1.3;
+  color: var(--accent);
+}
+.assessment-takeaway span {
+  color: var(--ink-2);
+}
+
+.feedback-example .slide-title {
+  max-width: 94cqi;
+  margin-bottom: 2.5cqi;
+}
+.feedback-found {
+  margin-top: 0.4cqi;
+}
+.feedback-side > span {
+  font-size: 1.2cqi;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+.feedback-found strong {
+  font-size: 2.05cqi;
+  color: var(--ink-2);
+  font-weight: 500;
+}
+.feedback-found code {
+  font-size: inherit;
+}
+.feedback-contrast {
+  display: grid;
+  gap: 2.2cqi;
+  margin-top: 3.6cqi;
+}
+.feedback-side {
+  display: grid;
+  grid-template-columns: 12cqi 1fr;
+  align-items: center;
+  min-height: 6.8cqi;
+  padding: 1.3cqi 0;
+  border-top: 1px solid var(--rule-strong);
+}
+.feedback-side.effect {
+  border-top: 2px solid var(--accent);
+}
+.feedback-steps {
+  display: flex;
+  align-items: center;
+  gap: 0.9cqi;
+}
+.feedback-step {
+  font-size: 1.55cqi;
+  color: var(--ink-2);
+  font-weight: 550;
+  white-space: nowrap;
+}
+.feedback-arrow {
+  font-size: 1.5cqi;
+  color: var(--ink-3);
+}
+.feedback-side.effect .feedback-step:last-child {
+  color: var(--accent);
+  font-weight: 700;
+}
+.feedback-note {
+  margin: 3cqi 0 0;
+  padding-top: 1.5cqi;
+  border-top: 1px solid var(--rule-strong);
+  font-size: 2.05cqi;
+  color: var(--ink);
+}
+.finding-bars {
+  display: grid;
+  gap: 1.7cqi;
+  margin-top: 1.4cqi;
+  max-width: 82cqi;
+}
+.finding-legend {
+  display: flex;
+  gap: 2.2cqi;
+  margin-top: 2.5cqi;
+  font-size: 1.4cqi;
+  color: var(--ink-3);
+}
+.finding-legend span {
+  display: inline-flex;
+  gap: 0.7cqi;
+  align-items: center;
+}
+.finding-legend i {
+  width: 1.1cqi;
+  height: 1.1cqi;
+  display: inline-block;
+}
+.finding-legend .unique { background: var(--accent); }
+.finding-legend .shared { background: var(--ink-3); }
+.finding-row {
+  display: grid;
+  grid-template-columns: 14cqi 1fr 5cqi;
+  gap: 2cqi;
+  align-items: center;
+}
+.finding-row .name {
+  font-size: 1.65cqi;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.finding-row .track {
+  display: flex;
+  height: 2.5cqi;
+  background: var(--rule);
+}
+.finding-row .segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 1.55cqi;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.finding-row .segment.unique {
+  background: var(--accent);
+  color: var(--bg);
+}
+.finding-row .segment.shared {
+  background: var(--ink-3);
+  color: var(--bg);
+}
+.finding-row .count {
+  font-size: 3cqi;
+  line-height: 1;
+  font-weight: 700;
+  text-align: right;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.finding-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 4cqi;
+  margin-top: 3.2cqi;
+  padding-top: 1.5cqi;
+  border-top: 1px solid var(--rule-strong);
+  font-size: 1.55cqi;
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+.finding-summary strong { color: var(--ink); }
+.finding-summary .honesty { max-width: 40cqi; color: var(--ink-3); }
+.findings-comparison .slide-title {
+  margin-bottom: 2.8cqi;
+}
+.findings-comparison .finding-legend {
+  margin-top: 0;
+}
+.findings-comparison .finding-bars {
+  max-width: 88cqi;
+  gap: 2cqi;
+  margin-top: 2.4cqi;
+}
+.finding-axis {
+  display: grid;
+  grid-template-columns: 14cqi 1fr 5cqi;
+  gap: 2cqi;
+  margin-bottom: -0.8cqi;
+}
+.finding-axis span {
+  grid-column: 3;
+  text-align: right;
+  font-size: 1.15cqi;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.findings-comparison .finding-summary {
+  justify-content: flex-start;
+  margin-top: 3.4cqi;
+  font-size: 1.75cqi;
+}
+
+/* Closing slides: flat comparisons and a short progression, without cards. */
+.close-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6cqi;
+  margin-top: 4cqi;
+}
+.close-column {
+  padding-top: 1.5cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.close-column .label,
+.failure-cell .label {
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.close-column.context .label { color: var(--accent); }
+.close-column .items {
+  margin-top: 1.5cqi;
+  font-size: 2.2cqi;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+.close-column.context .items { color: var(--ink); }
+.close-example {
+  margin-top: 3.3cqi;
+  padding-left: 1.7cqi;
+  border-left: 0.35cqi solid var(--accent);
+  font-size: 1.75cqi;
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+.close-example strong { color: var(--ink); }
+.harness-learning .slide-title {
+  margin-bottom: 0;
+}
+.harness-learning .close-columns {
+  margin-top: 3.8cqi;
+}
+.harness-learning .close-example {
+  display: flex;
+  align-items: baseline;
+  gap: 1.3cqi;
+  margin-top: 3.6cqi;
+  padding: 1.6cqi 0 0;
+  border-left: 0;
+  border-top: 1px solid var(--rule-strong);
+  font-size: 1.9cqi;
+}
+.harness-learning .close-example b {
+  color: var(--ink-3);
+  font-weight: 500;
+}
+.harness-learning .close-example strong {
+  color: var(--accent);
+}
+.harness-comparison .slide-title {
+  margin-bottom: 0;
+}
+.harness-rows {
+  margin-top: 2.5cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.harness-repo {
+  display: grid;
+  grid-template-columns: 0.28fr 0.72fr;
+  gap: 3.2cqi;
+  align-items: baseline;
+  padding: 1.05cqi 0;
+  border-bottom: 1px solid var(--rule-strong);
+  color: inherit;
+  text-decoration: none;
+}
+.harness-repo strong {
+  font-size: 1.65cqi;
+  color: var(--ink);
+}
+.harness-repo strong::after {
+  content: " ↗";
+  color: var(--accent);
+  font-size: 1.1cqi;
+}
+.harness-repo p {
+  margin: 0;
+  font-size: 1.5cqi;
+  line-height: 1.3;
+  color: var(--ink-2);
+}
+.harness-context-summary {
+  display: grid;
+  grid-template-columns: 0.28fr 0.72fr;
+  gap: 3.2cqi;
+  align-items: start;
+  margin-top: 2.35cqi;
+}
+.harness-context-summary h3 {
+  margin: 0;
+  font-size: 2.05cqi;
+  line-height: 1.15;
+  color: var(--ink);
+}
+.harness-context-summary p {
+  margin: 0;
+  font-size: 1.65cqi;
+  line-height: 1.38;
+  color: var(--ink-2);
+}
+.harness-comparison .close-example {
+  display: flex;
+  align-items: baseline;
+  gap: 1.3cqi;
+  margin-top: 2.35cqi;
+  padding: 1.35cqi 0 0;
+  border-left: 0;
+  border-top: 1px solid var(--rule-strong);
+  font-size: 1.75cqi;
+}
+.harness-comparison .close-example b {
+  color: var(--ink-3);
+  font-weight: 500;
+}
+.harness-comparison .close-example strong {
+  color: var(--accent);
+}
+.close-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2.5cqi;
+  margin-top: 4.5cqi;
+}
+.close-step {
+  padding-top: 1.4cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.close-step .number {
+  font-size: 1.25cqi;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.close-step h3 {
+  margin: 1.2cqi 0 0;
+  font-size: 2.05cqi;
+  line-height: 1.15;
+  color: var(--ink);
+}
+.close-step p {
+  margin: 1cqi 0 0;
+  font-size: 1.5cqi;
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+.daily-start .slide-title {
+  margin-bottom: 0;
+}
+.closing-steps {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 6cqi;
+  row-gap: 2.5cqi;
+  margin-top: 3.8cqi;
+}
+.closing-step {
+  min-height: 11.5cqi;
+  padding-top: 1.2cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.closing-step > span {
+  font-size: 1.3cqi;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.closing-step h3 {
+  margin: 1cqi 0 0;
+  font-size: 2.5cqi;
+  line-height: 1.15;
+  color: var(--ink);
+}
+.closing-step p {
+  margin: 1cqi 0 0;
+  max-width: 27cqi;
+  font-size: 1.8cqi;
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+.closing-repeat {
+  margin-top: 2.5cqi;
+  padding-top: 1.6cqi;
+  border-top: 1px solid var(--rule-strong);
+  font-size: 2.15cqi;
+  color: var(--accent);
+}
+
+.final-takeaway .slide-title {
+  max-width: 96cqi;
+  margin-bottom: 0;
+}
+.final-bullets {
+  display: grid;
+  gap: 1.5cqi;
+  margin: 4.5cqi 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 2.55cqi;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.final-bullets li {
+  position: relative;
+  padding-left: 2.2cqi;
+}
+.final-bullets li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+
+.thank-you-slide {
+  justify-content: center;
+  padding-top: var(--safe-y);
+}
+.thank-you-slide h2 {
+  margin: 0 0 5cqi;
+  font-size: 6.6cqi;
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  color: var(--ink);
+}
+.thank-you-link {
+  display: flex;
+  align-items: baseline;
+  gap: 1.4cqi;
+  font-size: 2.4cqi;
+  color: var(--ink-3);
+}
+.thank-you-link a {
+  font-size: 3.5cqi;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.harness-reference .slide-title {
+  max-width: 96cqi;
+  margin-bottom: 2.4cqi;
+}
+.reference-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4cqi;
+}
+.reference-column {
+  padding-top: 1.3cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.reference-column h3 {
+  margin: 0;
+  font-size: 1.45cqi;
+  line-height: 1.2;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.reference-column ul {
+  margin: 1.7cqi 0 0;
+  padding: 0;
+  list-style: none;
+}
+.reference-column li + li {
+  margin-top: 1.55cqi;
+}
+.reference-column a {
+  display: block;
+  text-decoration: none;
+}
+.reference-column strong {
+  display: block;
+  font-family: var(--mono);
+  font-size: 1.08cqi;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+}
+.reference-column a:hover strong {
+  color: var(--accent);
+}
+
+.eval-frame-definition {
+  margin-top: 1.2cqi;
+  font-size: 1.65cqi;
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+.eval-frame-loop {
+  display: grid;
+  grid-template-columns: 1fr 3.2cqi 1fr 3.2cqi 1fr;
+  align-items: start;
+  margin-top: 3.6cqi;
+}
+.eval-frame-step {
+  padding-top: 1.2cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.eval-frame-label {
+  font-size: 1.05cqi;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+}
+.eval-frame-step h3 {
+  margin-top: 0.7cqi;
+  font-size: 2.25cqi;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  color: var(--ink);
+}
+.eval-frame-step p {
+  margin-top: 0.6cqi;
+  max-width: 22cqi;
+  font-size: 1.45cqi;
+  line-height: 1.28;
+  color: var(--ink-2);
+}
+.eval-frame-arrow {
+  display: grid;
+  place-items: center;
+  min-height: 7.6cqi;
+  font-size: 2.3cqi;
+  color: var(--ink-3);
+}
+.eval-frame-measure {
+  display: grid;
+  grid-template-columns: 14cqi 1fr;
+  gap: 2.4cqi;
+  align-items: center;
+  margin-top: 3.2cqi;
+  padding: 1.55cqi 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.eval-frame-measure p {
+  font-size: 2.25cqi;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  font-weight: 500;
+}
+.eval-frame-footer {
+  display: grid;
+  grid-template-columns: 34cqi 1fr;
+  gap: 4cqi;
+  align-items: end;
+  margin-top: 2.8cqi;
+}
+.eval-frame-funnel {
+  display: flex;
+  align-items: baseline;
+  gap: 1.2cqi;
+  font-variant-numeric: tabular-nums;
+}
+.eval-frame-number {
+  font-size: 3.4cqi;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-weight: 700;
+}
+.eval-frame-arrow-small {
+  font-size: 2cqi;
+  color: var(--ink-3);
+}
+.eval-frame-usable {
+  font-size: 1.55cqi;
+  color: var(--accent);
+  font-weight: 600;
+}
+.eval-frame-footer-copy {
+  padding-left: 2cqi;
+  border-left: 1px solid var(--rule-strong);
+  font-size: 1.6cqi;
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+.eval-frame-footer-copy strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.eval-build {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3.2cqi;
+  margin-top: 3.4cqi;
+}
+.eval-build-step {
+  padding-top: 1.5cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.eval-build-step.key { border-top: 2px solid var(--accent); }
+.eval-build-number {
+  font-size: 4.2cqi;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.eval-build-label {
+  font-size: 1.4cqi;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.eval-build-copy {
+  margin-top: 1.2cqi;
+  font-size: 2cqi;
+  line-height: 1.3;
+  color: var(--ink-2);
+}
+.eval-build-step.key .eval-build-copy { color: var(--ink); }
+.eval-case-chain {
+  display: flex;
+  align-items: center;
+  gap: 1.4cqi;
+  margin-top: 3.4cqi;
+  padding-top: 1.8cqi;
+  border-top: 1px solid var(--rule-strong);
+  font-size: 1.75cqi;
+  color: var(--ink-2);
+}
+.eval-case-chain span { white-space: nowrap; }
+.eval-case-chain b { color: var(--accent); font-weight: 600; }
+.eval-lesson-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6cqi;
+  margin-top: 3.4cqi;
+}
+.eval-lesson {
+  padding-top: 1.5cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.eval-lesson.key { border-top: 2px solid var(--accent); }
+.eval-lesson-label {
+  font-size: 1.25cqi;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.eval-lesson h3 {
+  margin-top: 0.8cqi;
+  font-size: 2.25cqi;
+  line-height: 1.15;
+  color: var(--ink);
+}
+.eval-result-list {
+  margin-top: 1.8cqi;
+  border-top: 1px solid var(--rule);
+}
+.eval-result-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 8.5cqi 8.5cqi;
+  gap: 1cqi;
+  align-items: center;
+  padding: 1.1cqi 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 1.55cqi;
+  color: var(--ink-2);
+}
+.eval-result-row strong,
+.eval-result-row b {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  text-align: center;
+}
+.eval-result-row strong { color: var(--ink); }
+.eval-result-row b { color: var(--accent); font-size: 2.25cqi; }
+.eval-result-list.model-results .eval-result-row:not(:first-child) strong {
+  font-size: 2.25cqi;
+}
+.eval-result-list.model-results .eval-result-row:first-child > :last-child {
+  color: var(--accent);
+}
+.eval-result-list.workflow-results .eval-result-row:first-child > :last-child {
+  color: var(--accent);
+}
+.eval-result-list.cost-results .eval-result-row {
+  grid-template-columns: minmax(0, 1fr) 12cqi 12cqi;
+}
+.eval-result-list.cost-results .eval-result-row:not(:first-child) > :last-child,
+.eval-result-list.job-results .eval-result-row:not(:first-child) > :last-child {
+  font-size: 2.25cqi;
+}
+.eval-result-list.job-results .eval-result-row {
+  grid-template-columns: minmax(0, 1fr) 18cqi 10cqi;
+}
+.eval-result-list.job-results .eval-result-row:first-child > :last-child {
+  color: var(--accent);
+}
+.eval-lesson-note {
+  margin-top: 1.5cqi;
+  font-size: 1.6cqi;
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+.eval-takeaway {
+  margin-top: 3cqi;
+  padding-top: 1.5cqi;
+  border-top: 1px solid var(--rule-strong);
+  font-size: 2.15cqi;
+  line-height: 1.25;
+  color: var(--ink);
+}
+.eval-takeaway em { color: var(--accent); font-style: normal; font-weight: 600; }
+.eval-takeaway.no-rule { border-top: 0; padding-top: 0; }
+.failure-pairs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 4cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.failure-cell {
+  min-height: 9.5cqi;
+  padding: 1.6cqi 2.2cqi 1.6cqi 0;
+  border-bottom: 1px solid var(--rule);
+}
+.failure-cell:nth-child(even) {
+  padding-left: 3cqi;
+  border-left: 1px solid var(--rule);
+}
+.failure-cell.response .label { color: var(--accent); }
+.failure-cell .value {
+  margin-top: 1cqi;
+  font-size: 2.05cqi;
+  line-height: 1.25;
+  color: var(--ink);
+}
+.failure-cell .detail {
+  margin-top: 0.7cqi;
+  font-size: 1.45cqi;
+  line-height: 1.35;
+  color: var(--ink-3);
+}
+.closing-pillars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3.5cqi;
+  margin-top: 4.5cqi;
+}
+.closing-pillar {
+  padding-top: 1.5cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.closing-pillar h3 {
+  margin: 0;
+  font-size: 2.6cqi;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.closing-pillar .claim {
+  margin-top: 1.4cqi;
+  font-size: 1.8cqi;
+  line-height: 1.25;
+  color: var(--ink-2);
+}
+.closing-pillar .examples {
+  margin-top: 1.5cqi;
+  font-size: 1.35cqi;
+  line-height: 1.45;
+  color: var(--ink-3);
+}
+.closing-pillar:last-child {
+  border-top-color: var(--accent);
+}
+.closing-pillar:last-child h3 { color: var(--accent); }
+.conclusion-list {
+  margin-top: 3.7cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.conclusion-row {
+  display: grid;
+  grid-template-columns: 6cqi 1fr;
+  gap: 2.5cqi;
+  align-items: center;
+  min-height: 7.2cqi;
+  border-bottom: 1px solid var(--rule);
+}
+.conclusion-row .number {
+  font-size: 1.25cqi;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.conclusion-row .statement {
+  font-size: 2.25cqi;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+/* Chain / numbered steps (demos, incidents) */
+/* Question board: plain-English questions + the internal sources each one fuses.
+   The accent left-bar marks questions that combine 2+ sources (the point). */
+.qgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.2cqi; }
+.q { background: var(--bg-2); border: 1px solid var(--rule-strong); border-radius: 1.2cqi; padding: 1.5cqi 2cqi; }
+.q.power { border-left: 0.5cqi solid var(--accent); padding-left: 1.7cqi; }
+.q .ask { font-size: var(--fs-body); line-height: 1.25; color: var(--ink); font-weight: 500; }
+.q .ask .hl { color: var(--accent); }
+.q .chips { display: flex; flex-wrap: wrap; gap: 0.9cqi; margin-top: 1cqi; }
+.q .chip { font-size: var(--fs-label); color: var(--ink-3); border: 1px solid var(--rule-strong); border-radius: 99px; padding: 0.3cqi 1.2cqi; white-space: nowrap; }
+/* Tiered question board: simple -> combine -> full investigation. Chip count grows down. */
+.qtiers { display: grid; gap: 1.3cqi; }
+.qrow { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4cqi; }
+.q.hero { background: var(--accent-soft); border-left-width: 0.6cqi; }
+.q .aside { margin-top: 0.7cqi; font-size: var(--fs-label); font-style: italic; color: var(--accent); }
+.q .file { font-size: var(--fs-label); color: var(--ink-3); margin-bottom: 0.9cqi; font-variant: all-small-caps; letter-spacing: .06em; }
+
+/* Questions mapped directly to the skills Claude uses. */
+.skills-question-slide { padding-top: 5.2cqi; }
+.skills-question-slide .slide-title { margin-bottom: 2.2cqi; }
+.question-scale {
+  width: 100%;
+  margin-top: 1cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.question-step {
+  display: grid;
+  grid-template-columns: 11cqi minmax(0, 1fr) 19cqi;
+  align-items: center;
+  min-height: 8.8cqi;
+  border-bottom: 1px solid var(--rule-strong);
+}
+.question-step .skill-count {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9cqi;
+  color: var(--accent);
+}
+.question-step .skill-count strong {
+  font-size: 3.4cqi;
+  line-height: 1;
+  font-weight: 600;
+}
+.question-step .skill-count span,
+.question-step .skill-list {
+  font-size: 1.25cqi;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.question-step .question-copy {
+  font-size: 2.35cqi;
+  line-height: 1.25;
+  color: var(--ink);
+}
+.question-step .question-copy em {
+  color: var(--accent);
+  font-style: normal;
+}
+.question-step .skill-list {
+  justify-self: end;
+  text-align: right;
+  line-height: 1.4;
+}
+.question-step.major {
+  min-height: 14cqi;
+}
+.question-step.major .question-copy {
+  max-width: 64ch;
+  font-size: 2.3cqi;
+}
+.question-step.major .skill-list span {
+  display: block;
+  margin-top: 0.45cqi;
+}
+
+/* One large question, followed by the investigation Claude derives from it. */
+.incident-prompt {
+  margin-top: 3.2cqi;
+  max-width: 100%;
+  border-left: 0.4cqi solid var(--accent);
+  padding-left: 2cqi;
+}
+.incident-prompt .file {
+  margin-bottom: 0.9cqi;
+  font-size: 1.35cqi;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.incident-prompt .ask {
+  font-size: 2.55cqi;
+  line-height: 1.25;
+  font-weight: 500;
+  color: var(--ink);
+}
+.incident-prompt .hl { color: var(--accent); }
+.incident-investigation {
+  margin-top: 3cqi;
+  padding-top: 1.5cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.incident-investigation .claim {
+  font-size: 1.75cqi;
+  line-height: 1.3;
+  font-weight: 600;
+  color: var(--accent);
+}
+.incident-flow {
+  display: grid;
+  grid-template-columns: 1.05fr auto 1.65fr auto 1.55fr auto 1.05fr;
+  align-items: center;
+  gap: 1cqi;
+  margin-top: 1.4cqi;
+  color: var(--ink-2);
+}
+.incident-flow span {
+  font-size: 1.55cqi;
+  line-height: 1.2;
+  font-weight: 600;
+  text-align: center;
+}
+.incident-flow .owner {
+  color: var(--accent);
+  font-weight: 650;
+}
+.incident-flow b {
+  font-size: 1.8cqi;
+  line-height: 1;
+  font-weight: 400;
+  color: var(--ink-4);
+}
+
+/* Coverage grid: the breadth of internal data the skills wired in. Category cards,
+   colour-coded top rule, data nouns as chips. No agent in the middle (breadth is the point). */
+.covgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8cqi; }
+.cov { background: var(--bg-2); border: 1px solid var(--rule-strong); border-top: 0.4cqi solid var(--rule-strong); border-radius: 1.2cqi; padding: 1.7cqi 1.8cqi; }
+.cov h3 { font-size: 2cqi; font-weight: 700; margin-bottom: 1.2cqi; line-height: 1.1; }
+.cov .tags { display: flex; flex-wrap: wrap; gap: 0.8cqi; }
+.cov .t { font-size: var(--fs-label); color: var(--ink-2); background: rgba(245,244,247,0.05); border: 1px solid var(--rule); border-radius: 99px; padding: 0.3cqi 1.1cqi; }
+.cov.a { border-top-color: var(--accent); } .cov.a h3 { color: var(--accent); }
+.cov.b { border-top-color: var(--blue); }   .cov.b h3 { color: var(--blue); }
+.cov.g { border-top-color: var(--green); }  .cov.g h3 { color: var(--green); }
+.cov.r { border-top-color: var(--rose); }   .cov.r h3 { color: var(--rose); }
+
+/* One investigation path across the systems a security engineer uses. */
+.investigation-map { margin-top: 3.2cqi; }
+.investigation-path {
+  display: grid;
+  grid-template-columns: 1.1fr auto 0.9fr auto 1.1fr auto 0.9fr auto 0.95fr;
+  gap: 1.1cqi;
+  align-items: stretch;
+}
+.investigation-stage {
+  min-width: 0;
+  min-height: 14.5cqi;
+  padding-top: 1.35cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.investigation-stage.start { border-top: 2px solid var(--accent); }
+.investigation-stage .stage-label {
+  margin-bottom: 0.65cqi;
+  font-size: 1.05cqi;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.investigation-stage.start .stage-label { color: var(--accent); }
+.investigation-stage h3 {
+  margin-bottom: 1.15cqi;
+  font-size: 2.15cqi;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.investigation-stage p {
+  font-size: 1.42cqi;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.investigation-arrow {
+  display: grid;
+  place-items: center;
+  padding-bottom: 1.8cqi;
+  font-size: 2cqi;
+  color: var(--ink-4);
+}
+.tagging-join {
+  display: grid;
+  grid-template-columns: 18cqi 1fr;
+  gap: 2.2cqi;
+  align-items: center;
+  margin-top: 2.4cqi;
+  padding: 1.4cqi 0 0 1.6cqi;
+  border-top: 1px solid var(--rule-strong);
+  border-left: 0.35cqi solid var(--accent);
+}
+.tagging-join .join-label {
+  font-size: 1.35cqi;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.tagging-join .join-path {
+  display: flex;
+  align-items: center;
+  gap: 1.5cqi;
+  font-size: 1.8cqi;
+  line-height: 1.25;
+  color: var(--ink-2);
+}
+.tagging-join .join-path strong { color: var(--ink); font-weight: 600; }
+.tagging-join .join-path b { color: var(--ink-4); font-weight: 400; }
+
+.connected-graph-slide {
+  padding-top: 5.2cqi;
+}
+.connected-graph-slide .eyebrow {
+  display: none;
+}
+.connected-graph-slide .slide-title {
+  margin-bottom: 2.2cqi;
+}
+.connected-graph {
+  display: grid;
+  place-items: center;
+  height: 41cqi;
+  margin-top: 0;
+}
+.connected-graph svg {
+  width: 100%;
+  height: 100%;
+  max-width: 89cqi;
+  overflow: visible;
+}
+.graph-caption {
+  margin-top: 0.4cqi;
+  text-align: center;
+  font-size: 1.65cqi;
+  line-height: 1.3;
+  color: var(--ink-2);
+}
+.graph-caption strong { color: var(--accent); font-weight: 650; }
+
+/* Concrete SSRF context graph: the generic connected graph applied to one finding. */
+.ssrf-context-graph-slide {
+  padding-top: 5.2cqi;
+}
+.ssrf-context-graph-slide .slide-title {
+  margin-bottom: 0.7cqi;
+}
+.ssrf-context-graph {
+  height: 41.5cqi;
+}
+.ssrf-context-graph svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.ssrf-context-graph .node {
+  fill: var(--bg);
+  stroke: var(--rule-strong);
+  stroke-width: 2;
+}
+.ssrf-context-graph .node-accent {
+  fill: var(--bg);
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+.ssrf-context-graph .node-result {
+  fill: var(--bg);
+  stroke: var(--green);
+  stroke-width: 3;
+}
+.ssrf-context-graph .lane {
+  fill: none;
+  stroke: var(--rule);
+  stroke-width: 2;
+}
+.ssrf-context-graph .section {
+  fill: var(--ink-3);
+  font-family: var(--font);
+  font-size: 27px;
+  font-weight: 600;
+  letter-spacing: 2.4px;
+}
+.ssrf-context-graph .section.accent { fill: var(--accent); }
+.ssrf-context-graph .section.result { fill: var(--green); }
+.ssrf-context-graph .label {
+  fill: var(--ink);
+  font-family: var(--font);
+  font-size: 32px;
+  font-weight: 600;
+}
+.ssrf-context-graph .copy {
+  fill: var(--ink-3);
+  font-family: var(--font);
+  font-size: 27px;
+}
+.ssrf-context-graph .copy.compact { font-size: 25px; }
+.ssrf-context-graph .start-label { font-size: 30px; }
+.ssrf-context-graph .mono {
+  fill: var(--ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 27px;
+}
+.ssrf-context-graph .mono.accent { fill: var(--accent); }
+.ssrf-context-graph .edge {
+  fill: none;
+  stroke: var(--ink-4);
+  stroke-width: 2;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  marker-end: url(#ssrf-context-arrow);
+}
+.ssrf-context-graph .edge-accent {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  marker-end: url(#ssrf-context-arrow-accent);
+}
+.ssrf-context-graph .edge-merge {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+}
+.ssrf-context-graph .rule {
+  stroke: var(--rule);
+  stroke-width: 2;
+}
+
+.chain { display: grid; gap: 1.6cqi; max-width: 54ch; }
+.chain .step { display: grid; grid-template-columns: auto 1fr; gap: 2cqi; align-items: baseline; font-size: var(--fs-body); color: var(--ink-2); line-height: var(--lh-body); }
+.chain .step .n { color: var(--accent); font-weight: 700; font-variant-numeric: tabular-nums; }
+.chain .step em { font-style: normal; color: var(--ink); font-weight: 600; }
+.chain .step .hit { color: var(--accent); font-weight: 600; }
+
+.exposure-compare {
+  display: grid;
+  gap: 1.4cqi;
+  max-width: 78cqi;
+}
+.exposure-row {
+  display: grid;
+  grid-template-columns: 15cqi minmax(0, 1fr);
+  align-items: center;
+  min-height: 7.4cqi;
+  padding: 0.8cqi 0;
+  border-top: 1px solid var(--rule-strong);
+}
+.exposure-row:last-child { border-bottom: 1px solid var(--rule-strong); }
+.exposure-label {
+  font-size: var(--fs-label);
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.exposure-path {
+  display: flex;
+  align-items: baseline;
+  gap: 1.5cqi;
+  font-size: 2.25cqi;
+  line-height: 1.2;
+  color: var(--ink-2);
+}
+.exposure-path code { color: var(--ink); }
+.exposure-path .result { color: var(--ink); font-weight: 650; }
+.exposure-row.missed .exposure-label,
+.exposure-row.missed .result { color: var(--accent); }
+.exposure-note {
+  margin-top: 1.5cqi;
+  max-width: none;
+  padding-left: 1.4cqi;
+  border-left: 0.28cqi solid var(--accent);
+  font-size: 1.48cqi;
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+
+.incident-scope-grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 4.5cqi;
+  margin-top: 2.7cqi;
+  align-items: start;
+}
+.incident-scope-column {
+  padding-top: 1.25cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.incident-scope-column.evidence {
+  border-top: 2px solid var(--accent);
+}
+.incident-scope-label {
+  color: var(--ink-3);
+  font-size: 1.12cqi;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.incident-scope-quote {
+  max-width: 23ch;
+  margin-top: 1.2cqi;
+  color: var(--ink);
+  font-size: 2.2cqi;
+  font-weight: 600;
+  line-height: 1.16;
+}
+.incident-scope-copy {
+  max-width: 31ch;
+  margin-top: 1.35cqi;
+  color: var(--ink-2);
+  font-size: 1.45cqi;
+  line-height: 1.42;
+}
+.incident-scope-list {
+  display: grid;
+  gap: 1.05cqi;
+  margin-top: 1.35cqi;
+  padding: 0;
+  list-style: none;
+}
+.incident-scope-list li {
+  position: relative;
+  max-width: 30ch;
+  padding-left: 1.3cqi;
+  color: var(--ink-2);
+  font-size: 1.55cqi;
+  line-height: 1.35;
+}
+.incident-scope-list li::before {
+  content: "›";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+.incident-terminal {
+  margin-top: 1.2cqi;
+  padding: 1.3cqi 1.5cqi;
+  border: 1px solid var(--rule-strong);
+  background: rgba(255,255,255,0.018);
+  color: var(--ink-2);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 1.15cqi;
+  line-height: 1.46;
+  white-space: pre-wrap;
+}
+.incident-terminal .comment { color: var(--ink-3); }
+.incident-terminal .blocked { color: var(--ink-2); }
+.incident-terminal .route { color: var(--ink); }
+.incident-terminal .ok { color: var(--green); }
+.incident-terminal .hot { color: var(--accent); font-weight: 650; }
+.incident-scope-note {
+  margin-top: 2cqi;
+  padding-left: 1.4cqi;
+  border-left: 0.28cqi solid var(--accent);
+  color: var(--ink-2);
+  font-size: 1.45cqi;
+  line-height: 1.35;
+}
+
+/* Horizontal reachability / attack-path flow */
+.flow { display: flex; align-items: center; justify-content: center; gap: 1.4cqi; flex-wrap: wrap; }
+.flow .fnode { border: 1px solid var(--rule-strong); border-radius: 0.8cqi; padding: 1.5cqi 1.7cqi; min-width: 15cqi; text-align: center; }
+.flow .fnode .ftag { font-size: 1.5cqi; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-3); margin-bottom: 0.7cqi; line-height: 1.2; }
+.flow .fnode .fname { font-size: 2cqi; font-weight: 600; color: var(--ink); line-height: 1.25; }
+.flow .fnode.ok  { border-color: var(--green); }  .flow .fnode.ok  .ftag { color: var(--green); }
+.flow .fnode.hot { border-color: var(--accent); } .flow .fnode.hot .ftag { color: var(--accent); }
+.flow .fnode.bad { border-color: var(--rose); }   .flow .fnode.bad .ftag { color: var(--rose); }
+.flow .farr { color: var(--ink-3); font-size: var(--fs-body); }
+
+/* code snippet: show a real finding as code (graphite theme, system mono) */
+.snippet {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 1.9cqi; line-height: 1.75; color: var(--ink);
+  background: rgba(245,244,247,0.04);
+  border: 1px solid var(--rule); border-left: 2px solid var(--accent);
+  border-radius: 6px; padding: 2.2cqi 2.6cqi; margin: 0;
+  white-space: pre-wrap; word-break: break-word; overflow-x: auto;
+}
+.snippet .cmt { color: var(--ink-3); }
+.snippet .tok { color: var(--accent); font-weight: 600; }
+
+/* trace: probe -> observe in logs -> learn (one row per step) */
+.trace { display: grid; gap: 2cqi; }
+.trace .row { display: grid; grid-template-columns: 15ch 1fr; gap: 2.6cqi; align-items: baseline; font-size: var(--fs-body); color: var(--ink-2); line-height: var(--lh-body); }
+.trace .row .try { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--accent); white-space: nowrap; }
+.trace .row em { font-style: normal; color: var(--ink); font-weight: 600; }
+.trace .row .hit { color: var(--accent); font-weight: 700; }
+
+/* progressive reveal: [data-step] elements fade in one click at a time */
+[data-step] { opacity: 0; transform: translateY(0.8cqi); transition: opacity .35s var(--ease), transform .35s var(--ease); }
+[data-step].on { opacity: 1; transform: none; }
+
+/* full test URL always shown; each phase highlights the part it concerns */
+/* base + caller's own loginId shown from the start; injection grows into the searchId slot per step */
+.buildurl .seg { display: none; color: var(--accent); font-weight: 600; }
+.buildurl .seg.on { display: inline; }
+.buildurl .mine { color: var(--ink-2); }
+.content-slide[data-reveal="4"] .buildurl .mine { color: var(--ink-3); text-decoration: line-through; }
+.buildurl .ck { display: none; color: var(--ink-3); }
+.buildurl .ck.on { display: block; margin-top: 0.8cqi; }
+
+/* 4-phase feedback loop cards (probe -> logs -> adapt) */
+.phases { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.4cqi; }
+.phase { border-top: 2px solid var(--rule-strong); padding-top: 1.4cqi; }
+.phase .pl { font-size: var(--fs-label); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.2cqi; }
+.phase .pt { font-size: 1.85cqi; color: var(--ink-2); line-height: 1.45; }
+.phase .pa { font-size: 1.85cqi; color: var(--green); font-weight: 600; margin-top: 1cqi; }
+.phase code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink); font-size: 0.95em; }
+.phase .pa code { color: var(--green); }
+
+/* SSRF story: compact four-slide case study, developed separately and folded
+   back into the main deck. The silhouettes intentionally match the deck while
+   keeping the denser code and verification details projector-legible. */
+.ssrf-story { padding-top: 7cqi; }
+.ssrf-story .slide-title { margin-bottom: 0; }
+.ssrf-lead {
+  margin-top: 1.7cqi;
+  font-size: 2.15cqi;
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+.ssrf-setup-grid {
+  display: grid;
+  grid-template-columns: 0.75fr 1.25fr;
+  gap: 4cqi;
+  align-items: center;
+  margin-top: 2.4cqi;
+}
+.ssrf-fact-list { display: grid; gap: 1.6cqi; }
+.ssrf-fact { padding-top: 1.1cqi; border-top: 1px solid var(--rule-strong); }
+.ssrf-fact .label {
+  margin-bottom: 0.45cqi;
+  font-size: 1.12cqi;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.ssrf-fact .value { font-size: 1.9cqi; line-height: 1.25; color: var(--ink); }
+.ssrf-code { font-size: 1.46cqi; line-height: 1.62; padding: 1.8cqi 2cqi; }
+.ssrf-code .kw,
+.ssrf-code .fn { color: var(--blue); }
+.ssrf-code .str { color: var(--ink-2); }
+.ssrf-code .tok { color: var(--accent); font-weight: 700; }
+.ssrf-route {
+  display: grid;
+  grid-template-columns: 12.7cqi auto 11cqi auto 8.5cqi;
+  gap: 0.7cqi;
+  align-items: center;
+  justify-content: center;
+  width: 40cqi;
+  margin: 2.5cqi auto 0;
+}
+.ssrf-route .node {
+  min-height: 3.5cqi;
+  display: grid;
+  place-items: center;
+  padding: 0.55cqi 0.7cqi;
+  border: 1px solid var(--rule-strong);
+  text-align: center;
+}
+.ssrf-route .tag {
+  margin-bottom: 0.4cqi;
+  font-size: 0.78cqi;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.ssrf-route .name { font-size: 1.18cqi; font-weight: 600; }
+.ssrf-route .hot { border-color: var(--accent); }
+.ssrf-route .hot .tag { color: var(--accent); }
+.ssrf-route .arrow { font-size: 1.45cqi; color: var(--ink-4); }
+
+.ssrf-repo-trace {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6cqi;
+  align-items: stretch;
+  margin-top: 3.2cqi;
+}
+.ssrf-repo { padding-top: 1.2cqi; position: relative; }
+.ssrf-repo::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 68%;
+  border-top: 1px solid var(--rule-strong);
+}
+.ssrf-repo.target::before { border-top: 2px solid var(--accent); }
+.ssrf-repo .repo-name {
+  margin-bottom: 1cqi;
+  font-size: 1.35cqi;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.ssrf-repo pre {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 1.43cqi;
+  line-height: 1.58;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+}
+.ssrf-repo pre .fn { color: var(--blue); }
+.ssrf-repo pre .str { color: var(--ink-2); }
+.ssrf-repo pre .tok { color: var(--accent); font-weight: 700; }
+.ssrf-repo pre .hotline { color: var(--accent); }
+.ssrf-repo .gap {
+  margin-top: 1.4cqi;
+  padding-top: 1.1cqi;
+  border-top: 1px solid var(--rule);
+  font-size: 1.55cqi;
+  line-height: 1.3;
+  color: var(--accent);
+  font-weight: 600;
+}
+.ssrf-repo .gap span {
+  display: block;
+  margin-top: 0.35cqi;
+  color: var(--ink-3);
+  font-size: 0.86em;
+  font-weight: 400;
+}
+.ssrf-repo-conclusion { margin-top: 2.2cqi; font-size: 1.92cqi; line-height: 1.3; color: var(--ink-2); }
+
+.ssrf-poc .buildurl { margin-top: 2.7cqi; font-size: 1.7cqi; line-height: 1.4; padding: 1.25cqi 1.5cqi; }
+.ssrf-poc .phases { gap: 1.7cqi; margin-top: 2.5cqi; }
+.ssrf-poc .phase { padding-top: 1.1cqi; border-top-width: 1px; }
+.ssrf-poc .phase .pl { margin-bottom: 0.65cqi; font-size: 1.2cqi; color: var(--ink-3); }
+.ssrf-poc .phase .ps { font-size: 2.2cqi; line-height: 1.1; font-weight: 600; color: var(--ink); }
+.ssrf-poc .phase .pt { margin-top: 0.9cqi; font-size: 1.65cqi; line-height: 1.25; color: var(--ink-2); }
+.ssrf-poc .phase .pa { margin-top: 0.8cqi; font-size: 1.28cqi; line-height: 1.35; color: var(--ink-2); font-weight: 400; }
+.ssrf-poc .phase .pa.human { color: var(--accent); }
+.ssrf-poc[data-reveal="4"] .buildurl .mine { opacity: 0.35; text-decoration: line-through; text-decoration-color: var(--accent); }
+.ssrf-success {
+  display: flex;
+  align-items: baseline;
+  gap: 1cqi;
+  margin-top: 2.8cqi;
+  padding-top: 1.3cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.ssrf-success strong { font-size: 2.5cqi; color: var(--accent); }
+.ssrf-success span { font-size: 1.8cqi; color: var(--ink-2); }
+
+.ssrf-why-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 0.8fr;
+  gap: 5cqi;
+  margin-top: 3.1cqi;
+}
+.ssrf-why-col { padding-top: 1.2cqi; border-top: 1px solid var(--rule-strong); }
+.ssrf-why-col.agent { border-top: 2px solid var(--accent); }
+.ssrf-why-col h3 { margin-bottom: 1.2cqi; font-size: 2.05cqi; line-height: 1.15; }
+.ssrf-why-col ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.8cqi; }
+.ssrf-why-col li {
+  position: relative;
+  padding-left: 1.4cqi;
+  font-size: 1.55cqi;
+  line-height: 1.3;
+  color: var(--ink-2);
+}
+.ssrf-why-col li::before { content: "›"; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+.ssrf-moment {
+  margin-top: 2.7cqi;
+  padding-top: 1.5cqi;
+  border-top: 1px solid var(--rule-strong);
+  font-size: 2.5cqi;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.ssrf-moment em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+/* SSRF cold open: the result first, before the mechanism is introduced. */
+.ssrf-hook-slide {
+  padding-top: 5.2cqi;
+}
+.ssrf-hook-slide .slide-title {
+  max-width: none;
+  margin-bottom: 0;
+}
+.ssrf-hook-body {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 4cqi;
+  align-items: start;
+  margin-top: 2.4cqi;
+}
+.ssrf-hook-code {
+  font-size: 1.35cqi;
+  line-height: 1.6;
+  padding: 1.5cqi 1.7cqi;
+}
+.ssrf-hook-code .kw,
+.ssrf-hook-code .fn {
+  color: var(--blue);
+}
+.ssrf-hook-code .str {
+  color: var(--ink-2);
+}
+.ssrf-hook-reasons {
+  border-top: 1px solid var(--rule-strong);
+}
+.ssrf-hook-reasons-label {
+  padding: 1.1cqi 0 0.7cqi;
+  color: var(--ink-3);
+  font-size: 1.08cqi;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+.ssrf-hook-reason {
+  display: grid;
+  grid-template-columns: 10cqi 1fr;
+  gap: 1.2cqi;
+  padding: 0.8cqi 0;
+  border-top: 1px solid var(--rule);
+}
+.ssrf-hook-reason strong {
+  color: var(--ink);
+  font-size: 1.4cqi;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.ssrf-hook-reason span {
+  color: var(--ink-2);
+  font-size: 1.3cqi;
+  line-height: 1.3;
+}
+.ssrf-hook-outcome {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  margin-top: 2.2cqi;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule-strong);
+}
+.ssrf-hook-outcome > div {
+  padding: 1.2cqi 2cqi 1.3cqi 0;
+}
+.ssrf-hook-outcome > div + div {
+  padding-left: 2cqi;
+  border-left: 1px solid var(--rule);
+}
+.ssrf-hook-outcome .label {
+  margin-bottom: 0.5cqi;
+  color: var(--ink-3);
+  font-size: 1.05cqi;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.ssrf-hook-outcome strong {
+  display: block;
+  color: var(--ink);
+  font-size: 1.85cqi;
+  font-weight: 600;
+  line-height: 1.18;
+}
+.ssrf-hook-outcome span {
+  display: block;
+  margin-top: 0.45cqi;
+  color: var(--ink-2);
+  font-size: 1.25cqi;
+  line-height: 1.3;
+}
+.ssrf-hook-outcome .result {
+  background: linear-gradient(90deg, var(--accent-soft), transparent 80%);
+}
+.ssrf-hook-outcome .result .label,
+.ssrf-hook-outcome .result strong {
+  color: var(--accent);
+}
+.ssrf-hook-moment {
+  margin-top: 1.8cqi;
+  color: var(--ink);
+  font-size: 2cqi;
+  line-height: 1.2;
+}
+.ssrf-hook-moment strong {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* SSRF callback: the tools and evidence behind the cold-open result. */
+.ssrf-validation-flow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  gap: 1.5cqi;
+  align-items: start;
+  margin-top: 3cqi;
+}
+.ssrf-validation-stage {
+  min-width: 0;
+  padding-top: 1.35cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.ssrf-validation-stage.result {
+  border-top: 2px solid var(--accent);
+}
+.ssrf-validation-stage-label {
+  margin-bottom: 0.75cqi;
+  color: var(--ink-3);
+  font-size: 1.1cqi;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+.ssrf-validation-stage.result .ssrf-validation-stage-label {
+  color: var(--accent);
+}
+.ssrf-validation-stage h3 {
+  margin-bottom: 0.85cqi;
+  color: var(--ink);
+  font-size: 2cqi;
+  line-height: 1.12;
+}
+.ssrf-validation-stage p {
+  color: var(--ink-2);
+  font-size: 1.45cqi;
+  line-height: 1.35;
+}
+.ssrf-validation-arrow {
+  padding-top: 4.5cqi;
+  color: var(--ink-4);
+  font-size: 2cqi;
+}
+.ssrf-validation-evidence {
+  display: grid;
+  grid-template-columns: 1.35fr 0.8fr;
+  gap: 4cqi;
+  margin-top: 3.1cqi;
+  padding-top: 1.5cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.ssrf-validation-evidence p {
+  color: var(--ink-2);
+  font-size: 1.45cqi;
+  line-height: 1.35;
+}
+.ssrf-validation-evidence strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.ssrf-validation-evidence .human strong {
+  color: var(--accent);
+}
+
+/* Generic two-column split */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 6cqi; align-items: start; }
+
+/* Brand hierarchy on the setup slide. */
+.vend-wordmark {
+  display: block;
+  width: 8.8cqi;
+  height: auto;
+  margin-top: 0.15cqi;
+}
+.vend-wordmark-light { display: none; }
+html[data-theme="light"] .vend-wordmark-dark { display: none; }
+html[data-theme="light"] .vend-wordmark-light { display: block; }
+.marketplaces-label {
+  margin-top: 1.55cqi;
+  color: var(--ink-3);
+  font-size: 1.15cqi;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+}
+.brands {
+  display: grid;
+  grid-template-columns: 10.2cqi 10.2cqi;
+  column-gap: 1.8cqi;
+  row-gap: 1.25cqi;
+  align-items: center;
+  margin-top: 0.8cqi;
+}
+.brands img {
+  display: block;
+  width: auto;
+  height: 2.2cqi;
+  max-width: 9.8cqi;
+  object-fit: contain;
+  object-position: left center;
+}
+
+/* Bullet list: subtle accent marker, projector-legible. The workhorse for
+   turning prose into points during the content rework. */
+.bullets { display: grid; gap: 2cqi; list-style: none; }
+.bullets.tight { gap: 1.2cqi; }
+.bullets li {
+  position: relative;
+  padding-left: 2.6cqi;
+  font-size: var(--fs-body);
+  font-weight: 400;
+  line-height: var(--lh-body);
+  color: var(--ink-2);
+}
+.bullets li::before {
+  content: '\203A';            /* › : a quiet, slightly technical marker */
+  position: absolute; left: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+.bullets li em { font-style: normal; color: var(--ink); font-weight: 600; }
+.bullets li .accent { color: var(--accent); font-weight: 600; }
+
+/* Inline line chart (SVG). Strokes/fills use theme vars so it flips with "t".
+   Whole-vs-part encoding: total reports in neutral ink, valid in the accent, the
+   gap between them shaded = the slop. Identity is carried by direct end-labels. */
+.chart svg { width: 100%; height: auto; display: block; }
+.chart-slide .slide-title { margin-bottom: 0.4cqi; }
+.chart .grid  { stroke: var(--rule); stroke-width: 1; }
+.chart .axis  { fill: var(--ink-3); font-family: var(--font); font-variant-numeric: tabular-nums; }
+.chart .band  { fill: var(--accent-soft); }
+.chart .line-total { fill: none; stroke: var(--ink-3); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+.chart .line-valid { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; }
+.chart .dot-total  { fill: var(--ink-3); }
+.chart .dot-valid  { fill: var(--accent); }
+.chart .lab-total  { fill: var(--ink-2); font-family: var(--font); font-weight: 600; }
+.chart .lab-valid  { fill: var(--accent); font-family: var(--font); font-weight: 700; }
+.chart .peak       { fill: var(--ink); font-family: var(--font); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* Wall of names (B18 harness ecosystem) */
+.wall { display: flex; flex-wrap: wrap; gap: 1.4cqi 1.6cqi; max-width: 74ch; }
+.wall span { font-size: 1.9cqi; font-weight: 600; color: var(--ink-2); border: 1px solid var(--rule); padding: 0.6cqi 1.4cqi; }
+.wall span.dim { color: var(--ink-3); }
+
+/* ============================================================================
+   NAVIGATION CHROME (fixed to viewport, survives letterboxing)
+   ========================================================================== */
+
+.progress {
+  position: fixed; top: 0; left: 0;
+  height: 2px;
+  background: var(--accent);
+  transition: width 0.4s var(--ease);
+  z-index: 1000;
+}
+
+.slide-counter {
+  position: fixed; bottom: 1.5rem; right: 1.8rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+  z-index: 100;
+  transition: opacity 0.3s;
+}
+
+.nav {
+  position: fixed; bottom: 1.4rem; left: 50%;
+  transform: translateX(-50%);
+  display: flex; gap: 0.5rem;
+  z-index: 100; opacity: 0;
+  transition: opacity 0.3s;
+}
+body:hover .nav { opacity: 1; }
+.nav button {
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  color: var(--ink-3);
+  padding: 0.5rem 1rem;
+  border-radius: 0;
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+.nav button:hover { border-color: var(--accent); color: var(--ink); }
+
+/* Theme-flip confirmation toast (fires on "t") */
+.theme-toast {
+  position: fixed; bottom: 1.5rem; left: 1.8rem;
+  font-size: 0.8rem; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-3);
+  border: 1px solid var(--rule-strong);
+  padding: 0.45rem 0.8rem;
+  z-index: 100; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s;
+}
+.theme-toast.show { opacity: 1; }
+.theme-toast b { color: var(--accent); font-weight: 700; }
+
+::view-transition-old(root) { animation: var(--speed) var(--ease) both vtOut; }
+::view-transition-new(root) { animation: var(--speed) var(--ease) both vtIn; }
+@keyframes vtOut { to   { opacity: 0; } }
+@keyframes vtIn  { from { opacity: 0; } }
+
+/* ---- confidently-wrong (Erlend) example: faked-tool-call tag + injected CLAUDE.md block ---- */
+.snippet .tag { color: var(--blue); font-weight: 600; }
+.mdblock { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  background: rgba(245,244,247,0.04); border: 1px solid var(--rule);
+  border-left: 2px solid var(--accent); border-radius: 6px; padding: 1.8cqi 2cqi; }
+.mdblock .md-h { color: var(--accent); font-weight: 700; font-size: 1.3cqi; letter-spacing: 0.01em; }
+.mdblock .md-note { color: var(--ink-3); font-style: italic; font-size: 1.15cqi; margin: 0.5cqi 0 1.4cqi; }
+.mdblock .banner { margin: 0; white-space: pre; font-size: 1.1cqi; line-height: 1.45; color: var(--ink-2);
+  background: rgba(245,244,247,0.03); border: 1px solid var(--rule); border-radius: 4px; padding: 1.3cqi 1.5cqi; }
+.mdblock .banner b { color: var(--ink); font-weight: 700; }
+.mdblock .banner .cat { color: var(--blue); font-weight: 600; }
+
+/* ---- RLM / incomplete-coverage sequence inserted after slide 36 ---- */
+.rlm-slide .lead { font-size: 2.2cqi; max-width: 62ch; }
+.rlm-slide .gap-top { margin-top: 1.8cqi; }
+.rlm-slide code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--ink); font-size: 0.92em; }
+
+.plain-note { margin-top: 2.2cqi; font-size: 1.7cqi; color: var(--ink-3); line-height: 1.45; }
+.plain-note b, .plain-note strong { color: var(--ink-2); font-weight: 600; }
+.plain-note em { color: var(--accent); font-style: normal; font-weight: 600; }
+.scope-note { margin-top: 1.2cqi; font-size: 1.3cqi; line-height: 1.4; color: var(--ink-3); }
+
+.log-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 5cqi; }
+.log-run { border-top: 1px solid var(--rule-strong); padding-top: 1.4cqi; }
+.log-run.rlm { border-top: 2px solid var(--accent); }
+.log-method { font-size: 1.3cqi; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: var(--ink-3); }
+.log-result { margin-top: 1.2cqi; font-size: 3.2cqi; font-weight: 600; line-height: 1.1; color: var(--ink); }
+.log-run.rlm .log-result { color: var(--accent); }
+.log-detail { margin-top: 1.2cqi; font-size: 1.65cqi; line-height: 1.4; color: var(--ink-3); }
+.log-detail strong { color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.log-findings { display: grid; gap: 0.6cqi; margin-top: 1.2cqi; list-style: none; }
+.log-findings li { font-size: 1.65cqi; line-height: 1.35; color: var(--ink-2); }
+.log-findings li::before { content: '\203A'; margin-right: 0.8cqi; color: var(--accent); font-weight: 700; }
+.log-takeaway { margin-top: 2.6cqi; max-width: 58ch; font-size: 2cqi; line-height: 1.4; color: var(--ink-2); }
+.log-takeaway em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+.method-groups { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3.2cqi; margin-top: 1.8cqi; }
+.method-group { padding-bottom: 0.8cqi; border-bottom: 1px solid var(--rule-strong); font-size: 1.2cqi; font-weight: 600; text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink-3); }
+.method-group.rlm { grid-column: 2 / 4; border-bottom-color: var(--accent); color: var(--accent); }
+.methods-grid { margin-top: 0.8cqi; }
+.methods-grid .block {
+  display: grid;
+  grid-template-rows: auto 16.4cqi auto;
+  align-content: start;
+  border-top: 0;
+  padding-top: 0.8cqi;
+}
+.methods-grid .block p { align-self: start; }
+.methods-grid .block .tools {
+  align-self: start;
+  line-height: 1.35;
+}
+
+.rlm-cmp-label { font-size: var(--fs-label); text-transform: uppercase; letter-spacing: 0.2em; color: var(--ink-3); margin-bottom: 1cqi; }
+.results-table { border-top: 1px solid var(--rule-strong); }
+.results-head, .results-row { display: grid; grid-template-columns: minmax(0, 1fr) 10cqi 11cqi; column-gap: 3cqi; }
+.results-head { padding: 0.9cqi 0; font-size: 1.2cqi; font-weight: 600; text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink-3); }
+.results-head span:not(:first-child) { text-align: right; }
+.results-row { align-items: baseline; padding: 1.35cqi 0; border-top: 1px solid var(--rule); }
+.results-row .method { font-size: 2.2cqi; color: var(--ink-2); }
+.results-row .count { font-size: 3.2cqi; font-weight: 700; line-height: 1; text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
+.rlm-experiment-setup {
+  margin-top: 1.3cqi;
+  font-size: 1.6cqi;
+  line-height: 1.3;
+  color: var(--ink-3);
+}
+.protected-results {
+  max-width: 86cqi;
+  margin-top: 3.2cqi;
+}
+.protected-results .results-head,
+.protected-results .results-row {
+  grid-template-columns: minmax(0, 1fr) 20cqi;
+}
+.protected-results .results-row { padding: 1.55cqi 0; }
+.protected-results .results-row .count { font-size: 3.6cqi; }
+.protected-results .results-row.miss .count { color: var(--accent); }
+.rlm-experiment-why {
+  margin-top: 3cqi;
+  padding-top: 1.5cqi;
+  border-top: 1px solid var(--rule-strong);
+  font-size: 2cqi;
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+.rlm-experiment-why code { color: var(--accent); }
+
+.xp-prompt { background: #0b0b0e; border: 1px solid var(--rule); border-radius: 8px; padding: 1.7cqi 2.2cqi; display: grid; gap: 0.9cqi; }
+.xp-prompt .lbl, .xp-scale .cap, .xp-control .k { font-size: 1.2cqi; font-weight: 600; text-transform: uppercase; letter-spacing: 0.24em; color: var(--ink-3); }
+.xp-prompt .ask { font-size: 2.2cqi; line-height: 1.3; color: var(--ink); font-weight: 500; }
+.xp-prompt .ask .hl { color: var(--accent); }
+.xp-scale { display: flex; flex-wrap: wrap; align-items: baseline; gap: 1.3cqi; margin-top: 2.4cqi; font-size: 2.4cqi; font-weight: 600; letter-spacing: -0.01em; }
+.xp-scale .cap { align-self: center; }
+.xp-scale .num { color: var(--accent); font-variant-numeric: tabular-nums; }
+.xp-scale .lang { color: var(--ink); font-weight: 500; }
+.xp-scale .sep { color: var(--rule-strong); font-weight: 400; }
+.xp-control { display: flex; align-items: baseline; gap: 1.2cqi; margin-top: 1.9cqi; font-size: 1.6cqi; color: var(--ink-3); }
+.experiment-slide { padding-top: 5.2cqi; }
+.experiment-slide .slide-title { margin-bottom: 2.2cqi; }
+.experiment-task {
+  margin-top: 1.8cqi;
+  padding-left: 2.1cqi;
+  border-left: 0.35cqi solid var(--accent);
+}
+.experiment-task .task-label,
+.experiment-meta .meta-label {
+  font-size: 1.25cqi;
+  font-weight: 600;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+.experiment-task .task-copy {
+  margin-top: 1.2cqi;
+  font-size: 3.15cqi;
+  line-height: 1.25;
+  color: var(--ink);
+}
+.experiment-task .task-copy em,
+.experiment-meta .meta-value em {
+  color: var(--accent);
+  font-style: normal;
+}
+.experiment-meta {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1.45fr;
+  gap: 3cqi;
+  margin-top: 5.3cqi;
+}
+.experiment-meta.compact { grid-template-columns: 1fr 1.55fr; }
+.experiment-meta .meta-item {
+  padding-top: 1.3cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.experiment-meta .meta-value {
+  margin-top: 1.1cqi;
+  font-size: 1.9cqi;
+  line-height: 1.3;
+  color: var(--ink);
+}
+.experiment-meta .meta-item.control .meta-value {
+  font-size: 1.65cqi;
+  color: var(--ink-2);
+}
+
+/* Keep every content-slide title on one visual baseline. Eyebrows sit above
+   the title without taking up space in the content flow. */
+.content-slide,
+.production-agent-slide,
+.recall-priority-slide {
+  padding-top: 7cqi !important;
+}
+.content-slide > .stagger > .eyebrow {
+  position: absolute;
+  top: 4.6cqi;
+  left: var(--safe-x);
+  min-height: 0;
+  margin: 0;
+}
+.content-slide .slide-title,
+.production-agent-slide .slide-title,
+.recall-priority-slide .slide-title {
+  font-size: var(--fs-slide);
+}
+</style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+
+  <div class="slides" id="slides">
+
+    <!-- ============================================================ B1  title / meme -->
+    <section class="slide title-slide active">
+      <div class="stagger">
+        <div class="eyebrow">Sikkerhetsfestivalen 2026 <span class="mark">/</span> AppSec</div>
+        <h1>Claude, make me a<br>security engineer.</h1>
+        <div class="title-aside">Make no mistakes.</div>
+        <div class="title-meta">
+          <span>Emil Vaagland / Head of Product Security / Vend</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ B27  setup: Vend / scope / stack
+         D3 (public cut): swap named brands for "a large Nordic marketplace group". -->
+    <section class="slide content-slide">
+      <div class="stagger">
+        <div class="eyebrow redundant">Setup</div>
+        <h2 class="slide-title">Where I work, and what I work with</h2>
+        <div class="blocks cols-3">
+          <div class="block lead-rule">
+            <img class="vend-wordmark vend-wordmark-dark" src="assets/logos/vend-white.svg" alt="Vend">
+            <img class="vend-wordmark vend-wordmark-light" src="assets/logos/vend.svg" alt="Vend">
+            <div class="marketplaces-label">MARKETPLACES</div>
+            <div class="brands">
+              <img src="assets/logos/finn.svg" alt="FINN">
+              <img src="assets/logos/blocket.svg" alt="Blocket">
+              <img src="assets/logos/tori.svg" alt="Tori">
+              <img src="assets/logos/dba.svg" alt="DBA">
+            </div>
+          </div>
+          <div class="block">
+            <h3>Scale</h3>
+            <ul class="bullets tight">
+              <li>Product security and cloud governance</li>
+              <li>Thousands of repos</li>
+              <li>500 to 1,000 developers</li>
+            </ul>
+          </div>
+
+          <div class="block">
+            <h3>What we already run</h3>
+            <ul class="bullets tight">
+              <li>Code scanning</li>
+              <li>7 years of bug bounty</li>
+              <li>Cloud security</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ Cold open: the SSRF result before explaining the mechanism -->
+    <section class="slide content-slide ssrf-hook-slide">
+      <div class="stagger">
+        <div class="eyebrow placeholder" aria-hidden="true"></div>
+        <h2 class="slide-title">From &ldquo;no impact&rdquo; to exploitable</h2>
+
+        <div class="ssrf-hook-body">
+          <pre class="snippet ssrf-hook-code"><span class="cmt">// attacker controls searchId only</span>
+<span class="kw">const</span> url = <span class="str">`notifications/saved-search/<span class="tok">${searchId}</span>
+  ?loginId=${callerLoginId}`</span>;
+
+<span class="kw">return</span> <span class="fn">fetch</span>(url, {
+  headers: { authorization: userToken }
+});</pre>
+
+          <div class="ssrf-hook-reasons">
+            <div class="ssrf-hook-reasons-label">Why it looked harmless</div>
+            <div class="ssrf-hook-reason">
+              <strong>Path only</strong>
+              <span>The input only changed the path on a fixed internal service.</span>
+            </div>
+            <div class="ssrf-hook-reason">
+              <strong>User authentication</strong>
+              <span>The request forwarded the caller&rsquo;s authenticated token.</span>
+            </div>
+            <div class="ssrf-hook-reason">
+              <strong>Forced identity</strong>
+              <span><code>loginId</code> was always set to the caller.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ssrf-hook-outcome">
+          <div>
+            <div class="label">My test + early Claude runs</div>
+            <strong>No working exploit</strong>
+            <span>We assessed the SSRF as having no practical impact.</span>
+          </div>
+          <div class="result">
+            <div class="label">A later Claude run</div>
+            <strong>200 OK</strong>
+            <span>Another user&rsquo;s data.</span>
+          </div>
+        </div>
+
+        <p class="ssrf-hook-moment">That was my <strong>&ldquo;LLMs are now fucking good&rdquo;</strong> moment.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ B2  the shift -->
+    <section class="slide statement-slide">
+      <div class="stagger">
+        <div class="eyebrow placeholder" aria-hidden="true">&nbsp;</div>
+        <h2 class="statement" style="max-width:none; font-size:4.7cqi">We used to automate with <span class="was">code</span>.<br>Now we automate with <span class="accent">reasoning</span>.</h2>
+        <p class="statement-sub">Some years ago we wrote the code, checked the findings, and dug up the context by hand. The reasoning is the model's job now. Skills hand it the context we used to <em>keep in our heads</em>.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ B3  SAST flat (the flat line)
+         Guardrail: never "Google's SAST didn't work"; it's FP economics + single-repo ceiling.
+         Plants "found != exploitable" -> paid off B14/B15. ("The turn" callout dropped.) -->
+    <section class="slide content-slide">
+      <div class="stagger">
+        <div class="eyebrow redundant">The flat line</div>
+        <h2 class="slide-title">SAST has been flat since 2018</h2>
+        <div class="split-stat" style="align-items:start">
+          <div>
+          <div style="font-size:var(--fs-label);text-transform:uppercase;letter-spacing:0.22em;color:var(--ink-3);margin-bottom:2.4cqi">My experience</div>
+          <ul class="bullets">
+            <li>Hard to scale, hard to onboard</li>
+            <li>A sea of false positives, reports nobody reads</li>
+            <li>Can't follow a flaw into the next service</li>
+            <li>Never sees where the code <span class="accent">actually runs</span></li>
+          </ul>
+          </div>
+          <div class="points">
+            <div class="callout">
+              <span class="lbl">2018</span>
+              <p class="txt">"Google developers have a strong bias to <em>ignore static analysis</em>." Only 16% of reviewed warnings were ever fixed.</p>
+            </div>
+            <div class="callout">
+              <span class="lbl">2026</span>
+              <p class="txt">Commercial scanners still score a <em>low single-digit %</em> recall on 100,000 real CVEs.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sources">
+        <a class="src" href="https://cacm.acm.org/magazines/2018/4/226371-lessons-from-building-static-analysis-tools-at-google/" target="_blank" rel="noopener">Sadowski et al., Google, CACM 2018</a>
+        <a class="src" href="https://www.youtube.com/watch?v=IjL2qN1KDe8" target="_blank" rel="noopener">Aisle, 2026</a>
+      </div>
+    </section>
+
+    <!-- ============================================================ B6  the capability jump (CyberGym trajectory)
+         Point of the slide = the immense increase in capability. All 4 bars are CyberGym level-1, SINGLE RUN (pass@1),
+         model-focused rows straight from cybergym.io/assets/data/cybergym.json. GPT-4.1 ~9 (CyberGym Team run),
+         GPT-5 39.4 (CyberGym Team), GPT-5.5 81.8 (OpenAI), GPT-5.5-Cyber 85.6 (OpenAI). Mid-2024 pentest = YOUR anecdote. -->
+    <section class="slide content-slide">
+      <div class="stagger">
+        <div class="eyebrow redundant">The capability jump</div>
+        <h2 class="slide-title">9% to 86% in fourteen months</h2>
+        <p class="lead">CyberGym: find the real bug, then build a working exploit. Same benchmark, one run each.</p>
+        <div class="chart gap-top" style="max-width:82cqi">
+          <svg viewBox="0 0 1000 270" role="img" aria-label="CyberGym single-run score by model, Apr 2025 to Jun 2026: 9%, 39%, 82%, 86%">
+            <line x1="40" y1="210" x2="960" y2="210" style="stroke:var(--rule-strong);stroke-width:1"/>
+            <rect x="75"  y="195" width="100" height="15"  rx="4" style="fill:var(--accent);fill-opacity:.4"/>
+            <rect x="325" y="144" width="100" height="66"  rx="4" style="fill:var(--accent);fill-opacity:.6"/>
+            <rect x="575" y="71"  width="100" height="139" rx="4" style="fill:var(--accent);fill-opacity:.8"/>
+            <rect x="825" y="64"  width="100" height="146" rx="4" style="fill:var(--accent)"/>
+            <text x="125" y="184" text-anchor="middle" style="fill:var(--accent);font-family:var(--font);font-weight:700;font-size:36px;font-variant-numeric:tabular-nums">9%</text>
+            <text x="375" y="133" text-anchor="middle" style="fill:var(--accent);font-family:var(--font);font-weight:700;font-size:36px;font-variant-numeric:tabular-nums">39%</text>
+            <text x="625" y="60"  text-anchor="middle" style="fill:var(--accent);font-family:var(--font);font-weight:700;font-size:36px;font-variant-numeric:tabular-nums">82%</text>
+            <text x="875" y="53"  text-anchor="middle" style="fill:var(--accent);font-family:var(--font);font-weight:700;font-size:36px;font-variant-numeric:tabular-nums">86%</text>
+            <text x="125" y="232" text-anchor="middle" style="fill:var(--ink-2);font-family:var(--font);font-weight:600;font-size:26px">GPT-4.1</text>
+            <text x="375" y="232" text-anchor="middle" style="fill:var(--ink-2);font-family:var(--font);font-weight:600;font-size:26px">GPT-5</text>
+            <text x="625" y="232" text-anchor="middle" style="fill:var(--ink-2);font-family:var(--font);font-weight:600;font-size:26px">GPT-5.5</text>
+            <text x="875" y="232" text-anchor="middle" style="fill:var(--ink-2);font-family:var(--font);font-weight:600;font-size:26px">GPT-5.5-Cyber</text>
+            <text x="125" y="260" text-anchor="middle" style="fill:var(--ink-3);font-family:var(--font);font-size:22px;font-variant-numeric:tabular-nums">2025-04</text>
+            <text x="375" y="260" text-anchor="middle" style="fill:var(--ink-3);font-family:var(--font);font-size:22px;font-variant-numeric:tabular-nums">2025-08</text>
+            <text x="625" y="260" text-anchor="middle" style="fill:var(--ink-3);font-family:var(--font);font-size:22px;font-variant-numeric:tabular-nums">2026-04</text>
+            <text x="875" y="260" text-anchor="middle" style="fill:var(--ink-3);font-family:var(--font);font-size:22px;font-variant-numeric:tabular-nums">2026-06</text>
+          </svg>
+        </div>
+      </div>
+      <div class="sources">
+        <a class="src" href="https://www.cybergym.io/cybergym/" target="_blank" rel="noopener">CyberGym leaderboard, level 1, single run</a>
+      </div>
+    </section>
+
+    <!-- ============================================================ B6c  the harness jump (agents stack on top of the model)
+         Emil's idea: B6 shows raw-model capability climbing (9->86); THIS slide adds the agent scores to show
+         harness engineering pays out too. Same CyberGym level-1 leaderboard, single run.
+         Models (burgundy) GPT-4.1 9 / GPT-5 39 / GPT-5.5 82 / GPT-5.5-Cyber 86 (top raw MODEL).
+         Agents (blue) Wiz Atlas 90.9 / MDASH 92.0 sit ABOVE the best model. Scale ~1.7px/%, baseline y=210.
+         HONESTY: values rounded like B6 (90.9->91, 92.0->92, 85.6->86). MDASH tops it on OLDER models
+         (GPT-5.4 + Claude Opus 4.6 + Sonnet 4.6, 2026-06-17); Wiz Atlas = GPT-5.5 + Opus 4.6 (2026-07-27).
+         NVIDIA's open harness (86.8) lives on B5b; left off here to keep to Emil's wiz/mdash ask. -->
+    <section class="slide content-slide">
+      <div class="stagger">
+        <div class="eyebrow redundant">The harness jump</div>
+        <h2 class="slide-title">86% to 92%, same models</h2>
+        <p class="lead">Same benchmark. The top agents beat the best raw model, and <em>MDASH does it on older models</em>. That extra jump is harness engineering.</p>
+        <div class="chart gap-top" style="max-width:88cqi">
+          <svg viewBox="0 0 1000 262" role="img" aria-label="CyberGym single-run score: models GPT-4.1 9%, GPT-5 39%, GPT-5.5 82%, GPT-5.5-Cyber 86%; agents Wiz Atlas 91%, MDASH 92%">
+            <line x1="40" y1="210" x2="960" y2="210" style="stroke:var(--rule-strong);stroke-width:1"/>
+            <rect x="40"  y="8" width="20" height="20" rx="4" style="fill:var(--accent)"/>
+            <text x="70"  y="24" style="fill:var(--ink-2);font-family:var(--font);font-size:24px">raw model</text>
+            <rect x="215" y="8" width="20" height="20" rx="4" style="fill:var(--blue)"/>
+            <text x="245" y="24" style="fill:var(--ink-2);font-family:var(--font);font-size:24px">agent = model + harness</text>
+            <rect x="72"  y="195" width="90" height="15"  rx="4" style="fill:var(--accent);fill-opacity:.4"/>
+            <rect x="225" y="144" width="90" height="66"  rx="4" style="fill:var(--accent);fill-opacity:.55"/>
+            <rect x="378" y="71"  width="90" height="139" rx="4" style="fill:var(--accent);fill-opacity:.75"/>
+            <rect x="531" y="64"  width="90" height="146" rx="4" style="fill:var(--accent)"/>
+            <rect x="684" y="55"  width="90" height="155" rx="4" style="fill:var(--blue)"/>
+            <rect x="837" y="54"  width="90" height="156" rx="4" style="fill:var(--blue)"/>
+            <text x="117" y="184" text-anchor="middle" style="fill:var(--accent);font-family:var(--font);font-weight:700;font-size:34px;font-variant-numeric:tabular-nums">9%</text>
+            <text x="270" y="133" text-anchor="middle" style="fill:var(--accent);font-family:var(--font);font-weight:700;font-size:34px;font-variant-numeric:tabular-nums">39%</text>
+            <text x="423" y="60"  text-anchor="middle" style="fill:var(--accent);font-family:var(--font);font-weight:700;font-size:34px;font-variant-numeric:tabular-nums">82%</text>
+            <text x="576" y="53"  text-anchor="middle" style="fill:var(--accent);font-family:var(--font);font-weight:700;font-size:34px;font-variant-numeric:tabular-nums">86%</text>
+            <text x="729" y="44"  text-anchor="middle" style="fill:var(--blue);font-family:var(--font);font-weight:700;font-size:34px;font-variant-numeric:tabular-nums">91%</text>
+            <text x="882" y="43"  text-anchor="middle" style="fill:var(--blue);font-family:var(--font);font-weight:700;font-size:34px;font-variant-numeric:tabular-nums">92%</text>
+            <text x="117" y="238" text-anchor="middle" style="fill:var(--ink-2);font-family:var(--font);font-weight:600;font-size:24px">GPT-4.1</text>
+            <text x="270" y="238" text-anchor="middle" style="fill:var(--ink-2);font-family:var(--font);font-weight:600;font-size:24px">GPT-5</text>
+            <text x="423" y="238" text-anchor="middle" style="fill:var(--ink-2);font-family:var(--font);font-weight:600;font-size:24px">GPT-5.5</text>
+            <text x="576" y="238" text-anchor="middle" style="fill:var(--ink-2);font-family:var(--font);font-weight:600;font-size:24px">GPT-5.5-Cyber</text>
+            <text x="729" y="238" text-anchor="middle" style="fill:var(--ink);font-family:var(--font);font-weight:700;font-size:24px">Wiz Atlas</text>
+            <text x="882" y="238" text-anchor="middle" style="fill:var(--ink);font-family:var(--font);font-weight:700;font-size:24px">MDASH</text>
+          </svg>
+        </div>
+      </div>
+      <div class="sources">
+        <a class="src" href="https://www.cybergym.io/cybergym/" target="_blank" rel="noopener">CyberGym leaderboard, level 1, single run</a>
+      </div>
+    </section>
+
+    <!-- ============================================================ B12  evidence that harness engineering changes outcomes -->
+    <!--
+    <section class="slide content-slide">
+      <div class="stagger">
+        <div class="eyebrow redundant">Evidence</div>
+        <h2 class="slide-title">It's the engineering, not the model</h2>
+        <div class="metrics">
+          <div class="metric"><div class="num">44.4%</div><div class="lbl">Scaffolding ablated</div></div>
+          <div class="metric key"><div class="num">64.2%</div><div class="lbl">Policy back in</div></div>
+          <div class="metric"><div class="num">+19.8</div><div class="lbl">Points, same model</div></div>
+        </div>
+        <div class="blocks cols-3 gap-top">
+          <div class="block"><h3>Figma</h3><p>Same model, scaffolding is what moved recall. The engine, not the weights.</p></div>
+          <div class="block"><h3>Capital One VulnHunter</h3><p>Prompt-only Claude skills, no engine. 868 stars in 4 weeks. A bank landed on skills-first too.</p></div>
+          <div class="block lead-rule"><h3>Us</h3><p>Same playbook: an eval from real bounty bugs. Reasoning review caught <span class="accent">73%</span>; regex plus Semgrep, <span class="accent">24%</span>.</p></div>
+        </div>
+      </div>
+      <div class="sources">
+        <a class="src" href="https://www.figma.com/blog/how-figma-stays-ahead-of-vulnerabilities-with-agents/" target="_blank" rel="noopener">Figma, 2026</a>
+        <span class="src">Capital One VulnHunter</span>
+        <span class="src">our eval &middot; security-labs</span>
+      </div>
+    </section>
+    -->
+
+    <!-- ============================================================ B6d  the harness question (moved next to the charts; INTERPRETATION, not data)
+         Emil: the old two-col just restated the charts (models rose / agents beat models) -> stripped it, CyberGym numbers live on the charts now.
+         The spoken setup (CFP timed with Mythos; Heelan tools+tokens vs elaborate harness; both-are-true) is TALKED, not written.
+         Slide holds only the conclusion: harness pays out now, cost/efficiency lever, next model absorbs it, bet on what survives (domain knowledge + eval).
+         COST ANGLE (Emil): frontier labs promote "unlimited budget, go find bugs" (they sell tokens); enterprises optimize cost-per-finding, which the harness controls.
+         Receipts if ever needed: Fenrir $0.61/finding & $8.80/confirmed-TP; Figma ~$0.50/PR; NOOA pass-by-reference = parity at HALF the tokens. Kept number-free to stay sparse.
+         Sources: Heelan (the debate + "token throughput is the limit"), XBOW (depreciation). Pays off at "engineering not the model" + eval arc. -->
+    <section class="slide content-slide">
+      <div class="stagger">
+        <div class="eyebrow redundant">The harness question</div>
+        <h2 class="slide-title">Build an agent to find and verify bugs?</h2>
+        <ul class="bullets gap-top">
+          <li>A custom harness can improve results today</li>
+          <li>The next <em>&ldquo;Mythos moment&rdquo;</em> could make it obsolete</li>
+          <li>An open-source harness could squeeze more out of older models</li>
+          <li>Building one means owning the cost, maintenance, and evaluation</li>
+        </ul>
+      </div>
+      <div class="sources">
+        <a class="src" href="https://sean.heelan.io/2026/01/18/on-the-coming-industrialisation-of-exploit-generation-with-llms/" target="_blank" rel="noopener">Sean Heelan, 2026</a>
+        <a class="src" href="https://arxiv.org/abs/2607.13085" target="_blank" rel="noopener">XBOW baselines, arXiv 2607.13085</a>
+      </div>
+    </section>
+
+    <!-- ============================================================ B6b  the shift: black-box -> white-box (spring 2026)
+         Leads into the moat (B17). Anonymize vendor names; "why nothing" stays YOUR hypothesis. -->
+    <!--
+    <section class="slide content-slide">
+      <div class="stagger">
+        <div class="eyebrow">Spring 2026</div>
+        <h2 class="slide-title">Context is King</h2>
+        <p class="lead">LLMs read code well, so every vendor we retested now wants the source.</p>
+        <div class="chain gap-top">
+          <div class="step"><span class="n">&rarr;</span><span>analyze the code to <em>surface leads</em></span></div>
+          <div class="step"><span class="n">&rarr;</span><span>argue each lead, keep the <em>real</em> ones</span></div>
+          <div class="step"><span class="n">&rarr;</span><span>build a PoC and <span class="hit">actually test it</span></span></div>
+        </div>
+        <p class="lead gap-top">To prove a lead live, they need more than the repo: <em>deployment, URLs, the real target</em>.</p>
+      </div>
+    </section>
+    -->
+
+    <!-- ============================================================ B7  everybody can find bugs now (plants moat + slop)
+         moat -> paid off B17; slop -> paid off B19. -->
+    <!--
+    <section class="slide content-slide">
+      <div class="stagger">
+        <div class="eyebrow redundant">The problem</div>
+        <h2 class="slide-title">Everybody can find bugs now.<br>Or thinks they can.</h2>
+        <ul class="bullets gap-top">
+          <li>Bounty programs drown in <em>AI-generated slop</em>, from anyone with a chatbot</li>
+          <li>And the models are <em>confidently wrong</em>: severity cranked to max, no real bug</li>
+        </ul>
+        <div class="callout gap-top">
+          <span class="lbl">Mozilla</span>
+          <p class="txt">"It's cheap and easy to prompt an LLM to find a 'problem' in code, but <em>slow and expensive to respond to it</em>."</p>
+        </div>
+      </div>
+      <div class="sources">
+        <a class="src" href="https://www.hackerone.com/press-release/hackerone-report-finds-210-spike-ai-vulnerability-reports-amid-rise-ai-autonomy" target="_blank" rel="noopener">HackerOne: 210% spike in AI reports, 2025</a>
+        <a class="src" href="https://hacks.mozilla.org/2026/05/behind-the-scenes-hardening-firefox/" target="_blank" rel="noopener">Mozilla: hardening Firefox, 2026</a>
+        <a class="src" href="https://blog.doyensec.com/2026/05/27/aikido-xbow.html" target="_blank" rel="noopener">Doyensec: severity inflation, 2026</a>
+        <a class="src" href="https://arxiv.org/abs/2603.18740" target="_blank" rel="noopener">Confirmation bias in code review, 2026</a>
+      </div>
+    </section>
+    -->
+
+    <!-- ============================================================ payoff: fight AI with AI (the slop); moved next to the slop numbers -->
+    <!--
+    <section class="slide content-slide">
+      <div class="stagger">
+        <div class="eyebrow redundant">The slop</div>
+        <h2 class="slide-title">Fight AI with AI</h2>
+        <p class="lead">The one thing I did push to scale: a bounty <em>trash scorer</em>, an agent that scores every incoming report before a human touches it.</p>
+        <p class="lead gap-top">Same lesson as the whole talk: don't trust the confident narrative. <span class="accent">Score it, verify it.</span> When triage costs cents, you can triage everything.</p>
+      </div>
+      <div class="sources"><span class="src">numbers TBD &middot; reports, hours saved</span></div>
+    </section>
+    -->
+
+    <!-- ============================================================ B8  the origin story (hackday)
+         Numbers unreconciled: 168 sessions / 17k turns / $708 (operatives) vs old-deck set. -->
+    <section class="slide content-slide">
+      <div class="stagger">
+        <div class="eyebrow redundant">What we built</div>
+        <h2 class="slide-title">Claude knows security. Skills add our context.</h2>
+        <div class="blocks cols-2 gap-top">
+          <div class="block">
+            <h3>What Claude already knows</h3>
+            <ul class="bullets tight">
+              <li>Knows every vulnerability class by heart</li>
+              <li>Reads any codebase, in any language</li>
+              <li>Writes a PoC or a patch in minutes</li>
+            </ul>
+          </div>
+          <div class="block lead-rule">
+            <h3>What skills provide</h3>
+            <ul class="bullets tight">
+              <li>Our architecture, and what runs where</li>
+              <li>Our service owners and their Slack channels</li>
+              <li>Our logs, cloud assets, and exposure</li>
+              <li>Our triage and investigation process</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ B11a  the data points (breadth: everything skills wired in)
+         Category cards with data nouns. No agent in the middle. Scrub internal system names before public cut. -->
+    <section class="slide content-slide connected-graph-slide">
+      <div class="stagger">
+        <div class="eyebrow redundant">The context</div>
+        <h2 class="slide-title">Trace findings across code, runtime, and owners</h2>
+        <div class="connected-graph">
+          <svg viewBox="0 0 1000 390" role="img" aria-label="A security investigation can start from a report, repository, or package. Lookups and shared resource tags connect it to source code, runtime context, evidence, and the owning team, producing the full picture.">
+            <!-- Connectors first, behind the nodes. -->
+            <path d="M255 184 L267 195 L255 206" style="fill:none;stroke:var(--accent);stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round"/>
+            <line x1="545" y1="195" x2="570" y2="195" style="stroke:var(--ink-4);stroke-width:1.5"/>
+            <line x1="570" y1="45" x2="570" y2="330" style="stroke:var(--ink-4);stroke-width:1.5"/>
+            <line x1="570" y1="45" x2="600" y2="45" style="stroke:var(--ink-4);stroke-width:1.5"/>
+            <line x1="570" y1="140" x2="600" y2="140" style="stroke:var(--ink-4);stroke-width:1.5"/>
+            <line x1="570" y1="235" x2="600" y2="235" style="stroke:var(--ink-4);stroke-width:1.5"/>
+            <line x1="570" y1="330" x2="600" y2="330" style="stroke:var(--ink-4);stroke-width:1.5"/>
+            <path d="M875 184 L887 195 L875 206" style="fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"/>
+            <g transform="translate(-30,35)">
+              <line x1="10" y1="0" x2="10" y2="310" style="stroke:var(--accent);stroke-width:3"/>
+              <text x="35" y="20" style="fill:var(--accent);font-family:var(--font);font-size:21px;font-weight:700;letter-spacing:1.4px">STARTING POINTS</text>
+              <text x="35" y="83" style="fill:var(--ink);font-family:var(--font);font-size:21px">Bug bounty report</text>
+              <text x="35" y="148" style="fill:var(--ink);font-family:var(--font);font-size:21px">Code scanning finding</text>
+              <text x="35" y="213" style="fill:var(--ink);font-family:var(--font);font-size:21px">CVE advisory</text>
+              <text x="35" y="278" style="fill:var(--ink);font-family:var(--font);font-size:21px">URL or cloud resource</text>
+            </g>
+
+            <g transform="translate(315,100)">
+              <rect width="230" height="190" rx="10" style="fill:var(--bg-1);stroke:var(--accent);stroke-width:2"/>
+              <text x="115" y="35" text-anchor="middle" style="fill:var(--accent);font-family:var(--font);font-size:18px;font-weight:700;letter-spacing:1.3px">LINKED RESOURCES</text>
+              <text x="115" y="60" text-anchor="middle" style="fill:var(--ink-3);font-family:var(--font);font-size:16px">Lookups + shared tags</text>
+              <line x1="24" y1="76" x2="206" y2="76" style="stroke:var(--rule-strong)"/>
+              <text x="115" y="108" text-anchor="middle" style="fill:var(--ink);font-family:ui-monospace,monospace;font-size:16px">ingress → deployment</text>
+              <text x="115" y="141" text-anchor="middle" style="fill:var(--ink);font-family:ui-monospace,monospace;font-size:16px">repo ↔ deployment</text>
+              <text x="115" y="174" text-anchor="middle" style="fill:var(--ink);font-family:ui-monospace,monospace;font-size:16px">resource → owner</text>
+            </g>
+
+            <g transform="translate(600,15)">
+              <line x1="0" y1="0" x2="0" y2="60" style="stroke:var(--ink-3);stroke-width:3"/>
+              <text x="18" y="23" style="fill:var(--ink-2);font-family:var(--font);font-size:18px;font-weight:700;letter-spacing:1.1px">SOURCE</text>
+              <text x="18" y="49" style="fill:var(--ink);font-family:var(--font);font-size:17px">Repository · code · history</text>
+            </g>
+            <g transform="translate(600,110)">
+              <line x1="0" y1="0" x2="0" y2="60" style="stroke:var(--ink-3);stroke-width:3"/>
+              <text x="18" y="23" style="fill:var(--ink-2);font-family:var(--font);font-size:18px;font-weight:700;letter-spacing:1.1px">RUNTIME</text>
+              <text x="18" y="49" style="fill:var(--ink);font-family:var(--font);font-size:17px">Deployment · network · exposure</text>
+            </g>
+            <g transform="translate(600,205)">
+              <line x1="0" y1="0" x2="0" y2="60" style="stroke:var(--ink-3);stroke-width:3"/>
+              <text x="18" y="23" style="fill:var(--ink-2);font-family:var(--font);font-size:18px;font-weight:700;letter-spacing:1.1px">EVIDENCE</text>
+              <text x="18" y="49" style="fill:var(--ink);font-family:var(--font);font-size:17px">Logs · requests · sensor data</text>
+            </g>
+            <g transform="translate(600,300)">
+              <line x1="0" y1="0" x2="0" y2="60" style="stroke:var(--ink-3);stroke-width:3"/>
+              <text x="18" y="23" style="fill:var(--ink-2);font-family:var(--font);font-size:18px;font-weight:700;letter-spacing:1.1px">OWNERSHIP</text>
+              <text x="18" y="49" style="fill:var(--ink);font-family:var(--font);font-size:17px">Team · Slack · contacts</text>
+            </g>
+
+            <circle cx="965" cy="195" r="62" style="fill:rgba(215,95,69,0.08);stroke:var(--accent);stroke-width:2.5"/>
+            <text x="965" y="188" text-anchor="middle" style="fill:var(--accent);font-family:var(--font);font-size:20px;font-weight:700;letter-spacing:1.2px">THE FULL</text>
+            <text x="965" y="215" text-anchor="middle" style="fill:var(--accent);font-family:var(--font);font-size:20px;font-weight:700;letter-spacing:1.2px">PICTURE</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ B11c  ask in plain English (question board)
+         Real questions + the internal sources each one fuses. Accent bar = combines 2+ sources (the point).
+         Example team/CVE ids are generic; scrub before any public cut. -->
+    <section class="slide content-slide skills-question-slide">
+      <div class="stagger">
+        <h2 class="slide-title">Claude uses the skills each question needs</h2>
+        <div class="question-scale">
+          <div class="question-step">
+            <div class="skill-count"><strong>1</strong><span>skill</span></div>
+            <div class="question-copy">“Who <em>owns</em> this service?”</div>
+            <div class="skill-list">ownership</div>
+          </div>
+          <div class="question-step">
+            <div class="skill-count"><strong>2</strong><span>skills</span></div>
+            <div class="question-copy">“List every <em>public endpoint</em> team X <em>owns</em>”</div>
+            <div class="skill-list">ownership · exposure</div>
+          </div>
+          <div class="question-step major">
+            <div class="skill-count"><strong>6</strong><span>skills</span></div>
+            <div class="question-copy">“For <em>CVE-XXXX</em>, find the <em>exposed containers</em>, trace them to <em>repositories</em> and <em>owners</em>, then <em>draft the patch</em>.”</div>
+            <div class="skill-list">
+              <span>vulnerabilities · cloud</span>
+              <span>exposure · repository</span>
+              <span>ownership · pull request</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ SSRF context: apply the generic skill graph to this finding -->
+    <section class="slide content-slide ssrf-context-graph-slide">
+      <div class="stagger">
+        <div class="eyebrow">Back to the SSRF</div>
+        <h2 class="slide-title">From code finding to production context</h2>
+        <div class="ssrf-context-graph">
+          <svg viewBox="0 110 1600 780" preserveAspectRatio="xMidYMid meet" role="img" aria-label="A code scanning finding in a Node.js repository follows two discovery paths. The repository maps to its deployment and runtime network graph. The saved-search name maps through the API inventory to a Java service. Together these provide the request path, related source, PoC target, and log filters. Human-provided authentication and valid IDs join before verification.">
+            <defs>
+              <marker id="ssrf-context-arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto">
+                <path d="M 3 2 L 9 6 L 3 10" style="fill:none;stroke:var(--ink-4);stroke-width:2;stroke-linecap:round;stroke-linejoin:round" />
+              </marker>
+              <marker id="ssrf-context-arrow-accent" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto">
+                <path d="M 3 2 L 9 6 L 3 10" style="fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round" />
+              </marker>
+            </defs>
+
+            <!-- Connectors first, behind the nodes. -->
+            <path class="edge-accent" d="M 370 438 L 390 438 L 390 300 L 445 300" />
+            <path class="edge-accent" d="M 390 438 L 390 580 L 445 580" />
+            <path class="edge-accent" d="M 695 300 L 725 300" />
+            <path class="edge-accent" d="M 695 580 L 725 580" />
+            <path class="edge-accent" d="M 980 300 L 1035 300 L 1035 440 L 1060 440" />
+            <path class="edge-merge" d="M 980 580 L 1035 580 L 1035 440" />
+            <path class="edge" d="M 720 833 L 1060 833" />
+            <path class="edge-accent" d="M 1290 700 L 1290 755" />
+
+            <text class="section" x="0" y="338">STARTING POINT</text>
+            <rect class="node-accent" x="0" y="365" width="370" height="145" rx="10" />
+            <text class="label start-label" x="30" y="412">Code scanning finding</text>
+            <text class="copy" x="30" y="458">SSRF in Node.js repo</text>
+            <text class="mono accent" x="30" y="494">searchId → path</text>
+
+            <text class="section" x="430" y="145">FIND THE RELATED API</text>
+            <rect class="lane" x="420" y="175" width="590" height="245" rx="12" />
+            <text class="section accent" x="455" y="215">RUNTIME PATH</text>
+            <rect class="node" x="445" y="240" width="250" height="120" rx="8" />
+            <text class="label" x="475" y="282">Deployment</text>
+            <text class="copy" x="475" y="322">Mapped from repo</text>
+            <rect class="node" x="725" y="240" width="255" height="120" rx="8" />
+            <text class="label" x="755" y="282">Network graph</text>
+            <text class="copy" x="755" y="322">Callers + callees</text>
+
+            <rect class="lane" x="420" y="455" width="590" height="245" rx="12" />
+            <text class="section accent" x="455" y="495">API INVENTORY</text>
+            <rect class="node" x="445" y="520" width="250" height="120" rx="8" />
+            <text class="mono" x="475" y="562">saved-search</text>
+            <text class="copy" x="475" y="602">Search endpoints</text>
+            <rect class="node" x="725" y="520" width="255" height="120" rx="8" />
+            <text class="label" x="755" y="562">Matching API</text>
+            <text class="copy" x="755" y="602">Service + runtime</text>
+
+            <text class="section" x="1080" y="145">PRODUCTION CONTEXT</text>
+            <rect class="node-accent" x="1060" y="175" width="460" height="525" rx="12" />
+            <text class="label" x="1100" y="225">The complete API call</text>
+            <line class="rule" x1="1100" y1="248" x2="1480" y2="248" />
+
+            <text class="section" x="1100" y="292">REQUEST PATH</text>
+            <text class="copy compact" x="1100" y="330">Web app → Node.js app → Java API</text>
+
+            <text class="section" x="1100" y="390">RELATED SOURCE</text>
+            <text class="copy" x="1100" y="428">Two additional repos</text>
+
+            <text class="section" x="1100" y="488">POC TARGET</text>
+            <text class="copy" x="1100" y="526">Public entrypoint and route</text>
+
+            <text class="section" x="1100" y="586">LOG FILTERS</text>
+            <text class="copy compact" x="1100" y="624">Service · deployment · path · time</text>
+
+            <text class="section" x="20" y="770">HUMAN INPUT</text>
+            <rect class="node" x="20" y="795" width="700" height="75" rx="8" />
+            <text class="copy" x="50" y="842">Session · user ID · saved-search ID · nudge</text>
+
+            <rect class="node-result" x="1060" y="755" width="460" height="115" rx="10" />
+            <text class="section result" x="1100" y="800">VERIFY</text>
+            <text class="label" x="1100" y="842">Run PoC · observe logs</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ SSRF callback: now explain how Claude reached the result -->
+    <section hidden aria-hidden="true" data-archived-slide="ssrf-callback-summary">
+      <div class="stagger">
+        <div class="eyebrow">Back to the SSRF</div>
+        <h2 class="slide-title">How Claude proved it was exploitable</h2>
+
+        <div class="ssrf-validation-flow">
+          <div class="ssrf-validation-stage">
+            <div class="ssrf-validation-stage-label">Trace</div>
+            <h3>Follow the request</h3>
+            <p>Wiz showed the path from the exposed web app through the Node.js app to the Java API, then mapped the services to their repositories.</p>
+          </div>
+          <div class="ssrf-validation-arrow">&rarr;</div>
+          <div class="ssrf-validation-stage">
+            <div class="ssrf-validation-stage-label">Source</div>
+            <h3>Find the auth gap</h3>
+            <p>The related Java repository exposed <code>/_/saved-search</code> outside the normal authentication filter.</p>
+          </div>
+          <div class="ssrf-validation-arrow">&rarr;</div>
+          <div class="ssrf-validation-stage result">
+            <div class="ssrf-validation-stage-label">Verify</div>
+            <h3>Test and observe</h3>
+            <p>Claude sent requests, read load-balancer and application logs, adjusted the payload, and reached another user&rsquo;s data.</p>
+          </div>
+        </div>
+
+        <div class="ssrf-validation-evidence">
+          <p><strong>Claude used:</strong> runtime paths, related source code, requests, and logs.</p>
+          <p class="human"><strong>I supplied:</strong> authentication, valid IDs, and a nudge when it stopped early.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ SSRF callback 1/3: trace the request and find the auth gap -->
+    <section class="slide content-slide ssrf-story">
+      <div class="stagger">
+        <h2 class="slide-title">The Java API skipped auth on internal routes</h2>
+        <div class="ssrf-repo-trace">
+          <div class="ssrf-repo">
+            <div class="repo-name">Nodejs app repo</div>
+            <pre><span class="mute">// user input becomes a path</span>
+<span class="fn">fetch</span>(
+  <span class="str">`/saved-search/<span class="tok">${searchId}</span>
+   ?loginId=${caller}`</span>,
+  { authorization: userToken }
+);</pre>
+          </div>
+          <div class="ssrf-repo target">
+            <div class="repo-name">Java API repo</div>
+            <pre><span class="mute">// normal routes are authenticated</span>
+/saved-search/*  &rarr; authenticated
+<span class="hotline">/_/*             &rarr; not authenticated</span></pre>
+            <div class="gap">Saved-search was also mounted under /_/*<span>Likely for debugging</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ SSRF callback 2/3: probe, observe, and adjust -->
+    <section class="slide content-slide ssrf-story ssrf-poc" data-reveal-start="1">
+      <div class="stagger">
+        <div class="eyebrow placeholder" aria-hidden="true"></div>
+        <h2 class="slide-title">It tested, read the logs, and adjusted</h2>
+      </div>
+      <pre class="snippet buildurl">GET /saved-search/<span class="seg" data-step="2">../../_/saved-search/</span><span class="tok">&lt;id&gt;</span><span class="seg" data-step="3">?loginId=&lt;victim&gt;</span><span class="seg" data-step="4">#</span><span class="mine">?loginId=&lt;mine&gt;</span></pre>
+      <div class="phases">
+        <div class="phase" data-step="1">
+          <div class="pl">1 &middot; Auth</div>
+          <div class="ps">401</div>
+          <div class="pt"><span class="accent">I provided</span> a valid session</div>
+        </div>
+        <div class="phase" data-step="2">
+          <div class="pl">2 &middot; Route</div>
+          <div class="ps">502</div>
+          <div class="pt">Logs: traversal reached the backend</div>
+        </div>
+        <div class="phase" data-step="3">
+          <div class="pl">3 &middot; Data</div>
+          <div class="ps">502</div>
+          <div class="pt"><span class="accent">I provided</span> valid IDs</div>
+        </div>
+        <div class="phase" data-step="4">
+          <div class="pl">4 &middot; Query</div>
+          <div class="ps">Malformed</div>
+          <div class="pt">Claude: truncated with <code>#</code></div>
+        </div>
+      </div>
+      <div class="ssrf-success" data-step="4"><strong>200 OK</strong><span>Another user&rsquo;s data.</span></div>
+    </section>
+
+    <!-- ============================================================ B7b  the slop, in numbers (HackerOne report volume)
+         Data: Emil's HackerOne program, Aug 2025 - Aug 15, 2026. Only report counts graphed (not $). -->
+    <section class="slide content-slide chart-slide">
+      <div class="stagger">
+        <div class="eyebrow placeholder" aria-hidden="true"></div>
+        <h2 class="slide-title">The bug bounty slopocalypse?</h2>
+        <div class="chart">
+          <svg viewBox="0 0 1240 420" role="img" aria-label="Monthly bug bounty reports submitted versus valid, August 2025 to August 15, 2026. August 1 to 15 had 24 submitted reports and 11 valid reports.">
+            <line class="grid" x1="70" y1="360" x2="1080" y2="360"/>
+            <line class="grid" x1="70" y1="275" x2="1080" y2="275"/>
+            <line class="grid" x1="70" y1="190" x2="1080" y2="190"/>
+            <line class="grid" x1="70" y1="105" x2="1080" y2="105"/>
+            <line class="grid" x1="70" y1="20" x2="1080" y2="20"/>
+            <text class="axis" x="56" y="366" text-anchor="end" font-size="24">0</text>
+            <text class="axis" x="56" y="281" text-anchor="end" font-size="24">20</text>
+            <text class="axis" x="56" y="196" text-anchor="end" font-size="24">40</text>
+            <text class="axis" x="56" y="111" text-anchor="end" font-size="24">60</text>
+            <text class="axis" x="56" y="26" text-anchor="end" font-size="24">80</text>
+            <polygon class="band" points="70,262 154,224 238,186 322,50 406,271 490,186 574,203 658,156 742,75 826,105 910,254 994,250 1078,258 1078,313 994,343 910,343 826,330 742,322 658,326 574,300 490,300 406,330 322,237 238,330 154,330 70,309"/>
+            <path class="line-total" d="M70,262 L154,224 L238,186 L322,50 L406,271 L490,186 L574,203 L658,156 L742,75 L826,105 L910,254 L994,250 L1078,258"/>
+            <path class="line-valid" d="M70,309 L154,330 L238,330 L322,237 L406,330 L490,300 L574,300 L658,326 L742,322 L826,330 L910,343 L994,343 L1078,313"/>
+            <g class="dot-total">
+              <circle cx="70" cy="262" r="5"/><circle cx="154" cy="224" r="5"/><circle cx="238" cy="186" r="5"/><circle cx="322" cy="50" r="5"/><circle cx="406" cy="271" r="5"/><circle cx="490" cy="186" r="5"/><circle cx="574" cy="203" r="5"/><circle cx="658" cy="156" r="5"/><circle cx="742" cy="75" r="5"/><circle cx="826" cy="105" r="5"/><circle cx="910" cy="254" r="5"/><circle cx="994" cy="250" r="5"/><circle cx="1078" cy="258" r="5"/>
+            </g>
+            <g class="dot-valid">
+              <circle cx="70" cy="309" r="6"/><circle cx="154" cy="330" r="6"/><circle cx="238" cy="330" r="6"/><circle cx="322" cy="237" r="6"/><circle cx="406" cy="330" r="6"/><circle cx="490" cy="300" r="6"/><circle cx="574" cy="300" r="6"/><circle cx="658" cy="326" r="6"/><circle cx="742" cy="322" r="6"/><circle cx="826" cy="330" r="6"/><circle cx="910" cy="343" r="6"/><circle cx="994" cy="343" r="6"/><circle cx="1078" cy="313" r="6"/>
+            </g>
+            <text class="peak" x="322" y="36" text-anchor="middle" font-size="28">73</text>
+            <text class="lab-total" x="1098" y="258" font-size="28" dominant-baseline="middle">Submitted</text>
+            <text class="lab-valid" x="1098" y="313" font-size="28" dominant-baseline="middle">Valid</text>
+            <text class="axis" x="70" y="397" text-anchor="middle" font-size="24">Aug &rsquo;25</text>
+            <text class="axis" x="322" y="397" text-anchor="middle" font-size="24">Nov</text>
+            <text class="axis" x="574" y="397" text-anchor="middle" font-size="24">Feb</text>
+            <text class="axis" x="826" y="397" text-anchor="middle" font-size="24">May</text>
+            <text class="axis" x="1078" y="397" text-anchor="middle" font-size="24">Aug 1&ndash;15</text>
+          </svg>
+        </div>
+        <p class="lead gap-top">518 reports. <span class="accent">133 valid.</span></p>
+      </div>
+      <div class="sources"><span class="src">Our HackerOne program &middot; Aug 2025 to Aug 15, 2026</span></div>
+    </section>
+
+    <!-- ============================================================ bug bounty report scoring: skill -> memory -> service -->
+    <section class="slide production-agent-slide">
+      <header>
+        <h2 class="slide-title">Is this report worth a closer look?</h2>
+        <p class="production-agent-lead">We started with an ad hoc scoring skill, then turned it into a running agent.</p>
+      </header>
+
+      <div class="production-agent-flow" aria-label="How the report scoring agent processes a new report">
+        <div class="production-agent-step">
+          <div class="production-agent-label">Trigger</div>
+          <h3>New HackerOne report</h3>
+          <p class="production-agent-copy">Every new report starts a fresh agent session.</p>
+        </div>
+
+        <div class="production-agent-step">
+          <div class="production-agent-label">Skill</div>
+          <h3>Gather the evidence</h3>
+          <p class="production-agent-copy">Read the report, check scope and assess the PoC.</p>
+        </div>
+
+        <div class="production-agent-step">
+          <div class="production-agent-label">Memory</div>
+          <h3>Recall how we decided before</h3>
+          <p class="production-agent-copy">Recall similar reports, actions and closure reasons.</p>
+        </div>
+
+        <div class="production-agent-step output">
+          <div class="production-agent-label">Output</div>
+          <h3>Estimate and rationale in Slack</h3>
+          <p class="production-agent-copy">Post an estimate, rationale and supporting evidence.</p>
+          <div class="production-agent-metric">
+            <strong>84% precision</strong>
+            <span>52 of 62 trash calls were correct</span>
+          </div>
+        </div>
+      </div>
+
+      <footer class="production-agent-footer">
+        <p><strong>Prototype:</strong> run manually against a local report database.</p>
+        <p><strong>Service:</strong> estimates every new report.</p>
+      </footer>
+    </section>
+
+    <!-- ============================================================ Hindsight recall: conceptual example based on past reports -->
+    <section class="slide recall-priority-slide">
+      <header>
+        <h2 class="slide-title">Similar reports can have different priorities</h2>
+      </header>
+
+      <div class="recall-record" aria-label="A potential subdomain takeover compared with two past reports">
+        <div class="recall-record-section recall-summary-incoming">
+          <div class="recall-summary-label">Incoming report</div>
+          <h3>Potential subdomain takeover</h3>
+          <p>A dangling CNAME points to Zendesk. The report does not demonstrate control of the hostname.</p>
+        </div>
+
+        <div class="recall-record-section recall-summary-history">
+          <div class="recall-summary-label">Relevant past reports</div>
+          <div class="recall-summary-case">
+            <div>
+              <strong>No working takeover</strong>
+              <p>Dangling record, but no attacker-controlled content.</p>
+            </div>
+            <span>Informative</span>
+          </div>
+          <div class="recall-summary-case">
+            <div>
+              <strong>Working takeover</strong>
+              <p>Attacker controlled the hostname and showed impact.</p>
+            </div>
+            <span>Resolved</span>
+          </div>
+        </div>
+
+        <div class="recall-record-section recall-summary-verdict">
+          <div class="recall-summary-label">Agent estimate</div>
+          <h3>Likely informative</h3>
+          <p>This looks like the first case: a dangling record without a working takeover.</p>
+          <small>Conceptual example based on past decisions.</small>
+        </div>
+      </div>
+
+      <footer class="recall-priority-footer"><strong>Hindsight recalls why similar past reports were accepted or closed.</strong></footer>
+    </section>
+
+    <!-- Backup: removed from the live deck on 2026-08-19. Replace the template wrapper with the section to restore it. -->
+    <template id="backup-supply-chain-slide">
+      <section class="slide content-slide">
+        <div class="stagger">
+          <div class="eyebrow">Supply-chain incident</div>
+          <h2 class="slide-title">With access, Claude can investigate across systems</h2>
+          <div class="incident-prompt">
+            <div class="file">attached: supply-chain-advisory.txt</div>
+            <div class="ask">“Investigate this advisory. Are any affected <span class="hl">packages or versions</span> present in our repositories, production or Artifactory? Did any affected repository run in CI during the attack window? Were malicious versions downloaded, and by what? If anything is affected, which team owns it?”</div>
+          </div>
+          <div class="incident-investigation">
+            <div class="claim">Claude determines what to check, then queries each system.</div>
+            <div class="incident-flow" aria-label="Claude's investigation path">
+              <span>understand affected packages</span><b>&rarr;</b>
+              <span>search repos, production + Artifactory</span><b>&rarr;</b>
+              <span>inspect CI history + downloads</span><b>&rarr;</b>
+              <span class="owner">find owning team</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </template>
+
+    <!-- ============================================================ B22a  incident: Next.js RCE (setup)
+         Redact: hostnames (m10s.io / n8n), researcher handle, pod name, internal services. -->
+    <section class="slide content-slide">
+      <div class="stagger">
+        <div class="eyebrow">Incident &middot; Next.js RCE</div>
+        <h2 class="slide-title">&ldquo;It&rsquo;s behind Appgate.&rdquo;</h2>
+        <div class="incident-scope-grid">
+          <div class="incident-scope-column">
+            <div class="incident-scope-label">We and Claude</div>
+            <ul class="incident-scope-list">
+              <li>Found a vulnerable deployment</li>
+              <li>Checked Kubernetes ingress and cluster configuration</li>
+              <li>Normal route: 403 behind Appgate</li>
+              <li>Patch not treated as urgent</li>
+            </ul>
+          </div>
+          <div class="incident-scope-column evidence">
+            <div class="incident-scope-label">What the report proved</div>
+            <pre class="incident-terminal"><span class="comment"># Normal path</span>
+GET /                         <span class="blocked">403 · Appgate blocks</span>
+
+<span class="comment"># Wildcard load-balancer rule</span>
+/webhook*                     <span class="route">→ Next.js app</span>
+
+<span class="comment"># Any matching path</span>
+GET /webhookasdfsadfadf       <span class="ok">200 OK</span>
+
+<span class="comment"># Exploit</span>
+POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
+          </div>
+        </div>
+        <p class="incident-scope-note">We and Claude inspected Kubernetes. The GCP load balancer was outside the investigation scope.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ B22b  incident: Next.js RCE verification workflow -->
+    <section class="slide content-slide">
+      <div class="stagger">
+        <div class="eyebrow">Incident &middot; Next.js RCE</div>
+        <h2 class="slide-title">Claude verified the report end to end</h2>
+        <div class="verification-flow" aria-label="Report verification workflow">
+          <div class="verification-step">
+            <div class="index">01</div>
+            <h3>Generated the PoC</h3>
+            <p>Turned the report into reusable scripts.</p>
+            <span class="evidence">Python + shell</span>
+          </div>
+          <div class="verification-arrow">&rarr;</div>
+          <div class="verification-step confirmed">
+            <div class="index">02</div>
+            <h3>Ran it</h3>
+            <p>Fixed parsing, retried, and confirmed execution in production.</p>
+            <span class="evidence">uid=0(root)</span>
+          </div>
+          <div class="verification-arrow">&rarr;</div>
+          <div class="verification-step">
+            <div class="index">03</div>
+            <h3>Checked runtime sensors</h3>
+            <p>Queried runtime sensors and verified which commands generated alerts.</p>
+            <span class="evidence">id &middot; whoami &middot; /etc/passwd</span>
+          </div>
+        </div>
+        <p class="verification-takeaway">I could have done every step manually. Claude made the verification much faster.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ B11b  the connected graph (rebuild of operatives "The Connected Graph")
+         DRAFT to refactor live with Emil. Node labels are the REAL stack; SCRUB internal system names before any public cut.
+         Theme-translated from the operatives obsidian/orange deck to graphite + burgundy: accent = starting point,
+         --blue = service hub, neutral graphite cards = context systems, --green = full picture. All text uses var(--font). -->
+    <section hidden aria-hidden="true">
+      <div class="stagger">
+        <div class="eyebrow placeholder" aria-hidden="true"></div>
+        <h2 class="slide-title">Security context is a connected graph</h2>
+        <div class="chart">
+          <svg viewBox="0 0 1160 500" role="img" aria-label="A flow graph. One starting point (a bounty report, CVE, CodeQL alert, or URL) resolves to a service in Wiz and Kubernetes, which fans out to five context systems (ownership, GitHub, exposure, logs, history), which together assemble the full picture: who owns it, how to reach them, where the code is, whether it is exposed, the attack path, log evidence, and history.">
+            <defs>
+              <marker id="ga-accent" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" style="fill:var(--accent)"/></marker>
+              <marker id="ga-neutral" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" style="fill:var(--ink-3)"/></marker>
+            </defs>
+
+            <!-- Starting point (accent) -->
+            <g transform="translate(20,120)">
+              <rect x="0" y="0" width="210" height="230" rx="14" style="fill:var(--accent-soft);stroke:var(--accent);stroke-width:2"/>
+              <text x="105" y="36" text-anchor="middle" style="fill:var(--accent);font-family:var(--font);font-size:20px;font-weight:700;letter-spacing:.05em">STARTING POINT</text>
+              <line x1="22" y1="54" x2="188" y2="54" style="stroke:var(--rule);stroke-width:1"/>
+              <text x="26" y="94"  style="fill:var(--ink);font-family:var(--font);font-size:20px">Bounty report</text>
+              <text x="26" y="134" style="fill:var(--ink);font-family:var(--font);font-size:20px">CVE alert</text>
+              <text x="26" y="174" style="fill:var(--ink);font-family:var(--font);font-size:20px">CodeQL alert</text>
+              <text x="26" y="214" style="fill:var(--ink);font-family:var(--font);font-size:20px">URL, hostname</text>
+            </g>
+
+            <!-- Service hub (blue) -->
+            <g transform="translate(310,175)">
+              <rect x="0" y="0" width="210" height="170" rx="14" style="fill:var(--bg-2);stroke:var(--blue);stroke-width:2"/>
+              <text x="105" y="34" text-anchor="middle" style="fill:var(--blue);font-family:var(--font);font-size:18px;font-weight:700">Wiz + k8s</text>
+              <text x="105" y="66" text-anchor="middle" style="fill:var(--ink);font-family:var(--font);font-size:23px;font-weight:600">Service</text>
+              <line x1="26" y1="86" x2="184" y2="86" style="stroke:var(--rule);stroke-width:1"/>
+              <text x="105" y="112" text-anchor="middle" style="fill:var(--ink-3);font-family:var(--font);font-size:16px">owner: team-tag</text>
+              <text x="105" y="136" text-anchor="middle" style="fill:var(--ink-3);font-family:var(--font);font-size:16px">repo: owner/repo</text>
+              <text x="105" y="160" text-anchor="middle" style="fill:var(--ink-3);font-family:var(--font);font-size:16px">ingress: /path</text>
+            </g>
+
+            <!-- Context systems (neutral graphite cards) -->
+            <g transform="translate(620,6)">
+              <rect x="0" y="0" width="200" height="76" rx="10" style="fill:var(--bg-2);stroke:var(--rule-strong);stroke-width:1.5"/>
+              <text x="18" y="26" style="fill:var(--ink-3);font-family:var(--font);font-size:15px;font-weight:700;letter-spacing:.05em">OWNERSHIP</text>
+              <text x="18" y="50" style="fill:var(--ink);font-family:var(--font);font-size:19px">Team contact</text>
+              <text x="18" y="68" style="fill:var(--ink-4);font-family:var(--font);font-size:14px">Slack, email</text>
+            </g>
+            <g transform="translate(620,105)">
+              <rect x="0" y="0" width="200" height="76" rx="10" style="fill:var(--bg-2);stroke:var(--rule-strong);stroke-width:1.5"/>
+              <text x="18" y="26" style="fill:var(--ink-3);font-family:var(--font);font-size:15px;font-weight:700;letter-spacing:.05em">GITHUB</text>
+              <text x="18" y="50" style="fill:var(--ink);font-family:var(--font);font-size:19px">Source code</text>
+              <text x="18" y="68" style="fill:var(--ink-4);font-family:var(--font);font-size:14px">CodeQL, patterns</text>
+            </g>
+            <g transform="translate(620,204)">
+              <rect x="0" y="0" width="200" height="76" rx="10" style="fill:var(--bg-2);stroke:var(--rule-strong);stroke-width:1.5"/>
+              <text x="18" y="26" style="fill:var(--ink-3);font-family:var(--font);font-size:15px;font-weight:700;letter-spacing:.05em">EXPOSURE</text>
+              <text x="18" y="50" style="fill:var(--ink);font-family:var(--font);font-size:19px">Public URLs</text>
+              <text x="18" y="68" style="fill:var(--ink-4);font-family:var(--font);font-size:14px">Ingress, callers</text>
+            </g>
+            <g transform="translate(620,303)">
+              <rect x="0" y="0" width="200" height="76" rx="10" style="fill:var(--bg-2);stroke:var(--rule-strong);stroke-width:1.5"/>
+              <text x="18" y="26" style="fill:var(--ink-3);font-family:var(--font);font-size:15px;font-weight:700;letter-spacing:.05em">LOGS</text>
+              <text x="18" y="50" style="fill:var(--ink);font-family:var(--font);font-size:19px">Humio + GCP</text>
+              <text x="18" y="68" style="fill:var(--ink-4);font-family:var(--font);font-size:14px">Trace, verify</text>
+            </g>
+            <g transform="translate(620,402)">
+              <rect x="0" y="0" width="200" height="76" rx="10" style="fill:var(--bg-2);stroke:var(--rule-strong);stroke-width:1.5"/>
+              <text x="18" y="26" style="fill:var(--ink-3);font-family:var(--font);font-size:15px;font-weight:700;letter-spacing:.05em">HISTORY</text>
+              <text x="18" y="50" style="fill:var(--ink);font-family:var(--font);font-size:19px">Past reports</text>
+              <text x="18" y="68" style="fill:var(--ink-4);font-family:var(--font);font-size:14px">Duplicates, bounty</text>
+            </g>
+
+            <!-- Full picture (green) -->
+            <g transform="translate(900,70)">
+              <rect x="0" y="0" width="240" height="360" rx="14" style="fill:rgba(47,169,68,0.10);stroke:var(--green);stroke-width:2"/>
+              <text x="120" y="38" text-anchor="middle" style="fill:var(--green);font-family:var(--font);font-size:20px;font-weight:700;letter-spacing:.05em">FULL PICTURE</text>
+              <line x1="22" y1="56" x2="218" y2="56" style="stroke:var(--rule);stroke-width:1"/>
+              <text x="24" y="94"  style="fill:var(--ink);font-family:var(--font);font-size:19px"><tspan style="fill:var(--green)">&#10003;</tspan>  Who owns it</text>
+              <text x="24" y="134" style="fill:var(--ink);font-family:var(--font);font-size:19px"><tspan style="fill:var(--green)">&#10003;</tspan>  How to reach them</text>
+              <text x="24" y="174" style="fill:var(--ink);font-family:var(--font);font-size:19px"><tspan style="fill:var(--green)">&#10003;</tspan>  Where the code is</text>
+              <text x="24" y="214" style="fill:var(--ink);font-family:var(--font);font-size:19px"><tspan style="fill:var(--green)">&#10003;</tspan>  If it's exposed</text>
+              <text x="24" y="254" style="fill:var(--ink);font-family:var(--font);font-size:19px"><tspan style="fill:var(--green)">&#10003;</tspan>  The attack path</text>
+              <text x="24" y="294" style="fill:var(--ink);font-family:var(--font);font-size:19px"><tspan style="fill:var(--green)">&#10003;</tspan>  Log evidence</text>
+              <text x="24" y="334" style="fill:var(--ink);font-family:var(--font);font-size:19px"><tspan style="fill:var(--green)">&#10003;</tspan>  History and dupes</text>
+            </g>
+
+            <!-- Edge: starting point -> service -->
+            <line x1="230" y1="235" x2="305" y2="258" style="stroke:var(--accent);stroke-width:2.5" marker-end="url(#ga-accent)"/>
+
+            <!-- Edges: service -> context systems -->
+            <line x1="520" y1="228" x2="617" y2="44"  style="stroke:var(--ink-3);stroke-width:1.5" marker-end="url(#ga-neutral)"/>
+            <line x1="520" y1="244" x2="617" y2="143" style="stroke:var(--ink-3);stroke-width:1.5" marker-end="url(#ga-neutral)"/>
+            <line x1="520" y1="260" x2="617" y2="242" style="stroke:var(--ink-3);stroke-width:1.5" marker-end="url(#ga-neutral)"/>
+            <line x1="520" y1="276" x2="617" y2="341" style="stroke:var(--ink-3);stroke-width:1.5" marker-end="url(#ga-neutral)"/>
+            <line x1="520" y1="292" x2="617" y2="440" style="stroke:var(--ink-3);stroke-width:1.5" marker-end="url(#ga-neutral)"/>
+
+            <!-- Edges: context systems -> full picture (dashed green) -->
+            <line x1="820" y1="44"  x2="898" y2="120" style="stroke:var(--green);stroke-width:1;stroke-dasharray:4 4"/>
+            <line x1="820" y1="143" x2="898" y2="180" style="stroke:var(--green);stroke-width:1;stroke-dasharray:4 4"/>
+            <line x1="820" y1="242" x2="898" y2="240" style="stroke:var(--green);stroke-width:1;stroke-dasharray:4 4"/>
+            <line x1="820" y1="341" x2="898" y2="300" style="stroke:var(--green);stroke-width:1;stroke-dasharray:4 4"/>
+            <line x1="820" y1="440" x2="898" y2="360" style="stroke:var(--green);stroke-width:1;stroke-dasharray:4 4"/>
+          </svg>
+        </div>
+      </div>
+      <div class="sources"><span class="src">rebuild of operatives "The Connected Graph" &middot; scrub internal names before public cut</span></div>
+    </section>
+
+    <!-- ============================================================ B25  why this is easy for Claude (good tools, tagged resources, skills) -->
+    <section hidden aria-hidden="true">
+      <div class="stagger">
+        <div class="eyebrow redundant">The foundation</div>
+        <h2 class="slide-title">Why this is easy for Claude</h2>
+        <ul class="bullets gap-top">
+          <li>We have good tools, and APIs for everything</li>
+          <li>Resources are (usually) tagged (owner, repo, etc.) which helps connect the dots</li>
+          <li>We tell Claude how to do it, via <span class="accent">skills</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================ SSRF STORY 1/4
+         CodeQL triage skill test case: path-limited SSRF that looked unexploitable.
+         SCRUB before public: real brand/service names, user IDs, hostnames. -->
+    <section hidden aria-hidden="true" data-archived-slide="ssrf-detail-1">
+      <div class="stagger">
+        <div class="eyebrow">Code-scanning triage skill</div>
+        <h2 class="slide-title">An SSRF I couldn&rsquo;t exploit</h2>
+        <p class="ssrf-lead">That made it a useful test case while I built the skill.</p>
+        <div class="ssrf-setup-grid">
+          <div class="ssrf-fact-list">
+            <div class="ssrf-fact">
+              <div class="label">CodeQL</div>
+              <div class="value">Path-limited SSRF</div>
+            </div>
+            <div class="ssrf-fact">
+              <div class="label">My attempt</div>
+              <div class="value">No working exploit</div>
+            </div>
+            <div class="ssrf-fact">
+              <div class="label">Early Claude runs</div>
+              <div class="value">Not exploitable</div>
+            </div>
+          </div>
+          <pre class="snippet ssrf-code"><span class="cmt">// calls a fixed internal service with the caller's token</span>
+<span class="kw">const</span> url = <span class="str">`notifications/saved-search/<span class="tok">${searchId}</span>
+  ?loginId=${loginId}`</span>;
+
+<span class="kw">return</span> <span class="fn">fetch</span>(url, {
+  headers: { authorization: userToken }
+});</pre>
+        </div>
+        <div class="ssrf-route" aria-label="Request path from the exposed web app to the Java API">
+          <div class="node"><div class="name">exposed web app</div></div>
+          <div class="arrow">&rarr;</div>
+          <div class="node hot"><div class="name">nodejs app</div></div>
+          <div class="arrow">&rarr;</div>
+          <div class="node"><div class="name">java api</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ SSRF STORY 2/4
+         Claude uses Wiz skills to trace the runtime path and repository metadata,
+         then source analysis reveals the downstream auth gap. -->
+    <section hidden aria-hidden="true" data-archived-slide="ssrf-detail-2">
+      <div class="stagger">
+        <div class="eyebrow">Wiz skills + source</div>
+        <h2 class="slide-title">It followed the request across services</h2>
+        <div class="ssrf-repo-trace">
+          <div class="ssrf-repo">
+            <div class="repo-name">Nodejs app repo</div>
+            <pre><span class="mute">// user input becomes a path</span>
+<span class="fn">fetch</span>(
+  <span class="str">`/saved-search/<span class="tok">${searchId}</span>
+   ?loginId=${caller}`</span>,
+  { authorization: userToken }
+);</pre>
+          </div>
+          <div class="ssrf-repo-arrow">&rarr;</div>
+          <div class="ssrf-repo target">
+            <div class="repo-name">Java API repo</div>
+            <pre><span class="mute">// normal routes are authenticated</span>
+/saved-search/*  &rarr; authenticated
+<span class="hotline">/_/*             &rarr; not authenticated</span></pre>
+            <div class="gap">/_/saved-search bypassed the auth filter</div>
+          </div>
+        </div>
+        <p class="ssrf-repo-conclusion">Claude used the Wiz skills to trace the runtime path and find the related repositories. Reading their source exposed the <code>/_/</code> auth gap.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ SSRF STORY 3/4
+         Progressive reveal: AUTH -> PATH TRAVERSAL -> VALID IDS -> QUERY TRUNCATION.
+         The request grows as each phase appears. -->
+    <section hidden aria-hidden="true" data-archived-slide="ssrf-detail-3">
+      <div class="stagger">
+        <div class="eyebrow">Live verification</div>
+        <h2 class="slide-title">It tested, read the logs, and adjusted</h2>
+      </div>
+      <pre class="snippet buildurl">GET /saved-search/<span class="seg" data-step="2">../../_/saved-search/</span><span class="tok">&lt;id&gt;</span><span class="seg" data-step="3">?loginId=&lt;victim&gt;</span><span class="seg" data-step="4">#</span><span class="mine">?loginId=&lt;mine&gt;</span></pre>
+      <div class="phases">
+        <div class="phase" data-step="1">
+          <div class="pl">1 &middot; Auth</div>
+          <div class="ps">401</div>
+          <div class="pt"><span class="accent">I provided</span> a valid session</div>
+        </div>
+        <div class="phase" data-step="2">
+          <div class="pl">2 &middot; Route</div>
+          <div class="ps">502</div>
+          <div class="pt">Logs: traversal reached the backend</div>
+        </div>
+        <div class="phase" data-step="3">
+          <div class="pl">3 &middot; Data</div>
+          <div class="ps">502</div>
+          <div class="pt"><span class="accent">I provided</span> valid IDs</div>
+        </div>
+        <div class="phase" data-step="4">
+          <div class="pl">4 &middot; Query</div>
+          <div class="ps">Malformed</div>
+          <div class="pt">Claude: truncated with <code>#</code></div>
+        </div>
+      </div>
+      <div class="ssrf-success" data-step="4"><strong>200 OK</strong><span>Another user&rsquo;s data, on production.</span></div>
+    </section>
+
+    <!-- ============================================================ SSRF STORY 4/4
+         The payoff: connected tools let Claude investigate the real system;
+         the human supplies authentication, live IDs, and occasional direction. -->
+    <section hidden aria-hidden="true" data-archived-slide="ssrf-detail-4">
+      <div class="stagger">
+        <div class="eyebrow">Why this run was different</div>
+        <h2 class="slide-title">It could investigate the real system</h2>
+        <div class="ssrf-why-grid">
+          <div class="ssrf-why-col agent">
+            <h3>Claude could</h3>
+            <ul>
+              <li>use the Wiz skills to trace the request from the exposed app to the backend</li>
+              <li>map the services to repositories and analyze their source</li>
+              <li>send requests and adjust the payload</li>
+              <li>read load-balancer and application logs</li>
+            </ul>
+          </div>
+          <div class="ssrf-why-col">
+            <h3>I supplied</h3>
+            <ul>
+              <li>authentication</li>
+              <li>valid user and saved-search IDs</li>
+              <li>a nudge when it stopped early</li>
+            </ul>
+          </div>
+        </div>
+        <p class="ssrf-moment">That was my <em>&ldquo;LLMs are now fucking good&rdquo;</em> moment.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ EVAL 1/4  define the eval loop -->
+    <section class="slide content-slide">
+      <div class="stagger">
+        <h2 class="slide-title">Test skills and agents on verified cases</h2>
+        <p class="eval-frame-definition">Each case includes source code and ground truth we checked by hand.</p>
+
+        <div class="eval-frame-loop" aria-label="Eval loop">
+          <div class="eval-frame-step">
+            <div class="eval-frame-label">Known case</div>
+            <h3>Start with ground truth</h3>
+            <p>A verified bug, its fix, and the result we expect.</p>
+          </div>
+          <div class="eval-frame-arrow" aria-hidden="true">&rarr;</div>
+          <div class="eval-frame-step">
+            <div class="eval-frame-label">Change one thing</div>
+            <h3>Model or workflow</h3>
+            <p>Swap the model, tools, skill, effort, or validator.</p>
+          </div>
+          <div class="eval-frame-arrow" aria-hidden="true">&rarr;</div>
+          <div class="eval-frame-step">
+            <div class="eval-frame-label">Run again</div>
+            <h3>Compare the result</h3>
+            <p>Did it find the bug? How long did it take, and what did it cost?</p>
+          </div>
+        </div>
+
+        <div class="eval-frame-measure">
+          <div class="eval-frame-label">What this gives us</div>
+          <p>Use the same ground truth to measure models, parameters, and harness design.</p>
+        </div>
+
+        <div class="eval-frame-footer">
+          <div class="eval-frame-funnel" aria-label="122 valid reports produced 15 usable cases">
+            <span class="eval-frame-number">122</span>
+            <span class="eval-frame-arrow-small">&rarr;</span>
+            <span class="eval-frame-number">15</span>
+            <span class="eval-frame-usable">usable cases</span>
+          </div>
+          <div class="eval-frame-footer-copy">
+            <strong>Ground truth takes work.</strong><br>
+            Stronger models eventually saturate the set.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ EVAL 2/3  separate model limits from search-strategy limits -->
+    <section class="slide content-slide">
+      <div class="stagger">
+        <div class="eyebrow placeholder" aria-hidden="true"></div>
+        <h2 class="slide-title">Change the model or change the workflow?</h2>
+        <div class="eval-lesson-grid">
+          <div class="eval-lesson">
+            <div class="eval-lesson-label">35-file PR &middot; model comparison</div>
+            <h3>GPT-4.1 missed the bug in the full PR</h3>
+            <div class="eval-result-list model-results">
+              <div class="eval-result-row"><span>Model</span><strong>2-file diff</strong><strong>35-file PR</strong></div>
+              <div class="eval-result-row"><span>GPT-4.1</span><strong>3/3</strong><b>0/3</b></div>
+              <div class="eval-result-row"><span>GPT-5.6</span><strong>3/3</strong><b>3/3</b></div>
+            </div>
+            <p class="eval-lesson-note">GPT-5.6 found it in the full PR with reasoning effort set to none.</p>
+          </div>
+          <div class="eval-lesson key">
+            <div class="eval-lesson-label">SafeFrame <code>postMessage</code> &middot; workflow comparison</div>
+            <h3>More effort missed it. Tools found it.</h3>
+            <div class="eval-result-list workflow-results">
+              <div class="eval-result-row"><span>Method</span><strong>Effort</strong><strong>Found</strong></div>
+              <div class="eval-result-row"><span>Prompt + full diff</span><strong>none &rarr; xhigh</strong><b>0/3</b></div>
+              <div class="eval-result-row"><span>Repository tools</span><strong>medium</strong><b>3/3</b></div>
+            </div>
+            <p class="eval-lesson-note">Repository tools changed what the model inspected, at about 13&times; the cost.</p>
+          </div>
+        </div>
+      </div>
+      <div class="sources"><span class="src">Replicated pilot &middot; three samples per configuration</span></div>
+    </section>
+
+    <!-- ============================================================ EVAL 3/4  same recall, much higher cost -->
+    <section class="slide content-slide">
+      <div class="stagger">
+        <div class="eyebrow placeholder" aria-hidden="true"></div>
+        <h2 class="slide-title">Bare Codex or a large security workflow?</h2>
+        <div class="eval-lesson" style="margin-top:3.4cqi">
+          <div class="eval-lesson-label">Broken account ownership check</div>
+          <h3>Both found the vulnerability.</h3>
+          <div class="eval-result-list cost-results">
+            <div class="eval-result-row"><span>Method</span><strong>Time</strong><strong>Input</strong></div>
+            <div class="eval-result-row"><span>Bare Codex</span><strong>118s</strong><strong>214k</strong></div>
+            <div class="eval-result-row"><span>Large security workflow</span><strong>689s</strong><b>7.51M</b></div>
+          </div>
+        </div>
+        <p class="eval-takeaway no-rule">Same recall. The larger workflow was 5.8&times; slower and used <em>35&times; more input.</em></p>
+      </div>
+      <div class="sources"><span class="src">Workflow-development experiments &middot; August 2026</span></div>
+    </section>
+
+    <!-- ============================================================ EVAL 4/4  validation can reduce recall -->
+    <section class="slide content-slide">
+      <div class="stagger">
+        <div class="eyebrow placeholder" aria-hidden="true"></div>
+        <h2 class="slide-title">The validator removed a correct finding</h2>
+        <div class="eval-lesson" style="margin-top:3.4cqi">
+          <div class="eval-lesson-label">Simple IDOR bug</div>
+          <div class="eval-result-list job-results">
+            <div class="eval-result-row"><span>Method</span><strong>Time / input</strong><strong>Result</strong></div>
+            <div class="eval-result-row"><span>Skill + validator subagent</span><strong>342s / 1.94M</strong><b>Miss</b></div>
+            <div class="eval-result-row"><span>Three-sentence skill</span><strong>218s / 734k</strong><strong>Hit</strong></div>
+          </div>
+          <p class="eval-lesson-note" style="font-size:1.85cqi">The first agent found the bug. The validator dismissed it because an unseen backend might repeat the authorization check.</p>
+        </div>
+      </div>
+      <div class="sources"><span class="src">Development case, n=1 &middot; prompt refined after observing the miss</span></div>
+    </section>
+
+    <!-- ============================================================ B13  the failure mode: confident wrong (ties to the meme) -->
+    <section class="slide statement-slide">
+      <div class="stagger">
+        <div class="eyebrow placeholder" aria-hidden="true">&nbsp;</div>
+        <h2 class="statement">It can be <span class="accent">confidently wrong</span>.</h2>
+        <ul class="bullets tight" style="margin-top:3cqi;max-width:58cqi">
+          <li>Invent facts</li>
+          <li>Skip evidence without saying so</li>
+          <li>Dismiss real findings based on assumptions</li>
+          <li>Overstate weak findings</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================ B13a  confidently wrong &middot; it invents (the setup: the injected boot banner) -->
+    <section class="slide content-slide">
+      <div class="stagger">
+        <div class="eyebrow placeholder" aria-hidden="true"></div>
+        <h2 class="slide-title">I just wanted a cool banner</h2>
+        <div class="two-col" style="grid-template-columns:1fr 1.2fr">
+          <div>
+            <pre class="snippet raptor" style="font-size:1.1cqi;line-height:1.05;color:var(--ink);border-left-color:var(--ink-3)">██████╗  █████╗ ██████╗ ████████╗ ██████╗ ██████╗
+██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗
+██████╔╝███████║██████╔╝   ██║   ██║   ██║██████╔╝
+██╔══██╗██╔══██║██╔═══╝    ██║   ██║   ██║██╔══██╗
+██║  ██║██║  ██║██║        ██║   ╚██████╔╝██║  ██║
+╚═╝  ╚═╝╚═╝  ╚═╝╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝
+
+<span style="color:var(--green)">Autonomous Offensive/Defensive Research Framework</span>
+<span class="cmt">By Gadi Evron, Daniel Cuthbert, Halvar Flake, et al.</span></pre>
+            <ul class="bullets tight" style="margin-top:2cqi"><li>I tried to create my own startup banner directly in CLAUDE.md</li></ul>
+          </div>
+          <div>
+            <div class="mdblock">
+              <div class="md-h">## SESSION START</div>
+              <div class="md-note">On the first message, display this banner:</div>
+              <pre class="banner"><b>agent-lab/operatives</b>
+Claude with superpowers, connected to
+Wiz, GCP, Grafana, HackerOne, GitHub
+
+Just ask...
+  <span class="cat">Security</span>
+  &bull; Is CVE-2025-29927 affecting us?
+  &bull; Security review this PR
+  <span class="cat">SRE / Debugging</span>
+  &bull; Debug notification-podlet
+  &bull; Find owner of recommerce-layout
+<span class="cmt">...</span></pre>
+            </div>
+          </div>
+        </div>
+        <div class="callout band">
+          <span class="txt" style="font-size:2cqi;line-height:1.3">A long, vague, confusing first instruction. It got so confused it <em>invented the tool calls and the results</em>, then stated all of it with full confidence.</span>
+        </div>
+      </div>
+      <div class="sources"><a class="src" href="https://github.com/gadievron/raptor/blob/8ef5e28/CLAUDE.md#session-start" target="_blank" rel="noopener">RAPTOR &middot; CLAUDE.md</a></div>
+    </section>
+
+    <!-- ============================================================ B13b  confidently wrong &middot; it invents (the output: faked tool calls) -->
+    <section class="slide content-slide">
+      <div class="stagger">
+        <div class="eyebrow placeholder" aria-hidden="true"></div>
+        <h2 class="slide-title">It invented a team, and the people on it</h2>
+        <pre class="snippet gap-top" style="font-size:1.35cqi;line-height:1.5"><span class="cmt"># it never called a tool. it typed the calls and results as text:</span>
+
+<span class="tag">&lt;bash&gt;</span> python -m src.cli owner recommerce-item-insertion-layout <span class="tag">&lt;/bash&gt;</span>
+
+<span class="tag">&lt;result&gt;</span>
+  Team:    <span class="tok">pc-torget-frontend</span>    <span class="cmt">&larr; no such team</span>
+  Lang:    <span class="tok">Ruby</span>                  <span class="cmt">&larr; it's TypeScript</span>
+  Members: <span class="tok">&hellip; Erlend Oftedal, &hellip;</span>             <span class="cmt">&larr; all fabricated</span>
+<span class="tag">&lt;/result&gt;</span></pre>
+        <div class="callout band">
+          <span class="txt" style="font-size:2cqi;line-height:1.3">96 turns, <em>zero real tool calls</em>. Real team: rc-seller-experience.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ RLM1  same log, different coverage -->
+    <section class="slide content-slide rlm-slide">
+      <div class="stagger">
+        <div class="eyebrow placeholder" aria-hidden="true"></div>
+        <h2 class="slide-title">Log investigation experiment</h2>
+        <div class="log-comparison gap-top">
+          <div class="log-run">
+            <div class="log-method">Vanilla Claude</div>
+            <div class="log-result">&ldquo;No critical issues&rdquo;</div>
+            <div class="log-detail"><strong>2,000 / 5,000</strong> lines inspected</div>
+            <div class="log-detail">The missing 3,000 lines were not mentioned</div>
+          </div>
+          <div class="log-run rlm">
+            <div class="log-method">RLM plugin</div>
+            <div class="log-result">3 failure patterns</div>
+            <ul class="log-findings">
+              <li>11 watcher crashes</li>
+              <li>9 Kafka disconnects</li>
+              <li>Cascading failure</li>
+            </ul>
+          </div>
+        </div>
+        <p class="log-takeaway"><em>RLM = Recursive Language Model.</em> It keeps the full input outside the model&rsquo;s context window and uses code to inspect it in parts.</p>
+      </div>
+      <div class="sources"><a class="src" href="https://www.primeintellect.ai/blog/rlm" target="_blank" rel="noopener">Recursive Language Models &middot; Prime Intellect</a></div>
+    </section>
+
+    <!-- ============================================================ RLM2  one baseline, two RLM-style approaches -->
+    <section class="slide content-slide rlm-slide">
+      <div class="stagger">
+        <div class="eyebrow placeholder" aria-hidden="true"></div>
+        <h2 class="slide-title">Beyond one context window</h2>
+        <div class="method-groups">
+          <div class="method-group">Single context</div>
+          <div class="method-group rlm">Programmatic orchestration</div>
+        </div>
+        <div class="blocks cols-3 methods-grid">
+          <div class="block">
+            <h3>Vanilla Claude</h3>
+            <p>Selectively searches and reads in <em>one context</em>.</p>
+            <div class="tools">Coverage depends on its queries</div>
+          </div>
+          <div class="block">
+            <h3>Claude Dynamic Workflows</h3>
+            <p>Plans the work, writes an <em>orchestration script</em>, and runs parallel subagents.</p>
+            <div class="tools">Orchestrates tasks</div>
+          </div>
+          <div class="block">
+            <h3>Prime Agent (RLM)</h3>
+            <p>Keeps the input external, uses <em>code</em> to inspect it, and can call itself on selected parts.</p>
+            <div class="tools">Orchestrates context</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ RLM3  repository experiment and concrete coverage miss -->
+    <section class="slide content-slide rlm-slide">
+      <div class="stagger">
+        <div class="eyebrow placeholder" aria-hidden="true"></div>
+        <h2 class="slide-title">Vanilla missed all protected Remix routes</h2>
+        <p class="rlm-experiment-setup">One Remix app in a repo of ~333k lines &middot; ~50 modules. Same prompt, model, and effort.</p>
+        <div class="results-table protected-results">
+          <div class="results-head">
+            <span>Approach</span>
+            <span>Protected routes found</span>
+          </div>
+          <div class="results-row miss">
+            <div class="method">Vanilla Claude</div>
+            <div class="count">0 / 49</div>
+          </div>
+          <div class="results-row">
+            <div class="method">Prime Agent</div>
+            <div class="count">44 / 49</div>
+          </div>
+          <div class="results-row">
+            <div class="method">Dynamic Workflows</div>
+            <div class="count">49 / 49</div>
+          </div>
+        </div>
+        <p class="rlm-experiment-why">Remix routes are files. Vanilla searched for <code>router.get()</code>-style declarations and never walked the route directory.</p>
+        <p class="scope-note">&ldquo;Found&rdquo; means authentication enforcement was visible in code. We did not test internet exposure.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ Agentic pentesting changed between 2024 and 2026
+         The scopes and methods differed; this is a timeline, not a benchmark. -->
+    <section class="slide content-slide">
+      <div class="stagger">
+        <div class="eyebrow placeholder" aria-hidden="true"></div>
+        <h2 class="slide-title">Agentic pentesting: from black-box to source code</h2>
+        <div class="blocks cols-2 gap-top">
+          <div class="block">
+            <div class="timeline-year">2024</div>
+            <h3>Black-box pilot</h3>
+            <p>No source access. Nothing meaningful surfaced.</p>
+          </div>
+          <div class="block lead-rule">
+            <div class="timeline-year">April 2026</div>
+            <h3>Tested 2 vendors</h3>
+            <p>Source code was part of the assessment. They found real issues.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ Agentic assessment comparison 1/3
+         Same scope and source; our assessment additionally had internal data and tools. -->
+    <section class="slide content-slide assessment-comparison">
+      <div class="stagger">
+        <h2 class="slide-title">Same source code. Different context.</h2>
+        <div class="assessment-shared">
+          <span>All three</span>
+          <strong>Same scope description &middot; Same source code</strong>
+        </div>
+        <div class="assessment-columns" aria-label="Assessment harnesses and access">
+          <div class="assessment-column">
+            <h3>Vendor assessments</h3>
+            <div class="assessment-detail">
+              <span>Harness</span>
+              <p>Two different vendor agents</p>
+            </div>
+            <div class="assessment-detail">
+              <span>Context</span>
+              <p>Source code + public target</p>
+            </div>
+            <div class="assessment-detail">
+              <span>Could verify</span>
+              <p>Publicly visible effects</p>
+            </div>
+          </div>
+          <div class="assessment-column ours">
+            <h3>Our assessment</h3>
+            <div class="assessment-detail">
+              <span>Harness</span>
+              <p>Trail of Bits skills + our internal skills</p>
+            </div>
+            <div class="assessment-detail access">
+              <span>Context</span>
+              <p>Application logs &middot; runtime events &middot; network paths &middot; ownership &middot; internal services</p>
+            </div>
+            <div class="assessment-detail">
+              <span>Could verify</span>
+              <p>HTTP responses &middot; logs &middot; real side effects</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ Agentic assessment comparison 2/3: Slack side effect
+         Real receipts (Humio, prod, screenshot). Redact channel names, live token, vendor + PII. -->
+    <section class="slide content-slide feedback-example">
+      <div class="stagger">
+        <h2 class="slide-title">We kept investigating after the 401</h2>
+        <div class="feedback-found">
+          <strong>All three found the <code>sendFeedback</code> mutation.</strong>
+        </div>
+        <div class="feedback-contrast" aria-label="The vendor view compared with our internally verified view">
+          <div class="feedback-side response">
+            <span>Vendor view</span>
+            <div class="feedback-steps">
+              <span class="feedback-step">Send request</span>
+              <span class="feedback-arrow">&rarr;</span>
+              <span class="feedback-step"><code>401</code> Unauthorized</span>
+              <span class="feedback-arrow">&rarr;</span>
+              <span class="feedback-step">Flagged for investigation</span>
+            </div>
+          </div>
+          <div class="feedback-side effect">
+            <span>Our view</span>
+            <div class="feedback-steps">
+              <span class="feedback-step">Send request</span>
+              <span class="feedback-arrow">&rarr;</span>
+              <span class="feedback-step"><code>401</code> Unauthorized</span>
+              <span class="feedback-arrow">&rarr;</span>
+              <span class="feedback-step">Check application logs</span>
+              <span class="feedback-arrow">&rarr;</span>
+              <span class="feedback-step">Confirm in Slack</span>
+              <span class="feedback-arrow">&rarr;</span>
+              <span class="feedback-step">Verified</span>
+            </div>
+          </div>
+        </div>
+        <p class="feedback-note">However, we could see every random test payload they sent to the endpoint.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ Agentic assessment comparison 3/3
+         Initial-run counts. Not a benchmark: counting and harnesses differ; vendors were additive. -->
+    <section class="slide content-slide findings-comparison">
+      <div class="stagger">
+        <h2 class="slide-title">No single assessment found everything</h2>
+        <div class="finding-legend" aria-label="Finding bar legend">
+          <span><i class="unique"></i>Unique to this assessment</span>
+          <span><i class="shared"></i>Also found elsewhere</span>
+        </div>
+        <div class="finding-bars" aria-label="Total and unique findings by assessment approach">
+          <div class="finding-axis" aria-hidden="true"><span>Total</span></div>
+          <div class="finding-row">
+            <div class="name">Vendor A</div>
+            <div class="track" aria-label="8 total: 5 unique and 3 also found elsewhere">
+              <div class="segment unique" style="width:22.727%">5</div>
+              <div class="segment shared" style="width:13.636%">3</div>
+            </div>
+            <div class="count">8</div>
+          </div>
+          <div class="finding-row">
+            <div class="name">Vendor B</div>
+            <div class="track" aria-label="9 total: 4 unique and 5 also found elsewhere">
+              <div class="segment unique" style="width:18.182%">4</div>
+              <div class="segment shared" style="width:22.727%">5</div>
+            </div>
+            <div class="count">9</div>
+          </div>
+          <div class="finding-row">
+            <div class="name">Our assessment</div>
+            <div class="track" aria-label="22 total: 16 unique and 6 also found elsewhere">
+              <div class="segment unique" style="width:72.727%">16</div>
+              <div class="segment shared" style="width:27.273%">6</div>
+            </div>
+            <div class="count">22</div>
+          </div>
+        </div>
+        <div class="finding-summary">
+          <div><strong>25 found by only one assessment + 6 shared = 31 distinct findings</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ Wrap-up: concrete open-source approaches + internal context -->
+    <section class="slide content-slide harness-comparison">
+      <div class="stagger">
+        <h2 class="slide-title">Learn from open-source tools and harnesses</h2>
+        <div class="harness-rows">
+          <a class="harness-repo" href="https://github.com/Netflix-Skunkworks/railguard-skill" target="_blank" rel="noopener noreferrer">
+            <strong>Netflix Railguard</strong>
+            <p>Different specialist agents search for different types of bugs.</p>
+          </a>
+          <a class="harness-repo" href="https://github.com/visa/visa-vulnerability-agentic-harness" target="_blank" rel="noopener noreferrer">
+            <strong>Visa VVAH</strong>
+            <p>Static analysis finds likely paths. Agents investigate.</p>
+          </a>
+          <a class="harness-repo" href="https://github.com/block/codecrucible" target="_blank" rel="noopener noreferrer">
+            <strong>Block CodeCrucible</strong>
+            <p>The repo is filtered and split into chunks for LLM review.</p>
+          </a>
+        </div>
+        <div class="harness-context-summary">
+          <h3>These harnesses get better with your context.</h3>
+          <p>Threat model, architecture, security assumptions, runtime data and exposure.</p>
+        </div>
+        <div class="close-example">
+          <span>We kept it simple:</span>
+          <strong>our agentic pentest skill</strong>
+          <b>=</b>
+          <span>Trail of Bits skills</span>
+          <b>+</b>
+          <span>our internal skills</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ Wrap-up 2/2: improve skills through daily use -->
+    <section class="slide content-slide daily-start">
+      <div>
+        <h2 class="slide-title">Start with skills. Augment yourself.</h2>
+        <div class="closing-steps">
+          <div class="closing-step">
+            <span>01</span>
+            <h3>Use skills in daily work</h3>
+            <p>Keep yourself in the loop.</p>
+          </div>
+          <div class="closing-step">
+            <span>02</span>
+            <h3>Capture misses and corrections</h3>
+            <p>Update the skill, data access, or workflow.</p>
+          </div>
+          <div class="closing-step">
+            <span>03</span>
+            <h3>Build evals from verified cases</h3>
+            <p>Rerun them after changes.</p>
+          </div>
+          <div class="closing-step">
+            <span>04</span>
+            <h3>Ship an agent</h3>
+            <p>Run continuously or on real events.</p>
+          </div>
+        </div>
+        <div class="closing-repeat">Every production miss becomes a skill or eval update.</div>
+      </div>
+    </section>
+
+    <!-- ============================================================ Final takeaway -->
+    <section class="slide content-slide final-takeaway">
+      <div>
+        <h2 class="slide-title">Agents make us better security engineers.</h2>
+        <ul class="final-bullets">
+            <li>Give agents your internal context</li>
+            <li>Give them tools to verify findings</li>
+            <li>Use the right orchestration for the job</li>
+            <li>Use evals to see what improves results and what only burns tokens</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================ Thank you -->
+    <section class="slide thank-you-slide">
+      <div>
+        <h2>Thank you.</h2>
+        <div class="thank-you-link">
+          <span>Slides:</span>
+          <a href="https://vaag.land/sf26">https://vaag.land/sf26</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ Appendix: open-source security harnesses -->
+    <section class="slide content-slide harness-reference">
+      <div>
+        <h2 class="slide-title">Open-source security tools and harnesses</h2>
+        <div class="reference-grid">
+          <div class="reference-column">
+            <h3>LLM-led exploit generation</h3>
+            <ul>
+              <li><a href="https://github.com/Kritt-ai/open-kritt" target="_blank" rel="noreferrer"><strong>github.com/Kritt-ai/open-kritt</strong></a></li>
+              <li><a href="https://github.com/knostic/OpenAnt" target="_blank" rel="noreferrer"><strong>github.com/knostic/OpenAnt</strong></a></li>
+              <li><a href="https://github.com/provos/ironcurtain" target="_blank" rel="noreferrer"><strong>github.com/provos/ironcurtain</strong></a></li>
+              <li><a href="https://github.com/anthropics/defending-code-reference-harness" target="_blank" rel="noreferrer"><strong>github.com/anthropics/defending-code-reference-harness</strong></a></li>
+            </ul>
+          </div>
+          <div class="reference-column">
+            <h3>Skills for coding agents</h3>
+            <ul>
+              <li><a href="https://github.com/capitalone/vulnhunter" target="_blank" rel="noreferrer"><strong>github.com/capitalone/vulnhunter</strong></a></li>
+              <li><a href="https://github.com/cloudflare/security-audit-skill" target="_blank" rel="noreferrer"><strong>github.com/cloudflare/security-audit-skill</strong></a></li>
+              <li><a href="https://github.com/trailofbits/skills" target="_blank" rel="noreferrer"><strong>github.com/trailofbits/skills</strong></a></li>
+              <li><a href="https://github.com/google/mantis" target="_blank" rel="noreferrer"><strong>github.com/google/mantis</strong></a></li>
+              <li><a href="https://github.com/anthropics/claude-code-security-review" target="_blank" rel="noreferrer"><strong>github.com/anthropics/claude-code-security-review</strong></a></li>
+              <li><a href="https://github.com/openai/codex-security" target="_blank" rel="noreferrer"><strong>github.com/openai/codex-security</strong></a></li>
+            </ul>
+          </div>
+          <div class="reference-column">
+            <h3>SAST + LLM hybrids</h3>
+            <ul>
+              <li><a href="https://github.com/visa/visa-vulnerability-agentic-harness" target="_blank" rel="noreferrer"><strong>github.com/visa/visa-vulnerability-agentic-harness</strong></a></li>
+              <li><a href="https://github.com/gadievron/raptor" target="_blank" rel="noreferrer"><strong>github.com/gadievron/raptor</strong></a></li>
+              <li><a href="https://github.com/vercel-labs/deepsec" target="_blank" rel="noreferrer"><strong>github.com/vercel-labs/deepsec</strong></a></li>
+              <li><a href="https://github.com/cisco-open/ai-deep-sast" target="_blank" rel="noreferrer"><strong>github.com/cisco-open/ai-deep-sast</strong></a></li>
+              <li><a href="https://github.com/block/codecrucible" target="_blank" rel="noreferrer"><strong>github.com/block/codecrucible</strong></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="nav">
+    <button onclick="prevSlide()">&#8592;</button>
+    <button onclick="nextSlide()">&#8594;</button>
+  </div>
+  <div class="slide-counter" id="counter"></div>
+  <div class="theme-toast" id="themeToast"></div>
+
+  <script src="slides.js"></script>
+  <!-- Theme toggle: "t" flips dark<->light live, persists for the venue. -->
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const toast = document.getElementById('themeToast');
+      let toastTimer;
+      function announce() {
+        const light = root.dataset.theme === 'light';
+        toast.innerHTML = (light ? 'Light' : 'Dark') + ' &middot; <b>T</b> to flip';
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 1400);
+      }
+      function toggle() {
+        const light = root.dataset.theme === 'light';
+        if (light) { delete root.dataset.theme; }
+        else { root.dataset.theme = 'light'; }
+        try { localStorage.setItem('deck-theme', light ? 'dark' : 'light'); } catch (e) {}
+        announce();
+      }
+      document.addEventListener('keydown', (e) => {
+        if ((e.key === 't' || e.key === 'T') && !e.metaKey && !e.ctrlKey && !e.altKey) {
+          e.preventDefault();
+          toggle();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
