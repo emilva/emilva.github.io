@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
-<!-- Apply saved theme before first paint (no flash). Default = dark. -->
+
 <script>
   try { if (localStorage.getItem('deck-theme') === 'light')
           document.documentElement.dataset.theme = 'light'; } catch (e) {}
@@ -382,14 +382,14 @@ body::after {
   line-height: 1.7;
 }
 
-/* Bug bounty agent: how the ad hoc scoring skill became a running service. */
+/* Bug bounty scoring agent: HackerOne activity, Hindsight memory and Slack output. */
 .production-agent-slide {
   padding: 4.6cqi var(--safe-x);
 }
 .production-agent-slide.active {
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  gap: 2.6cqi;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 1.4cqi;
 }
 .production-agent-slide .slide-title {
   font-size: 4.2cqi;
@@ -400,193 +400,205 @@ body::after {
   font-size: 1.7cqi;
   line-height: 1.35;
 }
-.production-agent-flow {
-  display: grid;
-  grid-template-columns: 0.88fr 1.03fr 1.28fr 1fr;
-  align-items: stretch;
+.production-agent-diagram {
+  display: block;
+  width: 100%;
+  height: auto;
   min-height: 0;
-  border-top: 1px solid var(--rule-strong);
-  border-bottom: 1px solid var(--rule-strong);
+  align-self: start;
+  overflow: visible;
 }
-.production-agent-step {
-  min-width: 0;
-  padding: 2.05cqi 2cqi 1.7cqi 0;
+.production-agent-diagram text {
+  font-family: var(--font);
 }
-.production-agent-step + .production-agent-step {
-  padding-left: 2cqi;
-  border-left: 1px solid var(--rule);
+.production-agent-diagram .node,
+.production-agent-diagram .node-output {
+  fill: var(--bg-1);
+  stroke: var(--rule-strong);
+  stroke-width: 2;
 }
-.production-agent-label {
-  color: var(--ink-3);
-  font-size: 1.2cqi;
+.production-agent-diagram .memory-bank {
+  fill: var(--bg-1);
+  stroke: var(--rule-strong);
+  stroke-width: 2;
+}
+.production-agent-diagram .flow-line {
+  fill: none;
+  stroke: var(--ink-4);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+.production-agent-diagram .memory-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+.production-agent-diagram .kicker {
+  fill: var(--ink-3);
+  font-size: 20px;
   font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  letter-spacing: 2.4px;
 }
-.production-agent-step h3 {
-  max-width: 15ch;
-  margin-top: 0.8cqi;
-  color: var(--ink);
-  font-size: 2.15cqi;
+.production-agent-diagram .kicker-accent {
+  fill: var(--accent);
+}
+.production-agent-diagram .heading {
+  fill: var(--ink);
+  font-size: 31px;
   font-weight: 600;
-  line-height: 1.08;
-  letter-spacing: -0.015em;
 }
-.production-agent-copy {
-  max-width: 23ch;
-  margin-top: 1.25cqi;
-  color: var(--ink-2);
-  font-size: 1.58cqi;
-  line-height: 1.4;
+.production-agent-diagram .body {
+  fill: var(--ink-2);
+  font-size: 23px;
 }
-.production-agent-detail {
-  display: grid;
-  gap: 0.65cqi;
-  margin-top: 1.35cqi;
-  padding-top: 1.05cqi;
-  border-top: 1px solid var(--rule);
-  color: var(--ink-3);
-  font-size: 1.15cqi;
-  line-height: 1.25;
+.production-agent-diagram .muted {
+  fill: var(--ink-3);
+  font-size: 20px;
 }
-.production-agent-step.output {
-  background: linear-gradient(180deg, var(--accent-soft), transparent 78%);
+.production-agent-diagram .path-label {
+  fill: var(--accent);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
 }
-.production-agent-step.output .production-agent-label,
-.production-agent-step.output h3 {
-  color: var(--accent);
+.production-agent-diagram .memory-copy {
+  fill: var(--ink-2);
+  font-size: 26px;
+  font-weight: 500;
 }
-.production-agent-metric {
-  margin-top: 2.1cqi;
-  padding-top: 1.35cqi;
-  border-top: 1px solid var(--rule);
-}
-.production-agent-metric strong {
-  display: block;
-  color: var(--ink);
-  font-size: 2.55cqi;
+.production-agent-diagram .proof-number {
+  fill: var(--ink);
+  font-size: 68px;
   font-weight: 650;
-  line-height: 1.05;
+  letter-spacing: -1.5px;
 }
-.production-agent-metric span {
-  display: block;
-  margin-top: 0.45cqi;
-  color: var(--ink-2);
-  font-size: 1.28cqi;
-}
-.production-agent-footer {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 2cqi;
-  align-items: end;
-  color: var(--ink-3);
-  font-size: 1.28cqi;
-  line-height: 1.35;
-}
-.production-agent-footer p:last-child {
-  text-align: right;
-}
-.production-agent-footer strong {
-  color: var(--ink-2);
-  font-weight: 600;
+.production-agent-diagram .proof-copy {
+  fill: var(--ink-2);
+  font-size: 25px;
+  font-weight: 500;
 }
 
-/* Conceptual example of Hindsight recall informing the report estimate. */
+/* One concrete example of memory changing the report score. */
 .recall-priority-slide {
-  padding: 4.6cqi var(--safe-x);
+  padding: 7cqi var(--safe-x) 4.8cqi;
 }
-.recall-priority-slide.active {
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  gap: 2.35cqi;
-}
+.recall-priority-slide.active { display: block; }
 .recall-priority-slide .slide-title {
-  font-size: 4.2cqi;
+  font-size: 3.9cqi;
+  white-space: nowrap;
 }
-.recall-record {
+.recall-case {
   display: grid;
-  grid-template-columns: 0.95fr 1.25fr 0.95fr;
-  min-height: 0;
-  border-top: 1px solid var(--rule-strong);
-  border-bottom: 1px solid var(--rule-strong);
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.45fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  column-gap: 5.2cqi;
+  row-gap: 2.25cqi;
+  min-height: 37.5cqi;
+  margin-top: 3.6cqi;
 }
-.recall-record-section {
+.recall-case-incoming {
   min-width: 0;
-  padding: 2.1cqi 2.2cqi 1.55cqi 0;
+  padding-right: 4.6cqi;
+  border-right: 1px solid var(--rule-strong);
 }
-.recall-record-section + .recall-record-section {
-  padding-left: 2.2cqi;
-  border-left: 1px solid var(--rule);
-}
-.recall-summary-label {
+.recall-case-label {
   color: var(--ink-3);
-  font-size: 1.2cqi;
+  font-size: 1.15cqi;
   font-weight: 650;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.13em;
+  line-height: 1;
   text-transform: uppercase;
 }
-.recall-summary-incoming h3,
-.recall-summary-verdict h3 {
-  margin-top: 1.35cqi;
-  max-width: 14ch;
-  font-size: 2.45cqi;
+.recall-case-incoming h3 {
+  margin-top: 1.15cqi;
+  font-size: 2.35cqi;
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+}
+.recall-case-facts {
+  display: grid;
+  gap: 0.8cqi;
+  margin-top: 2.15cqi;
+}
+.recall-case-facts p {
+  color: var(--ink-2);
+  font-size: 1.55cqi;
+  line-height: 1.28;
+}
+.recall-case-facts p:first-child {
+  color: var(--ink);
+  font-weight: 550;
+}
+.recall-case-history { min-width: 0; }
+.recall-case-list {
+  margin-top: 0.95cqi;
+  border-top: 1px solid var(--rule-strong);
+}
+.recall-case-memory {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2.5cqi;
+  align-items: center;
+  min-height: 7.1cqi;
+  padding: 1.25cqi 0;
+  border-bottom: 1px solid var(--rule);
+}
+.recall-case-memory h3 {
+  font-size: 1.75cqi;
   font-weight: 600;
   line-height: 1.08;
 }
-.recall-summary-incoming p,
-.recall-summary-verdict p {
-  margin-top: 1.45cqi;
-  color: var(--ink-2);
-  font-size: 1.62cqi;
-  line-height: 1.38;
-}
-.recall-summary-case {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 1.3cqi;
-  align-items: start;
-  margin-top: 1.45cqi;
-  padding-top: 1.45cqi;
-  border-top: 1px solid var(--rule);
-}
-.recall-summary-case strong {
-  color: var(--ink);
-  font-size: 1.65cqi;
-  line-height: 1.15;
-}
-.recall-summary-case p {
+.recall-case-memory p {
+  max-width: 41ch;
   margin-top: 0.55cqi;
   color: var(--ink-2);
-  font-size: 1.42cqi;
-  line-height: 1.32;
-}
-.recall-summary-case span {
-  color: var(--ink-3);
-  font-size: 1.18cqi;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.recall-summary-verdict {
-  background: linear-gradient(180deg, var(--accent-soft), transparent 76%);
-}
-.recall-summary-verdict h3 { color: var(--accent); }
-.recall-summary-verdict small {
-  display: block;
-  margin-top: 2cqi;
-  padding-top: 1cqi;
-  border-top: 1px solid var(--rule);
-  color: var(--ink-4);
-  font-size: 1.15cqi;
+  font-size: 1.35cqi;
   line-height: 1.3;
 }
-.recall-priority-footer {
-  color: var(--ink-3);
-  font-size: 1.55cqi;
-  line-height: 1.35;
+.recall-case-outcome {
+  min-width: 8.5cqi;
+  text-align: right;
 }
-.recall-priority-footer strong {
-  color: var(--ink-2);
+.recall-case-outcome strong {
+  display: block;
+  font-size: 2.45cqi;
+  font-weight: 650;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.recall-case-outcome span {
+  display: block;
+  margin-top: 0.55cqi;
+  color: var(--ink-3);
+  font-size: 1.05cqi;
   font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.recall-case-decision {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.45fr);
+  column-gap: 5.2cqi;
+  align-items: start;
+  padding-top: 1.6cqi;
+  border-top: 2px solid var(--accent);
+}
+.recall-case-result {
+  color: var(--accent);
+  font-size: 2.65cqi;
+  font-weight: 650;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+}
+.recall-case-reason {
+  max-width: 52ch;
+  color: var(--ink-2);
+  font-size: 1.55cqi;
+  line-height: 1.32;
 }
 
 /* Asymmetric hero-stat split: big number left, supporting points right */
@@ -704,8 +716,8 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
 .verification-flow {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
-  gap: 2cqi;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4.5cqi;
   align-items: start;
   margin-top: 4cqi;
 }
@@ -742,11 +754,6 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
   color: var(--ink-3);
 }
 .verification-step.confirmed .evidence { color: var(--accent); font-weight: 650; }
-.verification-arrow {
-  padding-top: 6.2cqi;
-  font-size: 2.2cqi;
-  color: var(--ink-3);
-}
 .verification-takeaway {
   margin-top: 2.8cqi;
   padding-left: 1.7cqi;
@@ -760,7 +767,41 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
   padding-top: 5.2cqi;
 }
 .assessment-comparison .slide-title {
-  margin-bottom: 2.4cqi;
+  margin-bottom: 0;
+}
+.assessment-simple {
+  display: grid;
+  grid-template-columns: 20cqi minmax(0, 1fr);
+  column-gap: 5cqi;
+  row-gap: 4.4cqi;
+  align-items: baseline;
+  margin-top: 6.6cqi;
+}
+.assessment-simple .who {
+  font-size: 1.8cqi;
+  line-height: 1.15;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.assessment-simple .what {
+  min-width: 0;
+  font-size: 2.5cqi;
+  line-height: 1.12;
+  letter-spacing: -0.018em;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+.assessment-simple .what strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.assessment-simple .context {
+  grid-column: 2;
+  margin-top: -2.6cqi;
+  max-width: 64cqi;
+  font-size: 1.8cqi;
+  line-height: 1.45;
+  color: var(--ink-3);
 }
 .assessment-shared {
   display: flex;
@@ -844,12 +885,34 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
   letter-spacing: 0.14em;
 }
 .feedback-found strong {
-  font-size: 2.05cqi;
+  font-size: 2.3cqi;
   color: var(--ink-2);
   font-weight: 500;
 }
 .feedback-found code {
   font-size: inherit;
+}
+.feedback-outcomes {
+  display: grid;
+  grid-template-columns: 20cqi minmax(0, 1fr);
+  column-gap: 4.5cqi;
+  row-gap: 3.5cqi;
+  align-items: baseline;
+  margin-top: 5.2cqi;
+}
+.feedback-outcomes .who {
+  font-size: 1.8cqi;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.feedback-outcomes .result {
+  font-size: 2.5cqi;
+  line-height: 1.25;
+  color: var(--ink-2);
+}
+.feedback-outcomes .result strong {
+  color: var(--accent);
+  font-weight: 650;
 }
 .feedback-contrast {
   display: grid;
@@ -887,11 +950,9 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
   font-weight: 700;
 }
 .feedback-note {
-  margin: 3cqi 0 0;
-  padding-top: 1.5cqi;
-  border-top: 1px solid var(--rule-strong);
-  font-size: 2.05cqi;
-  color: var(--ink);
+  margin: 4.8cqi 0 0 24.5cqi;
+  font-size: 2.3cqi;
+  color: var(--ink-2);
 }
 .finding-bars {
   display: grid;
@@ -973,6 +1034,57 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
 }
 .finding-summary strong { color: var(--ink); }
 .finding-summary .honesty { max-width: 40cqi; color: var(--ink-3); }
+.finding-union-total {
+  margin-top: 5.8cqi;
+  font-size: 2.5cqi;
+  line-height: 1;
+  color: var(--ink-2);
+}
+.finding-union-total strong {
+  color: var(--ink);
+  font-size: 3.5cqi;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.finding-union-bar {
+  display: flex;
+  width: 100%;
+  height: 7.4cqi;
+  margin-top: 2.3cqi;
+  gap: 0.22cqi;
+  background: var(--bg);
+}
+.finding-union-segment {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+  color: var(--bg);
+  background: var(--accent);
+  text-align: center;
+}
+.finding-union-segment.a { width: 16.129%; }
+.finding-union-segment.b { width: 12.903%; }
+.finding-union-segment.ours { width: 51.613%; }
+.finding-union-segment.shared { width: 19.355%; background: var(--ink-3); }
+.finding-union-segment b {
+  font-size: 2.7cqi;
+  line-height: 1;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.finding-union-segment span {
+  margin-top: 0.45cqi;
+  font-size: 1.45cqi;
+  line-height: 1.05;
+  font-weight: 600;
+}
+.finding-union-note {
+  margin: 2.2cqi 0 0;
+  font-size: 1.8cqi;
+  color: var(--ink-3);
+}
 .findings-comparison .slide-title {
   margin-bottom: 2.8cqi;
 }
@@ -1075,13 +1187,13 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
   grid-template-columns: 0.28fr 0.72fr;
   gap: 3.2cqi;
   align-items: baseline;
-  padding: 1.05cqi 0;
+  padding: 1.5cqi 0;
   border-bottom: 1px solid var(--rule-strong);
   color: inherit;
   text-decoration: none;
 }
 .harness-repo strong {
-  font-size: 1.65cqi;
+  font-size: 2cqi;
   color: var(--ink);
 }
 .harness-repo strong::after {
@@ -1091,7 +1203,7 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
 }
 .harness-repo p {
   margin: 0;
-  font-size: 1.5cqi;
+  font-size: 2.1cqi;
   line-height: 1.3;
   color: var(--ink-2);
 }
@@ -1121,8 +1233,7 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
   margin-top: 2.35cqi;
   padding: 1.35cqi 0 0;
   border-left: 0;
-  border-top: 1px solid var(--rule-strong);
-  font-size: 1.75cqi;
+  font-size: 2cqi;
 }
 .harness-comparison .close-example b {
   color: var(--ink-3);
@@ -1242,11 +1353,11 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
   display: flex;
   align-items: baseline;
   gap: 1.4cqi;
-  font-size: 2.4cqi;
+  font-size: 3.2cqi;
   color: var(--ink-3);
 }
 .thank-you-link a {
-  font-size: 3.5cqi;
+  font-size: inherit;
   font-weight: 600;
   letter-spacing: -0.025em;
   color: var(--accent);
@@ -1306,7 +1417,8 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
 }
 .eval-frame-loop {
   display: grid;
-  grid-template-columns: 1fr 3.2cqi 1fr 3.2cqi 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3.2cqi;
   align-items: start;
   margin-top: 3.6cqi;
 }
@@ -1337,13 +1449,6 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
   line-height: 1.28;
   color: var(--ink-2);
 }
-.eval-frame-arrow {
-  display: grid;
-  place-items: center;
-  min-height: 7.6cqi;
-  font-size: 2.3cqi;
-  color: var(--ink-3);
-}
 .eval-frame-measure {
   display: grid;
   grid-template-columns: 14cqi 1fr;
@@ -1369,10 +1474,17 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
   margin-top: 2.8cqi;
 }
 .eval-frame-funnel {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 3.2cqi;
+  justify-content: start;
+  font-variant-numeric: tabular-nums;
+}
+.eval-frame-stat {
   display: flex;
   align-items: baseline;
-  gap: 1.2cqi;
-  font-variant-numeric: tabular-nums;
+  gap: 0.8cqi;
+  white-space: nowrap;
 }
 .eval-frame-number {
   font-size: 3.4cqi;
@@ -1380,8 +1492,8 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
   letter-spacing: -0.04em;
   font-weight: 700;
 }
-.eval-frame-arrow-small {
-  font-size: 2cqi;
+.eval-frame-source {
+  font-size: 1.35cqi;
   color: var(--ink-3);
 }
 .eval-frame-usable {
@@ -1482,7 +1594,7 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
   align-items: center;
   padding: 1.1cqi 0;
   border-bottom: 1px solid var(--rule);
-  font-size: 1.55cqi;
+  font-size: 1.8cqi;
   color: var(--ink-2);
 }
 .eval-result-row strong,
@@ -1513,7 +1625,7 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
   grid-template-columns: minmax(0, 1fr) 18cqi 10cqi;
 }
 .eval-result-list.job-results .eval-result-row:first-child > :last-child {
-  color: var(--accent);
+  color: var(--ink);
 }
 .eval-lesson-note {
   margin-top: 1.5cqi;
@@ -2003,21 +2115,20 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
 .incident-scope-grid {
   display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
-  gap: 4.5cqi;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 3.7cqi;
   margin-top: 2.7cqi;
   align-items: start;
 }
 .incident-scope-column {
-  padding-top: 1.25cqi;
-  border-top: 1px solid var(--rule-strong);
+  padding-top: 0.5cqi;
 }
 .incident-scope-column.evidence {
-  border-top: 2px solid var(--accent);
+  border-top: 0;
 }
 .incident-scope-label {
   color: var(--ink-3);
-  font-size: 1.12cqi;
+  font-size: 1.3cqi;
   font-weight: 650;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -2049,7 +2160,7 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
   max-width: 30ch;
   padding-left: 1.3cqi;
   color: var(--ink-2);
-  font-size: 1.55cqi;
+  font-size: 1.86cqi;
   line-height: 1.35;
 }
 .incident-scope-list li::before {
@@ -2066,7 +2177,7 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
   background: rgba(255,255,255,0.018);
   color: var(--ink-2);
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 1.15cqi;
+  font-size: 1.5cqi;
   line-height: 1.46;
   white-space: pre-wrap;
 }
@@ -2080,7 +2191,7 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
   padding-left: 1.4cqi;
   border-left: 0.28cqi solid var(--accent);
   color: var(--ink-2);
-  font-size: 1.45cqi;
+  font-size: 1.9cqi;
   line-height: 1.35;
 }
 
@@ -2310,17 +2421,19 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
   max-width: none;
   margin-bottom: 0;
 }
-.ssrf-hook-body {
+.ssrf-hook-annotated {
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
-  gap: 4cqi;
-  align-items: start;
-  margin-top: 2.4cqi;
+  grid-template-columns: minmax(0, 1.28fr) minmax(0, 0.72fr);
+  gap: 4.6cqi;
+  margin-top: 2.8cqi;
 }
 .ssrf-hook-code {
-  font-size: 1.35cqi;
-  line-height: 1.6;
-  padding: 1.5cqi 1.7cqi;
+  min-height: 23.5cqi;
+  padding: 1.9cqi 2.2cqi;
+  border: 0;
+  border-radius: 0;
+  font-size: 1.85cqi;
+  line-height: 1.62;
 }
 .ssrf-hook-code .kw,
 .ssrf-hook-code .fn {
@@ -2329,86 +2442,43 @@ a.src:hover { color: var(--accent); border-bottom-color: var(--accent); }
 .ssrf-hook-code .str {
   color: var(--ink-2);
 }
-.ssrf-hook-reasons {
-  border-top: 1px solid var(--rule-strong);
-}
-.ssrf-hook-reasons-label {
-  padding: 1.1cqi 0 0.7cqi;
-  color: var(--ink-3);
-  font-size: 1.08cqi;
-  font-weight: 700;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-}
-.ssrf-hook-reason {
+.ssrf-hook-notes {
   display: grid;
-  grid-template-columns: 10cqi 1fr;
-  gap: 1.2cqi;
-  padding: 0.8cqi 0;
-  border-top: 1px solid var(--rule);
+  grid-template-rows: repeat(3, 1fr);
+  min-height: 23.5cqi;
+  padding: 0.7cqi 0;
 }
-.ssrf-hook-reason strong {
-  color: var(--ink);
-  font-size: 1.4cqi;
-  font-weight: 600;
-  line-height: 1.25;
-}
-.ssrf-hook-reason span {
+.ssrf-hook-note {
+  display: flex;
+  align-items: center;
+  margin: 0;
   color: var(--ink-2);
-  font-size: 1.3cqi;
+  font-size: 1.9cqi;
   line-height: 1.3;
+}
+.ssrf-hook-note code {
+  margin-right: 0.45ch;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 0.9em;
+  font-weight: 600;
 }
 .ssrf-hook-outcome {
-  display: grid;
-  grid-template-columns: 1fr 1.1fr;
-  margin-top: 2.2cqi;
-  border-top: 1px solid var(--rule-strong);
-  border-bottom: 1px solid var(--rule-strong);
-}
-.ssrf-hook-outcome > div {
-  padding: 1.2cqi 2cqi 1.3cqi 0;
-}
-.ssrf-hook-outcome > div + div {
-  padding-left: 2cqi;
-  border-left: 1px solid var(--rule);
-}
-.ssrf-hook-outcome .label {
-  margin-bottom: 0.5cqi;
-  color: var(--ink-3);
-  font-size: 1.05cqi;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-.ssrf-hook-outcome strong {
-  display: block;
-  color: var(--ink);
-  font-size: 1.85cqi;
-  font-weight: 600;
-  line-height: 1.18;
-}
-.ssrf-hook-outcome span {
-  display: block;
-  margin-top: 0.45cqi;
+  margin-top: 2cqi;
   color: var(--ink-2);
-  font-size: 1.25cqi;
-  line-height: 1.3;
+  font-size: 2.05cqi;
+  line-height: 1.25;
 }
-.ssrf-hook-outcome .result {
-  background: linear-gradient(90deg, var(--accent-soft), transparent 80%);
-}
-.ssrf-hook-outcome .result .label,
-.ssrf-hook-outcome .result strong {
-  color: var(--accent);
-}
+.ssrf-hook-outcome strong { color: var(--ink); font-weight: 700; }
+.ssrf-hook-outcome .result { color: var(--accent); }
 .ssrf-hook-moment {
-  margin-top: 1.8cqi;
-  color: var(--ink);
-  font-size: 2cqi;
-  line-height: 1.2;
+  margin-top: 2.1cqi;
+  color: var(--ink-2);
+  font-size: 2.2cqi;
+  line-height: 1.15;
 }
 .ssrf-hook-moment strong {
-  color: var(--accent);
+  color: var(--ink);
   font-weight: 600;
 }
 
@@ -2638,15 +2708,15 @@ body:hover .nav { opacity: 1; }
 .plain-note { margin-top: 2.2cqi; font-size: 1.7cqi; color: var(--ink-3); line-height: 1.45; }
 .plain-note b, .plain-note strong { color: var(--ink-2); font-weight: 600; }
 .plain-note em { color: var(--accent); font-style: normal; font-weight: 600; }
-.scope-note { margin-top: 1.2cqi; font-size: 1.3cqi; line-height: 1.4; color: var(--ink-3); }
+.scope-note { margin-top: 1.2cqi; font-size: 1.5cqi; line-height: 1.4; color: var(--ink-3); }
 
 .log-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 5cqi; }
 .log-run { border-top: 1px solid var(--rule-strong); padding-top: 1.4cqi; }
 .log-run.rlm { border-top: 2px solid var(--accent); }
-.log-method { font-size: 1.3cqi; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: var(--ink-3); }
+.log-method { font-size: 1.4cqi; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: var(--ink-3); }
 .log-result { margin-top: 1.2cqi; font-size: 3.2cqi; font-weight: 600; line-height: 1.1; color: var(--ink); }
 .log-run.rlm .log-result { color: var(--accent); }
-.log-detail { margin-top: 1.2cqi; font-size: 1.65cqi; line-height: 1.4; color: var(--ink-3); }
+.log-detail { margin-top: 1.2cqi; font-size: 1.9cqi; line-height: 1.4; color: var(--ink-3); }
 .log-detail strong { color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .log-findings { display: grid; gap: 0.6cqi; margin-top: 1.2cqi; list-style: none; }
 .log-findings li { font-size: 1.65cqi; line-height: 1.35; color: var(--ink-2); }
@@ -2681,7 +2751,7 @@ body:hover .nav { opacity: 1; }
 .results-row .count { font-size: 3.2cqi; font-weight: 700; line-height: 1; text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
 .rlm-experiment-setup {
   margin-top: 1.3cqi;
-  font-size: 1.6cqi;
+  font-size: 1.8cqi;
   line-height: 1.3;
   color: var(--ink-3);
 }
@@ -2691,8 +2761,10 @@ body:hover .nav { opacity: 1; }
 }
 .protected-results .results-head,
 .protected-results .results-row {
-  grid-template-columns: minmax(0, 1fr) 20cqi;
+  grid-template-columns: minmax(0, 1fr) 24cqi;
 }
+.protected-results .results-head { font-size: 1.4cqi; }
+.protected-results .results-head span:last-child { white-space: nowrap; }
 .protected-results .results-row { padding: 1.55cqi 0; }
 .protected-results .results-row .count { font-size: 3.6cqi; }
 .protected-results .results-row.miss .count { color: var(--accent); }
@@ -2779,10 +2851,10 @@ body:hover .nav { opacity: 1; }
   margin: 0;
 }
 .content-slide .slide-title,
-.production-agent-slide .slide-title,
-.recall-priority-slide .slide-title {
+.production-agent-slide .slide-title {
   font-size: var(--fs-slide);
 }
+.recall-priority-slide .slide-title { font-size: 3.9cqi; }
 </style>
 </head>
 <body>
@@ -2790,7 +2862,7 @@ body:hover .nav { opacity: 1; }
 
   <div class="slides" id="slides">
 
-    <!-- ============================================================ B1  title / meme -->
+
     <section class="slide title-slide active">
       <div class="stagger">
         <div class="eyebrow">Sikkerhetsfestivalen 2026 <span class="mark">/</span> AppSec</div>
@@ -2802,8 +2874,7 @@ body:hover .nav { opacity: 1; }
       </div>
     </section>
 
-    <!-- ============================================================ B27  setup: Vend / scope / stack
-         D3 (public cut): swap named brands for "a large Nordic marketplace group". -->
+
     <section class="slide content-slide">
       <div class="stagger">
         <div class="eyebrow redundant">Setup</div>
@@ -2841,67 +2912,45 @@ body:hover .nav { opacity: 1; }
       </div>
     </section>
 
-    <!-- ============================================================ Cold open: the SSRF result before explaining the mechanism -->
+
     <section class="slide content-slide ssrf-hook-slide">
       <div class="stagger">
         <div class="eyebrow placeholder" aria-hidden="true"></div>
         <h2 class="slide-title">From &ldquo;no impact&rdquo; to exploitable</h2>
 
-        <div class="ssrf-hook-body">
+        <div class="ssrf-hook-annotated">
           <pre class="snippet ssrf-hook-code"><span class="cmt">// attacker controls searchId only</span>
-<span class="kw">const</span> url = <span class="str">`notifications/saved-search/<span class="tok">${searchId}</span>
-  ?loginId=${callerLoginId}`</span>;
+<span class="kw">const</span> url =
+  <span class="str">`notifications/saved-search/${<span class="tok">searchId</span>}`</span>
+  + <span class="str">`?loginId=${callerLoginId}`</span>;
 
 <span class="kw">return</span> <span class="fn">fetch</span>(url, {
   headers: { authorization: userToken }
 });</pre>
 
-          <div class="ssrf-hook-reasons">
-            <div class="ssrf-hook-reasons-label">Why it looked harmless</div>
-            <div class="ssrf-hook-reason">
-              <strong>Path only</strong>
-              <span>The input only changed the path on a fixed internal service.</span>
-            </div>
-            <div class="ssrf-hook-reason">
-              <strong>User authentication</strong>
-              <span>The request forwarded the caller&rsquo;s authenticated token.</span>
-            </div>
-            <div class="ssrf-hook-reason">
-              <strong>Forced identity</strong>
-              <span><code>loginId</code> was always set to the caller.</span>
-            </div>
+          <div class="ssrf-hook-notes">
+            <p class="ssrf-hook-note"><span><code>searchId</code> changed only the path.</span></p>
+            <p class="ssrf-hook-note"><span><code>callerLoginId</code> fixed the identity to the caller.</span></p>
+            <p class="ssrf-hook-note"><span><code>userToken</code> kept the request authenticated.</span></p>
           </div>
         </div>
 
-        <div class="ssrf-hook-outcome">
-          <div>
-            <div class="label">My test + early Claude runs</div>
-            <strong>No working exploit</strong>
-            <span>We assessed the SSRF as having no practical impact.</span>
-          </div>
-          <div class="result">
-            <div class="label">A later Claude run</div>
-            <strong>200 OK</strong>
-            <span>Another user&rsquo;s data.</span>
-          </div>
-        </div>
+        <p class="ssrf-hook-outcome"><strong>My test:</strong> no working exploit. &nbsp; <strong>Later Claude run:</strong> <span class="result">200 OK.</span></p>
 
         <p class="ssrf-hook-moment">That was my <strong>&ldquo;LLMs are now fucking good&rdquo;</strong> moment.</p>
       </div>
     </section>
 
-    <!-- ============================================================ B2  the shift -->
+
     <section class="slide statement-slide">
       <div class="stagger">
         <div class="eyebrow placeholder" aria-hidden="true">&nbsp;</div>
         <h2 class="statement" style="max-width:none; font-size:4.7cqi">We used to automate with <span class="was">code</span>.<br>Now we automate with <span class="accent">reasoning</span>.</h2>
-        <p class="statement-sub">Some years ago we wrote the code, checked the findings, and dug up the context by hand. The reasoning is the model's job now. Skills hand it the context we used to <em>keep in our heads</em>.</p>
+        <p class="statement-sub">The model reasons about the code.<br>Skills hand it the context we used to <em>keep in our heads</em>.</p>
       </div>
     </section>
 
-    <!-- ============================================================ B3  SAST flat (the flat line)
-         Guardrail: never "Google's SAST didn't work"; it's FP economics + single-repo ceiling.
-         Plants "found != exploitable" -> paid off B14/B15. ("The turn" callout dropped.) -->
+
     <section class="slide content-slide">
       <div class="stagger">
         <div class="eyebrow redundant">The flat line</div>
@@ -2934,10 +2983,7 @@ body:hover .nav { opacity: 1; }
       </div>
     </section>
 
-    <!-- ============================================================ B6  the capability jump (CyberGym trajectory)
-         Point of the slide = the immense increase in capability. All 4 bars are CyberGym level-1, SINGLE RUN (pass@1),
-         model-focused rows straight from cybergym.io/assets/data/cybergym.json. GPT-4.1 ~9 (CyberGym Team run),
-         GPT-5 39.4 (CyberGym Team), GPT-5.5 81.8 (OpenAI), GPT-5.5-Cyber 85.6 (OpenAI). Mid-2024 pentest = YOUR anecdote. -->
+
     <section class="slide content-slide">
       <div class="stagger">
         <div class="eyebrow redundant">The capability jump</div>
@@ -2970,14 +3016,7 @@ body:hover .nav { opacity: 1; }
       </div>
     </section>
 
-    <!-- ============================================================ B6c  the harness jump (agents stack on top of the model)
-         Emil's idea: B6 shows raw-model capability climbing (9->86); THIS slide adds the agent scores to show
-         harness engineering pays out too. Same CyberGym level-1 leaderboard, single run.
-         Models (burgundy) GPT-4.1 9 / GPT-5 39 / GPT-5.5 82 / GPT-5.5-Cyber 86 (top raw MODEL).
-         Agents (blue) Wiz Atlas 90.9 / MDASH 92.0 sit ABOVE the best model. Scale ~1.7px/%, baseline y=210.
-         HONESTY: values rounded like B6 (90.9->91, 92.0->92, 85.6->86). MDASH tops it on OLDER models
-         (GPT-5.4 + Claude Opus 4.6 + Sonnet 4.6, 2026-06-17); Wiz Atlas = GPT-5.5 + Opus 4.6 (2026-07-27).
-         NVIDIA's open harness (86.8) lives on B5b; left off here to keep to Emil's wiz/mdash ask. -->
+
     <section class="slide content-slide">
       <div class="stagger">
         <div class="eyebrow redundant">The harness jump</div>
@@ -3016,47 +3055,19 @@ body:hover .nav { opacity: 1; }
       </div>
     </section>
 
-    <!-- ============================================================ B12  evidence that harness engineering changes outcomes -->
-    <!--
-    <section class="slide content-slide">
-      <div class="stagger">
-        <div class="eyebrow redundant">Evidence</div>
-        <h2 class="slide-title">It's the engineering, not the model</h2>
-        <div class="metrics">
-          <div class="metric"><div class="num">44.4%</div><div class="lbl">Scaffolding ablated</div></div>
-          <div class="metric key"><div class="num">64.2%</div><div class="lbl">Policy back in</div></div>
-          <div class="metric"><div class="num">+19.8</div><div class="lbl">Points, same model</div></div>
-        </div>
-        <div class="blocks cols-3 gap-top">
-          <div class="block"><h3>Figma</h3><p>Same model, scaffolding is what moved recall. The engine, not the weights.</p></div>
-          <div class="block"><h3>Capital One VulnHunter</h3><p>Prompt-only Claude skills, no engine. 868 stars in 4 weeks. A bank landed on skills-first too.</p></div>
-          <div class="block lead-rule"><h3>Us</h3><p>Same playbook: an eval from real bounty bugs. Reasoning review caught <span class="accent">73%</span>; regex plus Semgrep, <span class="accent">24%</span>.</p></div>
-        </div>
-      </div>
-      <div class="sources">
-        <a class="src" href="https://www.figma.com/blog/how-figma-stays-ahead-of-vulnerabilities-with-agents/" target="_blank" rel="noopener">Figma, 2026</a>
-        <span class="src">Capital One VulnHunter</span>
-        <span class="src">our eval &middot; security-labs</span>
-      </div>
-    </section>
-    -->
 
-    <!-- ============================================================ B6d  the harness question (moved next to the charts; INTERPRETATION, not data)
-         Emil: the old two-col just restated the charts (models rose / agents beat models) -> stripped it, CyberGym numbers live on the charts now.
-         The spoken setup (CFP timed with Mythos; Heelan tools+tokens vs elaborate harness; both-are-true) is TALKED, not written.
-         Slide holds only the conclusion: harness pays out now, cost/efficiency lever, next model absorbs it, bet on what survives (domain knowledge + eval).
-         COST ANGLE (Emil): frontier labs promote "unlimited budget, go find bugs" (they sell tokens); enterprises optimize cost-per-finding, which the harness controls.
-         Receipts if ever needed: Fenrir $0.61/finding & $8.80/confirmed-TP; Figma ~$0.50/PR; NOOA pass-by-reference = parity at HALF the tokens. Kept number-free to stay sparse.
-         Sources: Heelan (the debate + "token throughput is the limit"), XBOW (depreciation). Pays off at "engineering not the model" + eval arc. -->
+
+
+
     <section class="slide content-slide">
       <div class="stagger">
         <div class="eyebrow redundant">The harness question</div>
         <h2 class="slide-title">Build an agent to find and verify bugs?</h2>
         <ul class="bullets gap-top">
-          <li>A custom harness can improve results today</li>
-          <li>The next <em>&ldquo;Mythos moment&rdquo;</em> could make it obsolete</li>
-          <li>An open-source harness could squeeze more out of older models</li>
-          <li>Building one means owning the cost, maintenance, and evaluation</li>
+          <li>A custom harness will improve results</li>
+          <li>The next model upgrade could make it obsolete or inefficient</li>
+          <li>Vendors and open source will build better harnesses. None of them ship with your context</li>
+          <li>Your domain knowledge and eval test cases outlast any model or harness</li>
         </ul>
       </div>
       <div class="sources">
@@ -3065,64 +3076,16 @@ body:hover .nav { opacity: 1; }
       </div>
     </section>
 
-    <!-- ============================================================ B6b  the shift: black-box -> white-box (spring 2026)
-         Leads into the moat (B17). Anonymize vendor names; "why nothing" stays YOUR hypothesis. -->
-    <!--
-    <section class="slide content-slide">
-      <div class="stagger">
-        <div class="eyebrow">Spring 2026</div>
-        <h2 class="slide-title">Context is King</h2>
-        <p class="lead">LLMs read code well, so every vendor we retested now wants the source.</p>
-        <div class="chain gap-top">
-          <div class="step"><span class="n">&rarr;</span><span>analyze the code to <em>surface leads</em></span></div>
-          <div class="step"><span class="n">&rarr;</span><span>argue each lead, keep the <em>real</em> ones</span></div>
-          <div class="step"><span class="n">&rarr;</span><span>build a PoC and <span class="hit">actually test it</span></span></div>
-        </div>
-        <p class="lead gap-top">To prove a lead live, they need more than the repo: <em>deployment, URLs, the real target</em>.</p>
-      </div>
-    </section>
-    -->
 
-    <!-- ============================================================ B7  everybody can find bugs now (plants moat + slop)
-         moat -> paid off B17; slop -> paid off B19. -->
-    <!--
-    <section class="slide content-slide">
-      <div class="stagger">
-        <div class="eyebrow redundant">The problem</div>
-        <h2 class="slide-title">Everybody can find bugs now.<br>Or thinks they can.</h2>
-        <ul class="bullets gap-top">
-          <li>Bounty programs drown in <em>AI-generated slop</em>, from anyone with a chatbot</li>
-          <li>And the models are <em>confidently wrong</em>: severity cranked to max, no real bug</li>
-        </ul>
-        <div class="callout gap-top">
-          <span class="lbl">Mozilla</span>
-          <p class="txt">"It's cheap and easy to prompt an LLM to find a 'problem' in code, but <em>slow and expensive to respond to it</em>."</p>
-        </div>
-      </div>
-      <div class="sources">
-        <a class="src" href="https://www.hackerone.com/press-release/hackerone-report-finds-210-spike-ai-vulnerability-reports-amid-rise-ai-autonomy" target="_blank" rel="noopener">HackerOne: 210% spike in AI reports, 2025</a>
-        <a class="src" href="https://hacks.mozilla.org/2026/05/behind-the-scenes-hardening-firefox/" target="_blank" rel="noopener">Mozilla: hardening Firefox, 2026</a>
-        <a class="src" href="https://blog.doyensec.com/2026/05/27/aikido-xbow.html" target="_blank" rel="noopener">Doyensec: severity inflation, 2026</a>
-        <a class="src" href="https://arxiv.org/abs/2603.18740" target="_blank" rel="noopener">Confirmation bias in code review, 2026</a>
-      </div>
-    </section>
-    -->
 
-    <!-- ============================================================ payoff: fight AI with AI (the slop); moved next to the slop numbers -->
-    <!--
-    <section class="slide content-slide">
-      <div class="stagger">
-        <div class="eyebrow redundant">The slop</div>
-        <h2 class="slide-title">Fight AI with AI</h2>
-        <p class="lead">The one thing I did push to scale: a bounty <em>trash scorer</em>, an agent that scores every incoming report before a human touches it.</p>
-        <p class="lead gap-top">Same lesson as the whole talk: don't trust the confident narrative. <span class="accent">Score it, verify it.</span> When triage costs cents, you can triage everything.</p>
-      </div>
-      <div class="sources"><span class="src">numbers TBD &middot; reports, hours saved</span></div>
-    </section>
-    -->
 
-    <!-- ============================================================ B8  the origin story (hackday)
-         Numbers unreconciled: 168 sessions / 17k turns / $708 (operatives) vs old-deck set. -->
+
+
+
+
+
+
+
     <section class="slide content-slide">
       <div class="stagger">
         <div class="eyebrow redundant">What we built</div>
@@ -3131,7 +3094,7 @@ body:hover .nav { opacity: 1; }
           <div class="block">
             <h3>What Claude already knows</h3>
             <ul class="bullets tight">
-              <li>Knows every vulnerability class by heart</li>
+              <li>Knows every vulnerability class</li>
               <li>Reads any codebase, in any language</li>
               <li>Writes a PoC or a patch in minutes</li>
             </ul>
@@ -3149,15 +3112,14 @@ body:hover .nav { opacity: 1; }
       </div>
     </section>
 
-    <!-- ============================================================ B11a  the data points (breadth: everything skills wired in)
-         Category cards with data nouns. No agent in the middle. Scrub internal system names before public cut. -->
+
     <section class="slide content-slide connected-graph-slide">
       <div class="stagger">
         <div class="eyebrow redundant">The context</div>
         <h2 class="slide-title">Trace findings across code, runtime, and owners</h2>
         <div class="connected-graph">
           <svg viewBox="0 0 1000 390" role="img" aria-label="A security investigation can start from a report, repository, or package. Lookups and shared resource tags connect it to source code, runtime context, evidence, and the owning team, producing the full picture.">
-            <!-- Connectors first, behind the nodes. -->
+
             <path d="M255 184 L267 195 L255 206" style="fill:none;stroke:var(--accent);stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round"/>
             <line x1="545" y1="195" x2="570" y2="195" style="stroke:var(--ink-4);stroke-width:1.5"/>
             <line x1="570" y1="45" x2="570" y2="330" style="stroke:var(--ink-4);stroke-width:1.5"/>
@@ -3214,9 +3176,7 @@ body:hover .nav { opacity: 1; }
       </div>
     </section>
 
-    <!-- ============================================================ B11c  ask in plain English (question board)
-         Real questions + the internal sources each one fuses. Accent bar = combines 2+ sources (the point).
-         Example team/CVE ids are generic; scrub before any public cut. -->
+
     <section class="slide content-slide skills-question-slide">
       <div class="stagger">
         <h2 class="slide-title">Claude uses the skills each question needs</h2>
@@ -3244,7 +3204,7 @@ body:hover .nav { opacity: 1; }
       </div>
     </section>
 
-    <!-- ============================================================ SSRF context: apply the generic skill graph to this finding -->
+
     <section class="slide content-slide ssrf-context-graph-slide">
       <div class="stagger">
         <div class="eyebrow">Back to the SSRF</div>
@@ -3260,7 +3220,7 @@ body:hover .nav { opacity: 1; }
               </marker>
             </defs>
 
-            <!-- Connectors first, behind the nodes. -->
+
             <path class="edge-accent" d="M 370 438 L 390 438 L 390 300 L 445 300" />
             <path class="edge-accent" d="M 390 438 L 390 580 L 445 580" />
             <path class="edge-accent" d="M 695 300 L 725 300" />
@@ -3324,7 +3284,7 @@ body:hover .nav { opacity: 1; }
       </div>
     </section>
 
-    <!-- ============================================================ SSRF callback: now explain how Claude reached the result -->
+
     <section hidden aria-hidden="true" data-archived-slide="ssrf-callback-summary">
       <div class="stagger">
         <div class="eyebrow">Back to the SSRF</div>
@@ -3357,7 +3317,7 @@ body:hover .nav { opacity: 1; }
       </div>
     </section>
 
-    <!-- ============================================================ SSRF callback 1/3: trace the request and find the auth gap -->
+
     <section class="slide content-slide ssrf-story">
       <div class="stagger">
         <h2 class="slide-title">The Java API skipped auth on internal routes</h2>
@@ -3382,7 +3342,7 @@ body:hover .nav { opacity: 1; }
       </div>
     </section>
 
-    <!-- ============================================================ SSRF callback 2/3: probe, observe, and adjust -->
+
     <section class="slide content-slide ssrf-story ssrf-poc" data-reveal-start="1">
       <div class="stagger">
         <div class="eyebrow placeholder" aria-hidden="true"></div>
@@ -3414,8 +3374,7 @@ body:hover .nav { opacity: 1; }
       <div class="ssrf-success" data-step="4"><strong>200 OK</strong><span>Another user&rsquo;s data.</span></div>
     </section>
 
-    <!-- ============================================================ B7b  the slop, in numbers (HackerOne report volume)
-         Data: Emil's HackerOne program, Aug 2025 - Aug 15, 2026. Only report counts graphed (not $). -->
+
     <section class="slide content-slide chart-slide">
       <div class="stagger">
         <div class="eyebrow placeholder" aria-hidden="true"></div>
@@ -3456,123 +3415,137 @@ body:hover .nav { opacity: 1; }
       <div class="sources"><span class="src">Our HackerOne program &middot; Aug 2025 to Aug 15, 2026</span></div>
     </section>
 
-    <!-- ============================================================ bug bounty report scoring: skill -> memory -> service -->
+
     <section class="slide production-agent-slide">
       <header>
-        <h2 class="slide-title">Is this report worth a closer look?</h2>
-        <p class="production-agent-lead">We started with an ad hoc scoring skill, then turned it into a running agent.</p>
+        <h2 class="slide-title">We built a bot to flag the trash</h2>
       </header>
 
-      <div class="production-agent-flow" aria-label="How the report scoring agent processes a new report">
-        <div class="production-agent-step">
-          <div class="production-agent-label">Trigger</div>
-          <h3>New HackerOne report</h3>
-          <p class="production-agent-copy">Every new report starts a fresh agent session.</p>
-        </div>
+      <svg class="production-agent-diagram" viewBox="0 0 1500 620" role="img" aria-label="HackerOne reports, comments and outcomes are retained in Hindsight memory. New reports gather context, pass through a scoring skill and post a score, rationale and supporting evidence to Slack. Relevant history is recalled from Hindsight while context is gathered.">
+        <defs>
+          <marker id="production-arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="var(--ink-4)"/>
+          </marker>
+          <marker id="production-arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/>
+          </marker>
+        </defs>
 
-        <div class="production-agent-step">
-          <div class="production-agent-label">Skill</div>
-          <h3>Gather the evidence</h3>
-          <p class="production-agent-copy">Read the report, check scope and assess the PoC.</p>
-        </div>
+        <g transform="translate(0,74)">
+          <rect class="node" width="320" height="190" rx="8"/>
+          <text class="kicker" x="28" y="40">HACKERONE</text>
+          <text class="heading" x="28" y="91">New report</text>
+          <text class="body" x="28" y="132">Comments + outcomes</text>
+        </g>
 
-        <div class="production-agent-step">
-          <div class="production-agent-label">Memory</div>
-          <h3>Recall how we decided before</h3>
-          <p class="production-agent-copy">Recall similar reports, actions and closure reasons.</p>
-        </div>
+        <path class="flow-line" d="M320 168 H390" marker-end="url(#production-arrow-gray)"/>
 
-        <div class="production-agent-step output">
-          <div class="production-agent-label">Output</div>
-          <h3>Estimate and rationale in Slack</h3>
-          <p class="production-agent-copy">Post an estimate, rationale and supporting evidence.</p>
-          <div class="production-agent-metric">
-            <strong>84% precision</strong>
-            <span>52 of 62 trash calls were correct</span>
-          </div>
-        </div>
-      </div>
+        <g transform="translate(410,74)">
+          <rect class="node" width="330" height="190" rx="8"/>
+          <text class="kicker" x="30" y="40">CONTEXT</text>
+          <text class="heading" x="30" y="87">Gather evidence</text>
+          <text class="body" x="30" y="126">Report · scope · PoC</text>
+        </g>
 
-      <footer class="production-agent-footer">
-        <p><strong>Prototype:</strong> run manually against a local report database.</p>
-        <p><strong>Service:</strong> estimates every new report.</p>
-      </footer>
+        <path class="flow-line" d="M740 168 H810" marker-end="url(#production-arrow-gray)"/>
+
+        <g transform="translate(830,74)">
+          <rect class="node" width="280" height="190" rx="8"/>
+          <text class="kicker" x="28" y="40">SCORING SKILL</text>
+          <text class="heading" x="28" y="87">0–100 score</text>
+          <text class="body" x="28" y="126">Trash · uncertain · valid</text>
+        </g>
+
+        <path class="flow-line" d="M1110 168 H1190" marker-end="url(#production-arrow-gray)"/>
+
+        <g transform="translate(1210,74)">
+          <rect class="node-output" width="280" height="190" rx="8"/>
+          <text class="kicker" x="28" y="40">SLACK</text>
+          <text class="heading" x="28" y="87">Score + rationale</text>
+          <text class="body" x="28" y="126">Supporting evidence</text>
+        </g>
+
+        <path class="memory-line" d="M160 278 V390" marker-end="url(#production-arrow-orange)"/>
+        <text class="path-label" x="182" y="350">RETAIN ALL ACTIVITY</text>
+
+        <path class="memory-line" d="M575 400 V284" marker-end="url(#production-arrow-orange)"/>
+        <text class="path-label" x="597" y="345">RECALL RELEVANT HISTORY</text>
+
+        <g transform="translate(0,400)">
+          <rect class="memory-bank" width="1110" height="155" rx="8"/>
+          <text class="kicker kicker-accent" x="30" y="43">HINDSIGHT MEMORY</text>
+          <text class="muted" x="1080" y="41" text-anchor="end">1,450 memories · 527 reports</text>
+          <text class="memory-copy" x="30" y="107">What happened, what we decided, and why</text>
+        </g>
+
+        <g transform="translate(1210,405)">
+          <text class="proof-number" x="0" y="68">84%</text>
+          <text class="proof-copy" x="0" y="112">precision on trash calls</text>
+        </g>
+      </svg>
     </section>
 
-    <!-- ============================================================ Hindsight recall: conceptual example based on past reports -->
+
     <section class="slide recall-priority-slide">
       <header>
-        <h2 class="slide-title">Similar reports can have different priorities</h2>
+        <h2 class="slide-title">Similar reports can have different outcomes</h2>
       </header>
 
-      <div class="recall-record" aria-label="A potential subdomain takeover compared with two past reports">
-        <div class="recall-record-section recall-summary-incoming">
-          <div class="recall-summary-label">Incoming report</div>
-          <h3>Potential subdomain takeover</h3>
-          <p>A dangling CNAME points to Zendesk. The report does not demonstrate control of the hostname.</p>
-        </div>
-
-        <div class="recall-record-section recall-summary-history">
-          <div class="recall-summary-label">Relevant past reports</div>
-          <div class="recall-summary-case">
-            <div>
-              <strong>No working takeover</strong>
-              <p>Dangling record, but no attacker-controlled content.</p>
-            </div>
-            <span>Informative</span>
-          </div>
-          <div class="recall-summary-case">
-            <div>
-              <strong>Working takeover</strong>
-              <p>Attacker controlled the hostname and showed impact.</p>
-            </div>
-            <span>Resolved</span>
+      <div class="recall-case" aria-label="How the trash scorer distinguishes similar subdomain takeover reports">
+        <div class="recall-case-incoming">
+          <div class="recall-case-label">Incoming report</div>
+          <h3>Subdomain takeover</h3>
+          <div class="recall-case-facts">
+            <p>Self-rated high</p>
+            <p>No working PoC or demonstrated impact</p>
           </div>
         </div>
 
-        <div class="recall-record-section recall-summary-verdict">
-          <div class="recall-summary-label">Agent estimate</div>
-          <h3>Likely informative</h3>
-          <p>This looks like the first case: a dangling record without a working takeover.</p>
-          <small>Conceptual example based on past decisions.</small>
+        <div class="recall-case-history">
+          <div class="recall-case-label">Relevant history from past reports</div>
+          <div class="recall-case-list">
+            <article class="recall-case-memory">
+              <div>
+                <h3>Dangling CNAME, no working PoC</h3>
+                <p>Nine similar reports were closed as informative.</p>
+              </div>
+              <div class="recall-case-outcome">
+                <strong>$0</strong>
+                <span>Informative</span>
+              </div>
+            </article>
+
+            <article class="recall-case-memory">
+              <div>
+                <h3>Main-domain takeover with a working PoC</h3>
+                <p>The reporter demonstrated control and showed cookie theft.</p>
+              </div>
+              <div class="recall-case-outcome">
+                <strong>$6,000</strong>
+                <span>Critical</span>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="recall-case-decision">
+          <div>
+            <div class="recall-case-label">Result</div>
+            <div class="recall-case-result">Low score &middot; likely trash</div>
+          </div>
+          <p class="recall-case-reason">The evidence matches the informative reports, not the critical takeover.</p>
         </div>
       </div>
-
-      <footer class="recall-priority-footer"><strong>Hindsight recalls why similar past reports were accepted or closed.</strong></footer>
     </section>
 
-    <!-- Backup: removed from the live deck on 2026-08-19. Replace the template wrapper with the section to restore it. -->
-    <template id="backup-supply-chain-slide">
-      <section class="slide content-slide">
-        <div class="stagger">
-          <div class="eyebrow">Supply-chain incident</div>
-          <h2 class="slide-title">With access, Claude can investigate across systems</h2>
-          <div class="incident-prompt">
-            <div class="file">attached: supply-chain-advisory.txt</div>
-            <div class="ask">“Investigate this advisory. Are any affected <span class="hl">packages or versions</span> present in our repositories, production or Artifactory? Did any affected repository run in CI during the attack window? Were malicious versions downloaded, and by what? If anything is affected, which team owns it?”</div>
-          </div>
-          <div class="incident-investigation">
-            <div class="claim">Claude determines what to check, then queries each system.</div>
-            <div class="incident-flow" aria-label="Claude's investigation path">
-              <span>understand affected packages</span><b>&rarr;</b>
-              <span>search repos, production + Artifactory</span><b>&rarr;</b>
-              <span>inspect CI history + downloads</span><b>&rarr;</b>
-              <span class="owner">find owning team</span>
-            </div>
-          </div>
-        </div>
-      </section>
-    </template>
 
-    <!-- ============================================================ B22a  incident: Next.js RCE (setup)
-         Redact: hostnames (m10s.io / n8n), researcher handle, pod name, internal services. -->
     <section class="slide content-slide">
       <div class="stagger">
         <div class="eyebrow">Incident &middot; Next.js RCE</div>
         <h2 class="slide-title">&ldquo;It&rsquo;s behind Appgate.&rdquo;</h2>
         <div class="incident-scope-grid">
           <div class="incident-scope-column">
-            <div class="incident-scope-label">We and Claude</div>
+            <div class="incident-scope-label">What we checked</div>
             <ul class="incident-scope-list">
               <li>Found a vulnerable deployment</li>
               <li>Checked Kubernetes ingress and cluster configuration</li>
@@ -3595,11 +3568,11 @@ GET /webhookasdfsadfadf       <span class="ok">200 OK</span>
 POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
           </div>
         </div>
-        <p class="incident-scope-note">We and Claude inspected Kubernetes. The GCP load balancer was outside the investigation scope.</p>
+        <p class="incident-scope-note">We only inspected Kubernetes. The GCP load balancer configuration was outside our investigation scope.</p>
       </div>
     </section>
 
-    <!-- ============================================================ B22b  incident: Next.js RCE verification workflow -->
+
     <section class="slide content-slide">
       <div class="stagger">
         <div class="eyebrow">Incident &middot; Next.js RCE</div>
@@ -3611,14 +3584,12 @@ POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
             <p>Turned the report into reusable scripts.</p>
             <span class="evidence">Python + shell</span>
           </div>
-          <div class="verification-arrow">&rarr;</div>
           <div class="verification-step confirmed">
             <div class="index">02</div>
             <h3>Ran it</h3>
             <p>Fixed parsing, retried, and confirmed execution in production.</p>
             <span class="evidence">uid=0(root)</span>
           </div>
-          <div class="verification-arrow">&rarr;</div>
           <div class="verification-step">
             <div class="index">03</div>
             <h3>Checked runtime sensors</h3>
@@ -3630,10 +3601,7 @@ POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
       </div>
     </section>
 
-    <!-- ============================================================ B11b  the connected graph (rebuild of operatives "The Connected Graph")
-         DRAFT to refactor live with Emil. Node labels are the REAL stack; SCRUB internal system names before any public cut.
-         Theme-translated from the operatives obsidian/orange deck to graphite + burgundy: accent = starting point,
-         --blue = service hub, neutral graphite cards = context systems, --green = full picture. All text uses var(--font). -->
+
     <section hidden aria-hidden="true">
       <div class="stagger">
         <div class="eyebrow placeholder" aria-hidden="true"></div>
@@ -3645,7 +3613,7 @@ POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
               <marker id="ga-neutral" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" style="fill:var(--ink-3)"/></marker>
             </defs>
 
-            <!-- Starting point (accent) -->
+
             <g transform="translate(20,120)">
               <rect x="0" y="0" width="210" height="230" rx="14" style="fill:var(--accent-soft);stroke:var(--accent);stroke-width:2"/>
               <text x="105" y="36" text-anchor="middle" style="fill:var(--accent);font-family:var(--font);font-size:20px;font-weight:700;letter-spacing:.05em">STARTING POINT</text>
@@ -3656,7 +3624,7 @@ POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
               <text x="26" y="214" style="fill:var(--ink);font-family:var(--font);font-size:20px">URL, hostname</text>
             </g>
 
-            <!-- Service hub (blue) -->
+
             <g transform="translate(310,175)">
               <rect x="0" y="0" width="210" height="170" rx="14" style="fill:var(--bg-2);stroke:var(--blue);stroke-width:2"/>
               <text x="105" y="34" text-anchor="middle" style="fill:var(--blue);font-family:var(--font);font-size:18px;font-weight:700">Wiz + k8s</text>
@@ -3667,7 +3635,7 @@ POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
               <text x="105" y="160" text-anchor="middle" style="fill:var(--ink-3);font-family:var(--font);font-size:16px">ingress: /path</text>
             </g>
 
-            <!-- Context systems (neutral graphite cards) -->
+
             <g transform="translate(620,6)">
               <rect x="0" y="0" width="200" height="76" rx="10" style="fill:var(--bg-2);stroke:var(--rule-strong);stroke-width:1.5"/>
               <text x="18" y="26" style="fill:var(--ink-3);font-family:var(--font);font-size:15px;font-weight:700;letter-spacing:.05em">OWNERSHIP</text>
@@ -3699,7 +3667,7 @@ POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
               <text x="18" y="68" style="fill:var(--ink-4);font-family:var(--font);font-size:14px">Duplicates, bounty</text>
             </g>
 
-            <!-- Full picture (green) -->
+
             <g transform="translate(900,70)">
               <rect x="0" y="0" width="240" height="360" rx="14" style="fill:rgba(47,169,68,0.10);stroke:var(--green);stroke-width:2"/>
               <text x="120" y="38" text-anchor="middle" style="fill:var(--green);font-family:var(--font);font-size:20px;font-weight:700;letter-spacing:.05em">FULL PICTURE</text>
@@ -3713,17 +3681,17 @@ POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
               <text x="24" y="334" style="fill:var(--ink);font-family:var(--font);font-size:19px"><tspan style="fill:var(--green)">&#10003;</tspan>  History and dupes</text>
             </g>
 
-            <!-- Edge: starting point -> service -->
+
             <line x1="230" y1="235" x2="305" y2="258" style="stroke:var(--accent);stroke-width:2.5" marker-end="url(#ga-accent)"/>
 
-            <!-- Edges: service -> context systems -->
+
             <line x1="520" y1="228" x2="617" y2="44"  style="stroke:var(--ink-3);stroke-width:1.5" marker-end="url(#ga-neutral)"/>
             <line x1="520" y1="244" x2="617" y2="143" style="stroke:var(--ink-3);stroke-width:1.5" marker-end="url(#ga-neutral)"/>
             <line x1="520" y1="260" x2="617" y2="242" style="stroke:var(--ink-3);stroke-width:1.5" marker-end="url(#ga-neutral)"/>
             <line x1="520" y1="276" x2="617" y2="341" style="stroke:var(--ink-3);stroke-width:1.5" marker-end="url(#ga-neutral)"/>
             <line x1="520" y1="292" x2="617" y2="440" style="stroke:var(--ink-3);stroke-width:1.5" marker-end="url(#ga-neutral)"/>
 
-            <!-- Edges: context systems -> full picture (dashed green) -->
+
             <line x1="820" y1="44"  x2="898" y2="120" style="stroke:var(--green);stroke-width:1;stroke-dasharray:4 4"/>
             <line x1="820" y1="143" x2="898" y2="180" style="stroke:var(--green);stroke-width:1;stroke-dasharray:4 4"/>
             <line x1="820" y1="242" x2="898" y2="240" style="stroke:var(--green);stroke-width:1;stroke-dasharray:4 4"/>
@@ -3735,7 +3703,7 @@ POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
       <div class="sources"><span class="src">rebuild of operatives "The Connected Graph" &middot; scrub internal names before public cut</span></div>
     </section>
 
-    <!-- ============================================================ B25  why this is easy for Claude (good tools, tagged resources, skills) -->
+
     <section hidden aria-hidden="true">
       <div class="stagger">
         <div class="eyebrow redundant">The foundation</div>
@@ -3748,9 +3716,7 @@ POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
       </div>
     </section>
 
-    <!-- ============================================================ SSRF STORY 1/4
-         CodeQL triage skill test case: path-limited SSRF that looked unexploitable.
-         SCRUB before public: real brand/service names, user IDs, hostnames. -->
+
     <section hidden aria-hidden="true" data-archived-slide="ssrf-detail-1">
       <div class="stagger">
         <div class="eyebrow">Code-scanning triage skill</div>
@@ -3789,9 +3755,7 @@ POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
       </div>
     </section>
 
-    <!-- ============================================================ SSRF STORY 2/4
-         Claude uses Wiz skills to trace the runtime path and repository metadata,
-         then source analysis reveals the downstream auth gap. -->
+
     <section hidden aria-hidden="true" data-archived-slide="ssrf-detail-2">
       <div class="stagger">
         <div class="eyebrow">Wiz skills + source</div>
@@ -3819,9 +3783,7 @@ POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
       </div>
     </section>
 
-    <!-- ============================================================ SSRF STORY 3/4
-         Progressive reveal: AUTH -> PATH TRAVERSAL -> VALID IDS -> QUERY TRUNCATION.
-         The request grows as each phase appears. -->
+
     <section hidden aria-hidden="true" data-archived-slide="ssrf-detail-3">
       <div class="stagger">
         <div class="eyebrow">Live verification</div>
@@ -3853,9 +3815,7 @@ POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
       <div class="ssrf-success" data-step="4"><strong>200 OK</strong><span>Another user&rsquo;s data, on production.</span></div>
     </section>
 
-    <!-- ============================================================ SSRF STORY 4/4
-         The payoff: connected tools let Claude investigate the real system;
-         the human supplies authentication, live IDs, and occasional direction. -->
+
     <section hidden aria-hidden="true" data-archived-slide="ssrf-detail-4">
       <div class="stagger">
         <div class="eyebrow">Why this run was different</div>
@@ -3883,7 +3843,7 @@ POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
       </div>
     </section>
 
-    <!-- ============================================================ EVAL 1/4  define the eval loop -->
+
     <section class="slide content-slide">
       <div class="stagger">
         <h2 class="slide-title">Test skills and agents on verified cases</h2>
@@ -3895,13 +3855,11 @@ POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
             <h3>Start with ground truth</h3>
             <p>A verified bug, its fix, and the result we expect.</p>
           </div>
-          <div class="eval-frame-arrow" aria-hidden="true">&rarr;</div>
           <div class="eval-frame-step">
             <div class="eval-frame-label">Change one thing</div>
             <h3>Model or workflow</h3>
-            <p>Swap the model, tools, skill, effort, or validator.</p>
+            <p>Change model, tools, skill, or effort.</p>
           </div>
-          <div class="eval-frame-arrow" aria-hidden="true">&rarr;</div>
           <div class="eval-frame-step">
             <div class="eval-frame-label">Run again</div>
             <h3>Compare the result</h3>
@@ -3911,15 +3869,19 @@ POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
 
         <div class="eval-frame-measure">
           <div class="eval-frame-label">What this gives us</div>
-          <p>Use the same ground truth to measure models, parameters, and harness design.</p>
+          <p>Same cases, different variables. See what actually moves the score.</p>
         </div>
 
         <div class="eval-frame-footer">
           <div class="eval-frame-funnel" aria-label="122 valid reports produced 15 usable cases">
-            <span class="eval-frame-number">122</span>
-            <span class="eval-frame-arrow-small">&rarr;</span>
-            <span class="eval-frame-number">15</span>
-            <span class="eval-frame-usable">usable cases</span>
+            <div class="eval-frame-stat">
+              <span class="eval-frame-number">122</span>
+              <span class="eval-frame-source">valid reports</span>
+            </div>
+            <div class="eval-frame-stat">
+              <span class="eval-frame-number">15</span>
+              <span class="eval-frame-usable">usable cases</span>
+            </div>
           </div>
           <div class="eval-frame-footer-copy">
             <strong>Ground truth takes work.</strong><br>
@@ -3929,7 +3891,7 @@ POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
       </div>
     </section>
 
-    <!-- ============================================================ EVAL 2/3  separate model limits from search-strategy limits -->
+
     <section class="slide content-slide">
       <div class="stagger">
         <div class="eyebrow placeholder" aria-hidden="true"></div>
@@ -3957,10 +3919,9 @@ POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
           </div>
         </div>
       </div>
-      <div class="sources"><span class="src">Replicated pilot &middot; three samples per configuration</span></div>
     </section>
 
-    <!-- ============================================================ EVAL 3/4  same recall, much higher cost -->
+
     <section class="slide content-slide">
       <div class="stagger">
         <div class="eyebrow placeholder" aria-hidden="true"></div>
@@ -3970,8 +3931,8 @@ POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
           <h3>Both found the vulnerability.</h3>
           <div class="eval-result-list cost-results">
             <div class="eval-result-row"><span>Method</span><strong>Time</strong><strong>Input</strong></div>
-            <div class="eval-result-row"><span>Bare Codex</span><strong>118s</strong><strong>214k</strong></div>
-            <div class="eval-result-row"><span>Large security workflow</span><strong>689s</strong><b>7.51M</b></div>
+            <div class="eval-result-row"><span>Plain Codex</span><strong>118s</strong><strong>214k</strong></div>
+            <div class="eval-result-row"><span>Codex security plugin</span><strong>689s</strong><b>7.51M</b></div>
           </div>
         </div>
         <p class="eval-takeaway no-rule">Same recall. The larger workflow was 5.8&times; slower and used <em>35&times; more input.</em></p>
@@ -3979,25 +3940,24 @@ POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
       <div class="sources"><span class="src">Workflow-development experiments &middot; August 2026</span></div>
     </section>
 
-    <!-- ============================================================ EVAL 4/4  validation can reduce recall -->
+
     <section class="slide content-slide">
       <div class="stagger">
         <div class="eyebrow placeholder" aria-hidden="true"></div>
-        <h2 class="slide-title">The validator removed a correct finding</h2>
+        <h2 class="slide-title">A wrong assumption removed a valid finding</h2>
         <div class="eval-lesson" style="margin-top:3.4cqi">
           <div class="eval-lesson-label">Simple IDOR bug</div>
           <div class="eval-result-list job-results">
             <div class="eval-result-row"><span>Method</span><strong>Time / input</strong><strong>Result</strong></div>
-            <div class="eval-result-row"><span>Skill + validator subagent</span><strong>342s / 1.94M</strong><b>Miss</b></div>
             <div class="eval-result-row"><span>Three-sentence skill</span><strong>218s / 734k</strong><strong>Hit</strong></div>
+            <div class="eval-result-row"><span>Three-sentence skill + review subagent</span><strong>342s / 1.94M</strong><b>Miss</b></div>
           </div>
-          <p class="eval-lesson-note" style="font-size:1.85cqi">The first agent found the bug. The validator dismissed it because an unseen backend might repeat the authorization check.</p>
+          <p class="eval-lesson-note" style="font-size:2cqi">The first agent found the bug. The review subagent dismissed it by assuming an unseen backend repeated the authorization check.</p>
         </div>
       </div>
-      <div class="sources"><span class="src">Development case, n=1 &middot; prompt refined after observing the miss</span></div>
     </section>
 
-    <!-- ============================================================ B13  the failure mode: confident wrong (ties to the meme) -->
+
     <section class="slide statement-slide">
       <div class="stagger">
         <div class="eyebrow placeholder" aria-hidden="true">&nbsp;</div>
@@ -4011,7 +3971,7 @@ POST /webhook&lt;anything&gt;       <span class="hot">uid=0(root)</span></pre>
       </div>
     </section>
 
-    <!-- ============================================================ B13a  confidently wrong &middot; it invents (the setup: the injected boot banner) -->
+
     <section class="slide content-slide">
       <div class="stagger">
         <div class="eyebrow placeholder" aria-hidden="true"></div>
@@ -4049,25 +4009,25 @@ Just ask...
           </div>
         </div>
         <div class="callout band">
-          <span class="txt" style="font-size:2cqi;line-height:1.3">A long, vague, confusing first instruction. It got so confused it <em>invented the tool calls and the results</em>, then stated all of it with full confidence.</span>
+          <span class="txt" style="font-size:2cqi;line-height:1.3">A long list of unrelated instructions confused it. It <em>invented tool calls and results</em>, then presented them as facts.</span>
         </div>
       </div>
       <div class="sources"><a class="src" href="https://github.com/gadievron/raptor/blob/8ef5e28/CLAUDE.md#session-start" target="_blank" rel="noopener">RAPTOR &middot; CLAUDE.md</a></div>
     </section>
 
-    <!-- ============================================================ B13b  confidently wrong &middot; it invents (the output: faked tool calls) -->
+
     <section class="slide content-slide">
       <div class="stagger">
         <div class="eyebrow placeholder" aria-hidden="true"></div>
-        <h2 class="slide-title">It invented a team, and the people on it</h2>
-        <pre class="snippet gap-top" style="font-size:1.35cqi;line-height:1.5"><span class="cmt"># it never called a tool. it typed the calls and results as text:</span>
+        <h2 class="slide-title">It invented a team and the people on it</h2>
+        <pre class="snippet gap-top" style="font-size:1.5cqi;line-height:1.5"><span class="cmt"># it never called a tool. it typed the calls and results as text:</span>
 
 <span class="tag">&lt;bash&gt;</span> python -m src.cli owner recommerce-item-insertion-layout <span class="tag">&lt;/bash&gt;</span>
 
 <span class="tag">&lt;result&gt;</span>
   Team:    <span class="tok">pc-torget-frontend</span>    <span class="cmt">&larr; no such team</span>
   Lang:    <span class="tok">Ruby</span>                  <span class="cmt">&larr; it's TypeScript</span>
-  Members: <span class="tok">&hellip; Erlend Oftedal, &hellip;</span>             <span class="cmt">&larr; all fabricated</span>
+  Members: <span class="tok">&hellip; Erlend Oftedal, &hellip;</span>   <span class="cmt">&larr; all fabricated</span>
 <span class="tag">&lt;/result&gt;</span></pre>
         <div class="callout band">
           <span class="txt" style="font-size:2cqi;line-height:1.3">96 turns, <em>zero real tool calls</em>. Real team: rc-seller-experience.</span>
@@ -4075,7 +4035,7 @@ Just ask...
       </div>
     </section>
 
-    <!-- ============================================================ RLM1  same log, different coverage -->
+
     <section class="slide content-slide rlm-slide">
       <div class="stagger">
         <div class="eyebrow placeholder" aria-hidden="true"></div>
@@ -4085,24 +4045,25 @@ Just ask...
             <div class="log-method">Vanilla Claude</div>
             <div class="log-result">&ldquo;No critical issues&rdquo;</div>
             <div class="log-detail"><strong>2,000 / 5,000</strong> lines inspected</div>
-            <div class="log-detail">The missing 3,000 lines were not mentioned</div>
+            <div class="log-detail">Missing <strong>3,000</strong> lines not mentioned</div>
           </div>
           <div class="log-run rlm">
-            <div class="log-method">RLM plugin</div>
+            <div class="log-method">RLM plugin for Claude</div>
             <div class="log-result">3 failure patterns</div>
-            <ul class="log-findings">
-              <li>11 watcher crashes</li>
-              <li>9 Kafka disconnects</li>
-              <li>Cascading failure</li>
-            </ul>
+            <div class="log-detail"><strong>11</strong> watcher crashes</div>
+            <div class="log-detail"><strong>9</strong> Kafka disconnects</div>
+            <div class="log-detail">Cascading failure</div>
           </div>
         </div>
-        <p class="log-takeaway"><em>RLM = Recursive Language Model.</em> It keeps the full input outside the model&rsquo;s context window and uses code to inspect it in parts.</p>
+        <p class="log-takeaway"><em>RLM = Recursive Language Model:</em><br>It keeps the full input outside the model&rsquo;s context window and uses code to inspect it in parts.</p>
       </div>
-      <div class="sources"><a class="src" href="https://www.primeintellect.ai/blog/rlm" target="_blank" rel="noopener">Recursive Language Models &middot; Prime Intellect</a></div>
+      <div class="sources">
+        <a class="src" href="https://www.primeintellect.ai/blog/rlm" target="_blank" rel="noopener">Recursive Language Models &middot; Prime Intellect</a>
+        <a class="src" href="https://alexzhang13.github.io/blog/2025/rlm/" target="_blank" rel="noopener">Alex Zhang &middot; RLM author&rsquo;s blog</a>
+      </div>
     </section>
 
-    <!-- ============================================================ RLM2  one baseline, two RLM-style approaches -->
+
     <section class="slide content-slide rlm-slide">
       <div class="stagger">
         <div class="eyebrow placeholder" aria-hidden="true"></div>
@@ -4114,7 +4075,7 @@ Just ask...
         <div class="blocks cols-3 methods-grid">
           <div class="block">
             <h3>Vanilla Claude</h3>
-            <p>Selectively searches and reads in <em>one context</em>.</p>
+            <p>Searches selectively within <em>one context window</em>.</p>
             <div class="tools">Coverage depends on its queries</div>
           </div>
           <div class="block">
@@ -4131,7 +4092,7 @@ Just ask...
       </div>
     </section>
 
-    <!-- ============================================================ RLM3  repository experiment and concrete coverage miss -->
+
     <section class="slide content-slide rlm-slide">
       <div class="stagger">
         <div class="eyebrow placeholder" aria-hidden="true"></div>
@@ -4156,12 +4117,10 @@ Just ask...
           </div>
         </div>
         <p class="rlm-experiment-why">Remix routes are files. Vanilla searched for <code>router.get()</code>-style declarations and never walked the route directory.</p>
-        <p class="scope-note">&ldquo;Found&rdquo; means authentication enforcement was visible in code. We did not test internet exposure.</p>
       </div>
     </section>
 
-    <!-- ============================================================ Agentic pentesting changed between 2024 and 2026
-         The scopes and methods differed; this is a timeline, not a benchmark. -->
+
     <section class="slide content-slide">
       <div class="stagger">
         <div class="eyebrow placeholder" aria-hidden="true"></div>
@@ -4181,151 +4140,74 @@ Just ask...
       </div>
     </section>
 
-    <!-- ============================================================ Agentic assessment comparison 1/3
-         Same scope and source; our assessment additionally had internal data and tools. -->
+
     <section class="slide content-slide assessment-comparison">
       <div class="stagger">
-        <h2 class="slide-title">Same source code. Different context.</h2>
-        <div class="assessment-shared">
-          <span>All three</span>
-          <strong>Same scope description &middot; Same source code</strong>
-        </div>
-        <div class="assessment-columns" aria-label="Assessment harnesses and access">
-          <div class="assessment-column">
-            <h3>Vendor assessments</h3>
-            <div class="assessment-detail">
-              <span>Harness</span>
-              <p>Two different vendor agents</p>
-            </div>
-            <div class="assessment-detail">
-              <span>Context</span>
-              <p>Source code + public target</p>
-            </div>
-            <div class="assessment-detail">
-              <span>Could verify</span>
-              <p>Publicly visible effects</p>
-            </div>
-          </div>
-          <div class="assessment-column ours">
-            <h3>Our assessment</h3>
-            <div class="assessment-detail">
-              <span>Harness</span>
-              <p>Trail of Bits skills + our internal skills</p>
-            </div>
-            <div class="assessment-detail access">
-              <span>Context</span>
-              <p>Application logs &middot; runtime events &middot; network paths &middot; ownership &middot; internal services</p>
-            </div>
-            <div class="assessment-detail">
-              <span>Could verify</span>
-              <p>HTTP responses &middot; logs &middot; real side effects</p>
-            </div>
-          </div>
+        <h2 class="slide-title">Three assessments. Different context.</h2>
+        <div class="assessment-simple" aria-label="Context available to the three assessments">
+          <div class="who">Two vendors</div>
+          <div class="what">Source code + public target</div>
+
+          <div class="who">Our assessment</div>
+          <div class="what">The same + <strong>production context</strong></div>
+
+          <div class="context">Logs &middot; runtime events &middot; network paths &middot; ownership &middot; internal services</div>
         </div>
       </div>
     </section>
 
-    <!-- ============================================================ Agentic assessment comparison 2/3: Slack side effect
-         Real receipts (Humio, prod, screenshot). Redact channel names, live token, vendor + PII. -->
+
     <section class="slide content-slide feedback-example">
       <div class="stagger">
         <h2 class="slide-title">We kept investigating after the 401</h2>
         <div class="feedback-found">
-          <strong>All three found the <code>sendFeedback</code> mutation.</strong>
+          <strong>All three found the message endpoint and tried to exploit it.</strong>
         </div>
-        <div class="feedback-contrast" aria-label="The vendor view compared with our internally verified view">
-          <div class="feedback-side response">
-            <span>Vendor view</span>
-            <div class="feedback-steps">
-              <span class="feedback-step">Send request</span>
-              <span class="feedback-arrow">&rarr;</span>
-              <span class="feedback-step"><code>401</code> Unauthorized</span>
-              <span class="feedback-arrow">&rarr;</span>
-              <span class="feedback-step">Flagged for investigation</span>
-            </div>
-          </div>
-          <div class="feedback-side effect">
-            <span>Our view</span>
-            <div class="feedback-steps">
-              <span class="feedback-step">Send request</span>
-              <span class="feedback-arrow">&rarr;</span>
-              <span class="feedback-step"><code>401</code> Unauthorized</span>
-              <span class="feedback-arrow">&rarr;</span>
-              <span class="feedback-step">Check application logs</span>
-              <span class="feedback-arrow">&rarr;</span>
-              <span class="feedback-step">Confirm in Slack</span>
-              <span class="feedback-arrow">&rarr;</span>
-              <span class="feedback-step">Verified</span>
-            </div>
-          </div>
+        <div class="feedback-outcomes" aria-label="What the vendor assessments and our assessment concluded">
+          <div class="who">API response</div>
+          <div class="result"><code>401 Unauthorized</code></div>
+
+          <div class="who">Vendor assessments</div>
+          <div class="result">Could not confirm the effect</div>
+
+          <div class="who">Our assessment</div>
+          <div class="result">Checked application logs. <strong>Message confirmed sent.</strong></div>
         </div>
-        <p class="feedback-note">However, we could see every random test payload they sent to the endpoint.</p>
       </div>
     </section>
 
-    <!-- ============================================================ Agentic assessment comparison 3/3
-         Initial-run counts. Not a benchmark: counting and harnesses differ; vendors were additive. -->
+
     <section class="slide content-slide findings-comparison">
       <div class="stagger">
         <h2 class="slide-title">No single assessment found everything</h2>
-        <div class="finding-legend" aria-label="Finding bar legend">
-          <span><i class="unique"></i>Unique to this assessment</span>
-          <span><i class="shared"></i>Also found elsewhere</span>
+        <div class="finding-union-total"><strong>31</strong> distinct findings</div>
+        <div class="finding-union-bar" role="img" aria-label="31 distinct findings: 5 found only by Vendor A, 4 found only by Vendor B, 16 found only by our assessment, and 6 found by more than one assessment">
+          <div class="finding-union-segment a"><b>5</b><span>Vendor A only</span></div>
+          <div class="finding-union-segment b"><b>4</b><span>Vendor B only</span></div>
+          <div class="finding-union-segment ours"><b>16</b><span>Our assessment only</span></div>
+          <div class="finding-union-segment shared"><b>6</b><span>Shared</span></div>
         </div>
-        <div class="finding-bars" aria-label="Total and unique findings by assessment approach">
-          <div class="finding-axis" aria-hidden="true"><span>Total</span></div>
-          <div class="finding-row">
-            <div class="name">Vendor A</div>
-            <div class="track" aria-label="8 total: 5 unique and 3 also found elsewhere">
-              <div class="segment unique" style="width:22.727%">5</div>
-              <div class="segment shared" style="width:13.636%">3</div>
-            </div>
-            <div class="count">8</div>
-          </div>
-          <div class="finding-row">
-            <div class="name">Vendor B</div>
-            <div class="track" aria-label="9 total: 4 unique and 5 also found elsewhere">
-              <div class="segment unique" style="width:18.182%">4</div>
-              <div class="segment shared" style="width:22.727%">5</div>
-            </div>
-            <div class="count">9</div>
-          </div>
-          <div class="finding-row">
-            <div class="name">Our assessment</div>
-            <div class="track" aria-label="22 total: 16 unique and 6 also found elsewhere">
-              <div class="segment unique" style="width:72.727%">16</div>
-              <div class="segment shared" style="width:27.273%">6</div>
-            </div>
-            <div class="count">22</div>
-          </div>
-        </div>
-        <div class="finding-summary">
-          <div><strong>25 found by only one assessment + 6 shared = 31 distinct findings</strong></div>
-        </div>
+        <p class="finding-union-note">Each finding counted once &middot; Shared means found by more than one assessment</p>
       </div>
     </section>
 
-    <!-- ============================================================ Wrap-up: concrete open-source approaches + internal context -->
+
     <section class="slide content-slide harness-comparison">
       <div class="stagger">
-        <h2 class="slide-title">Learn from open-source tools and harnesses</h2>
+        <h2 class="slide-title">Learn from open-source harnesses</h2>
         <div class="harness-rows">
           <a class="harness-repo" href="https://github.com/Netflix-Skunkworks/railguard-skill" target="_blank" rel="noopener noreferrer">
             <strong>Netflix Railguard</strong>
-            <p>Different specialist agents search for different types of bugs.</p>
+            <p>Specialist agents use detailed playbooks, code-navigation tools, and optional code scanning.</p>
           </a>
           <a class="harness-repo" href="https://github.com/visa/visa-vulnerability-agentic-harness" target="_blank" rel="noopener noreferrer">
             <strong>Visa VVAH</strong>
-            <p>Static analysis finds likely paths. Agents investigate.</p>
+            <p>Tree-sitter prioritizes reachable code before agents investigate.</p>
           </a>
           <a class="harness-repo" href="https://github.com/block/codecrucible" target="_blank" rel="noopener noreferrer">
             <strong>Block CodeCrucible</strong>
-            <p>The repo is filtered and split into chunks for LLM review.</p>
+            <p>The repo is filtered and chunked; LLMs do the vulnerability detection.</p>
           </a>
-        </div>
-        <div class="harness-context-summary">
-          <h3>These harnesses get better with your context.</h3>
-          <p>Threat model, architecture, security assumptions, runtime data and exposure.</p>
         </div>
         <div class="close-example">
           <span>We kept it simple:</span>
@@ -4333,15 +4215,15 @@ Just ask...
           <b>=</b>
           <span>Trail of Bits skills</span>
           <b>+</b>
-          <span>our internal skills</span>
+          <span>our internal context and verification</span>
         </div>
       </div>
     </section>
 
-    <!-- ============================================================ Wrap-up 2/2: improve skills through daily use -->
+
     <section class="slide content-slide daily-start">
       <div>
-        <h2 class="slide-title">Start with skills. Augment yourself.</h2>
+        <h2 class="slide-title">Start with skills.</h2>
         <div class="closing-steps">
           <div class="closing-step">
             <span>01</span>
@@ -4368,7 +4250,7 @@ Just ask...
       </div>
     </section>
 
-    <!-- ============================================================ Final takeaway -->
+
     <section class="slide content-slide final-takeaway">
       <div>
         <h2 class="slide-title">Agents make us better security engineers.</h2>
@@ -4381,7 +4263,7 @@ Just ask...
       </div>
     </section>
 
-    <!-- ============================================================ Thank you -->
+
     <section class="slide thank-you-slide">
       <div>
         <h2>Thank you.</h2>
@@ -4392,7 +4274,7 @@ Just ask...
       </div>
     </section>
 
-    <!-- ============================================================ Appendix: open-source security harnesses -->
+
     <section class="slide content-slide harness-reference">
       <div>
         <h2 class="slide-title">Open-source security tools and harnesses</h2>
@@ -4441,7 +4323,7 @@ Just ask...
   <div class="theme-toast" id="themeToast"></div>
 
   <script src="slides.js"></script>
-  <!-- Theme toggle: "t" flips dark<->light live, persists for the venue. -->
+
   <script>
     (function () {
       const root = document.documentElement;
